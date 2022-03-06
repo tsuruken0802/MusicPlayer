@@ -8,7 +8,7 @@
 import Foundation
 
 @available(iOS 13.0, *)
-public final class MPConstants {
+open class MPConstants {
     
     public struct Pitch {
         public static var minValue: Float {
