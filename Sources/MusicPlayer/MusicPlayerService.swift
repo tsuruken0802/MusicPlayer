@@ -7,18 +7,19 @@
 
 import Foundation
 
-class MusicPlayerSerivce {
+@available(iOS 13.0, *)
+public final class MusicPlayerSerivce {
     /// Pitchの表示用の文字列を取得する
     /// - Parameter value: Pitchの値
     /// - Returns: 文字列
-    static func displayPitch(value: Float) -> String {
-        let sPitch = Int(value / Constants.Pitch.unit)
+    public static func displayPitch(value: Float) -> String {
+        let sPitch = Int(value / MPConstants.Pitch.unit)
         var prefix = ""
         if sPitch > 0 {
-            prefix = Constants.Pitch.plusMark
+            prefix = MPConstants.Pitch.plusMark
         }
         else if sPitch < 0 {
-            prefix = Constants.Pitch.minusMark
+            prefix = MPConstants.Pitch.minusMark
         }
         return "\(prefix)\(abs(sPitch))"
     }
@@ -26,8 +27,8 @@ class MusicPlayerSerivce {
     /// Rate(テンポの速さ)の表示用の文字列を取得する
     /// - Parameter value: レートの値
     /// - Returns: 文字列
-    static func displayRate(value: Float) -> String {
-        let rate = value / Constants.Rate.defaultValue
+    public static func displayRate(value: Float) -> String {
+        let rate = value / MPConstants.Rate.defaultValue
         let prefix = "×"
         return "\(prefix)\(rate)"
     }
@@ -35,14 +36,14 @@ class MusicPlayerSerivce {
     /// 有効なPitchの値を取得する
     /// - Parameter value: Pitchの値
     /// - Returns: 有効値に変換された値
-    static func enablePitchValue(value: Float) -> Float {
-        return min(max(value, Constants.Pitch.limitMinValue), Constants.Pitch.limitMaxValue)
+    public static func enablePitchValue(value: Float) -> Float {
+        return min(max(value, MPConstants.Pitch.limitMinValue), MPConstants.Pitch.limitMaxValue)
     }
     
     /// 有効なRateの値を取得する
     /// - Parameter value: Rateの値
     /// - Returns: 有効値に変換された値
-    static func enableRateValue(value: Float) -> Float {
-        return min(max(value, Constants.Rate.limitMinValue), Constants.Rate.limitMaxValue)
+    public static func enableRateValue(value: Float) -> Float {
+        return min(max(value, MPConstants.Rate.limitMinValue), MPConstants.Rate.limitMaxValue)
     }
 }

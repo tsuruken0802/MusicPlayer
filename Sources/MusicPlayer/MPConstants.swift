@@ -7,9 +7,9 @@
 
 import Foundation
 
-class Constants {
+public final class MPConstants {
     
-    struct Pitch {
+    public struct Pitch {
         static var minValue: Float {
             return -800
         }
@@ -39,7 +39,7 @@ class Constants {
         static let minusMark: String = "♭"
     }
 
-    struct Rate {
+    public struct Rate {
         static var minValue: Float {
             return 0.25
         }

@@ -77,10 +77,10 @@ public final class MusicPlayer: ObservableObject {
     @Published public var currentTime: Float = 0
     
     /// Pitch
-    @Published public var pitch: Float = Constants.Pitch.defaultValue
+    @Published public var pitch: Float = MPConstants.Pitch.defaultValue
     
     /// Rate
-    @Published public var rate: Float = Constants.Rate.defaultValue
+    @Published public var rate: Float = MPConstants.Rate.defaultValue
     
     private init() {
         setAudioSession()
@@ -226,44 +226,44 @@ extension MusicPlayer {
     
     /// increment playback pitch
     public func incrementPitch() {
-        if pitch >= Constants.Pitch.maxValue {
+        if pitch >= MPConstants.Pitch.maxValue {
             return
         }
-        pitch += Constants.Pitch.unit
+        pitch += MPConstants.Pitch.unit
     }
     
     /// decrement playback pitch
     public func decrementPitch() {
-        if pitch <= Constants.Pitch.minValue {
+        if pitch <= MPConstants.Pitch.minValue {
             return
         }
-        pitch -= Constants.Pitch.unit
+        pitch -= MPConstants.Pitch.unit
     }
     
     /// reset playback pitch
     public func resetPitch() {
-        pitch = Constants.Pitch.defaultValue
+        pitch = MPConstants.Pitch.defaultValue
     }
     
     /// increment playback rate
     public func incrementRate() {
-        if rate >= Constants.Rate.maxValue {
+        if rate >= MPConstants.Rate.maxValue {
             return
         }
-        rate += Constants.Rate.unit
+        rate += MPConstants.Rate.unit
     }
     
     /// decrement playback rate
     public func decrementRate() {
-        if rate <= Constants.Rate.minValue {
+        if rate <= MPConstants.Rate.minValue {
             return
         }
-        rate -= Constants.Rate.unit
+        rate -= MPConstants.Rate.unit
     }
     
     /// reset playback rate
     public func resetRate() {
-        rate = Constants.Rate.defaultValue
+        rate = MPConstants.Rate.defaultValue
     }
     
     /// set timer
