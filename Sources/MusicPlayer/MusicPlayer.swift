@@ -53,10 +53,10 @@ public final class MusicPlayer: ObservableObject {
     }
     
     /// current playback item
-    @Published private(set) var currentItem: MPMediaItem?
+    @Published fileprivate(set) var currentItem: MPMediaItem?
     
     /// true is player is playing
-    @Published private(set) var isPlaying: Bool = false
+    @Published fileprivate(set) var isPlaying: Bool = false
     
     /// playback items
     @Published private var items: [MPMediaItem] = [] {
