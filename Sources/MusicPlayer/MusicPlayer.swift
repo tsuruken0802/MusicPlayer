@@ -68,13 +68,13 @@ public final class MusicPlayer: ObservableObject {
     private var currentTimeTimer: Timer?
     
     /// current playback time (seconed)
-    @Published var currentTime: Float = 0
+    @Published public var currentTime: Float = 0
     
     /// Pitch
-    @Published var pitch: Float = Constants.Pitch.defaultValue
+    @Published public var pitch: Float = Constants.Pitch.defaultValue
     
     /// Rate
-    @Published var rate: Float = Constants.Rate.defaultValue
+    @Published public var rate: Float = Constants.Rate.defaultValue
     
     private init() {
         setAudioSession()
