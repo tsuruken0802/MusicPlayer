@@ -4,9 +4,9 @@ import AVFAudio
 import MediaPlayer
 
 @available(iOS 13.0, *)
-final class MusicPlayer: ObservableObject {
+public final class MusicPlayer: ObservableObject {
     /// instance
-    static let shared: MusicPlayer = .init()
+    public static let shared: MusicPlayer = .init()
     
     /// Engine and Nodes
     private let audioEngine: AVAudioEngine = .init()
@@ -48,7 +48,7 @@ final class MusicPlayer: ObservableObject {
     }
     
     /// item duration
-    var duration: TimeInterval? {
+    public var duration: TimeInterval? {
         return currentItem?.playbackDuration
     }
     
@@ -109,7 +109,7 @@ final class MusicPlayer: ObservableObject {
 extension MusicPlayer {
     
     /// Play current item
-    func play() {
+    public func play() {
         if isSeekOver || !isEnableAudio {
             return
         }
@@ -129,7 +129,7 @@ extension MusicPlayer {
     /// - Parameters:
     ///   - items: playback items
     ///   - index: item index
-    func play(items: [MPMediaItem], index: Int) {
+    public func play(items: [MPMediaItem], index: Int) {
         if !itemsSafe(items: items, index: index) {
             return
         }
@@ -141,7 +141,7 @@ extension MusicPlayer {
     }
     
     /// Play next item
-    func next() {
+    public func next() {
         let nextIndex = currentIndex + 1
         if !itemsSafe(index: nextIndex) {
             pause()
@@ -153,7 +153,7 @@ extension MusicPlayer {
     }
     
     /// Play previous item
-    func back() {
+    public func back() {
         // 数秒しか経ってないなら同じ曲を0秒から再生する
         if currentTime >= MusicPlayer.backSameMusicThreshold {
             currentTime = 0
@@ -171,7 +171,7 @@ extension MusicPlayer {
     }
     
     /// Pause playback
-    func pause() {
+    public func pause() {
         updateCurrentTime()
         audioEngine.pause()
         playerNode.pause()
@@ -182,13 +182,13 @@ extension MusicPlayer {
     
     /// set playback volume
     /// - Parameter value: volume
-    func setVolume(value: Float) {
+    public func setVolume(value: Float) {
         playerNode.volume = value
     }
     
     /// change current playback position
     /// - Parameter withPlay: true if playback is performed after the position is changed
-    func setSeek(withPlay: Bool = false) {
+    public func setSeek(withPlay: Bool = false) {
         let time = TimeInterval(currentTime)
         if time < 0 { return }
         guard let duration = duration else { return }
@@ -219,7 +219,7 @@ extension MusicPlayer {
     }
     
     /// increment playback pitch
-    func incrementPitch() {
+    public func incrementPitch() {
         if pitch >= Constants.Pitch.maxValue {
             return
         }
@@ -227,7 +227,7 @@ extension MusicPlayer {
     }
     
     /// decrement playback pitch
-    func decrementPitch() {
+    public func decrementPitch() {
         if pitch <= Constants.Pitch.minValue {
             return
         }
@@ -235,12 +235,12 @@ extension MusicPlayer {
     }
     
     /// reset playback pitch
-    func resetPitch() {
+    public func resetPitch() {
         pitch = Constants.Pitch.defaultValue
     }
     
     /// increment playback rate
-    func incrementRate() {
+    public func incrementRate() {
         if rate >= Constants.Rate.maxValue {
             return
         }
@@ -248,7 +248,7 @@ extension MusicPlayer {
     }
     
     /// decrement playback rate
-    func decrementRate() {
+    public func decrementRate() {
         if rate <= Constants.Rate.minValue {
             return
         }
@@ -256,12 +256,12 @@ extension MusicPlayer {
     }
     
     /// reset playback rate
-    func resetRate() {
+    public func resetRate() {
         rate = Constants.Rate.defaultValue
     }
     
     /// set timer
-    func startCurrentTimeTimer() {
+    public func startCurrentTimeTimer() {
         if currentTimeTimer?.isValid == true {
             return
         }
@@ -269,7 +269,7 @@ extension MusicPlayer {
     }
     
     /// stop timer
-    func stopCurrentTimeTimer() {
+    public func stopCurrentTimeTimer() {
         currentTimeTimer?.invalidate()
         currentTimeTimer = nil
     }
