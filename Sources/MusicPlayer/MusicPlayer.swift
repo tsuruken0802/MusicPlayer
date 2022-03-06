@@ -49,14 +49,20 @@ public final class MusicPlayer: ObservableObject {
     
     /// item duration
     public var duration: TimeInterval? {
-        return currentItem?.playbackDuration
+        return _currentItem?.playbackDuration
     }
     
     /// current playback item
-    @Published fileprivate(set) var currentItem: MPMediaItem?
+    @Published private(set) var _currentItem: MPMediaItem?
+    public var currentItem: MPMediaItem? {
+        return _currentItem
+    }
     
     /// true is player is playing
-    @Published fileprivate(set) var isPlaying: Bool = false
+    @Published private(set) var _isPlaying: Bool = false
+    public var isPlaying: Bool {
+        return _isPlaying
+    }
     
     /// playback items
     @Published private var items: [MPMediaItem] = [] {
@@ -116,7 +122,7 @@ extension MusicPlayer {
         do {
             try audioEngine.start()
             playerNode.play()
-            isPlaying = true
+            _isPlaying = true
             startCurrentTimeTimer()
             setNowPlayingInfo()
         }
@@ -157,7 +163,7 @@ extension MusicPlayer {
         // 数秒しか経ってないなら同じ曲を0秒から再生する
         if currentTime >= MusicPlayer.backSameMusicThreshold {
             currentTime = 0
-            setSeek(withPlay: isPlaying)
+            setSeek(withPlay: _isPlaying)
             return
         }
         
@@ -175,7 +181,7 @@ extension MusicPlayer {
         updateCurrentTime()
         audioEngine.pause()
         playerNode.pause()
-        isPlaying = false
+        _isPlaying = false
         setNowPlayingInfo()
         stopCurrentTimeTimer()
     }
@@ -293,7 +299,7 @@ private extension MusicPlayer {
     private func stop() {
         audioEngine.stop()
         playerNode.stop()
-        isPlaying = false
+        _isPlaying = false
     }
     
     /// check safe index
@@ -309,7 +315,7 @@ private extension MusicPlayer {
     /// set currentItem
     private func setCurrentItem() {
         if itemsSafe(index: currentIndex) {
-            currentItem = items[currentIndex]
+            _currentItem = items[currentIndex]
         }
     }
     
@@ -355,7 +361,7 @@ private extension MusicPlayer {
         commandCenter.changePlaybackPositionCommand.addTarget { [unowned self] event in
             guard let positionCommandEvent = event as? MPChangePlaybackPositionCommandEvent else { return .commandFailed }
             currentTime = Float(positionCommandEvent.positionTime)
-            setSeek(withPlay: isPlaying)
+            setSeek(withPlay: _isPlaying)
             return .success
         }
     }
@@ -365,10 +371,10 @@ private extension MusicPlayer {
         let center =  MPNowPlayingInfoCenter.default()
         var nowPlayingInfo = center.nowPlayingInfo ?? [String : Any]()
         
-        nowPlayingInfo[MPMediaItemPropertyTitle] = currentItem?.title
+        nowPlayingInfo[MPMediaItemPropertyTitle] = _currentItem?.title
         
         let size = CGSize(width: 50, height: 50)
-        if let image = currentItem?.artwork?.image(at: size) {
+        if let image = _currentItem?.artwork?.image(at: size) {
             nowPlayingInfo[MPMediaItemPropertyArtwork] =
             MPMediaItemArtwork(boundsSize: image.size) { _ in
                 return image
@@ -380,14 +386,14 @@ private extension MusicPlayer {
         
         nowPlayingInfo[MPNowPlayingInfoPropertyElapsedPlaybackTime] = currentTime
         
-        if isPlaying {
+        if _isPlaying {
             nowPlayingInfo[MPNowPlayingInfoPropertyPlaybackRate] = rate
         }
         else {
             nowPlayingInfo[MPNowPlayingInfoPropertyPlaybackRate] = 0.0
         }
         
-        nowPlayingInfo[MPMediaItemPropertyPlaybackDuration] = currentItem?.playbackDuration
+        nowPlayingInfo[MPMediaItemPropertyPlaybackDuration] = _currentItem?.playbackDuration
         
         // Set the metadata
         center.nowPlayingInfo = nowPlayingInfo
@@ -395,7 +401,7 @@ private extension MusicPlayer {
     
     /// set Schedule File
     private func setScheduleFile() {
-        guard let currentItem = currentItem else { return }
+        guard let currentItem = _currentItem else { return }
         do {
             audioFile = try AVAudioFile(forReading: currentItem.assetURL!)
             audioEngine.connect(playerNode, to: pitchControl, format: nil)
@@ -428,7 +434,7 @@ private extension MusicPlayer {
         }
         switch type {
         case .began:
-            if isPlaying {
+            if _isPlaying {
                 pause()
             }
             break
@@ -457,11 +463,11 @@ private extension MusicPlayer {
 
         switch reason {
         case .newDeviceAvailable:
-            if !isPlaying {
+            if !_isPlaying {
                 play()
             }
         case .oldDeviceUnavailable:
-            if isPlaying {
+            if _isPlaying {
                 pause()
             }
         default:
