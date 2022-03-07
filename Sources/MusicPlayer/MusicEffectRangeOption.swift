@@ -9,8 +9,8 @@ import Foundation
 
 @available(iOS 13.0, *)
 public struct MusicEffectRangeOption {
-    let minValue: Float
-    let maxValue: Float
-    let unit: Float
-    let defaultValue: Float
+    public let minValue: Float
+    public let maxValue: Float
+    public let unit: Float
+    public let defaultValue: Float
 }
