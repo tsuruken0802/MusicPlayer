@@ -77,10 +77,12 @@ public final class MusicPlayer: ObservableObject {
     @Published public var currentTime: Float = 0
     
     /// Pitch
-    @Published public var pitch: Float = MPConstants.Pitch.defaultValue
+    @Published var pitch: Float = MPConstants.defaultPitchValue
+    @Published var pitchOptions: MusicEffectRangeOption = .init(minValue: MPConstants.defaultPitchMinValue, maxValue: MPConstants.defaultPitchMaxValue, unit: MPConstants.defaultPitchUnit, defaultValue: MPConstants.defaultPitchValue)
     
     /// Rate
-    @Published public var rate: Float = MPConstants.Rate.defaultValue
+    @Published var rate: Float = MPConstants.defaultRateValue
+    @Published var rateOptions: MusicEffectRangeOption = .init(minValue: MPConstants.defaultRateMinValue, maxValue: MPConstants.defaultRateMaxValue, unit: MPConstants.defaultRateUnit, defaultValue: MPConstants.defaultRateValue)
     
     private init() {
         setAudioSession()
@@ -225,45 +227,45 @@ extension MusicPlayer {
     }
     
     /// increment playback pitch
-    public func incrementPitch() {
-        if pitch >= MPConstants.Pitch.maxValue {
+    func incrementPitch() {
+        if pitch >= pitchOptions.maxValue {
             return
         }
-        pitch += MPConstants.Pitch.unit
+        pitch += pitchOptions.unit
     }
     
     /// decrement playback pitch
-    public func decrementPitch() {
-        if pitch <= MPConstants.Pitch.minValue {
+    func decrementPitch() {
+        if pitch <= pitchOptions.minValue {
             return
         }
-        pitch -= MPConstants.Pitch.unit
+        pitch -= pitchOptions.unit
     }
     
     /// reset playback pitch
-    public func resetPitch() {
-        pitch = MPConstants.Pitch.defaultValue
+    func resetPitch() {
+        pitch = pitchOptions.defaultValue
     }
     
     /// increment playback rate
-    public func incrementRate() {
-        if rate >= MPConstants.Rate.maxValue {
+    func incrementRate() {
+        if rate >= rateOptions.maxValue {
             return
         }
-        rate += MPConstants.Rate.unit
+        rate += rateOptions.unit
     }
     
     /// decrement playback rate
-    public func decrementRate() {
-        if rate <= MPConstants.Rate.minValue {
+    func decrementRate() {
+        if rate <= rateOptions.minValue {
             return
         }
-        rate -= MPConstants.Rate.unit
+        rate -= rateOptions.unit
     }
     
     /// reset playback rate
-    public func resetRate() {
-        rate = MPConstants.Rate.defaultValue
+    func resetRate() {
+        rate = rateOptions.defaultValue
     }
     
     /// set timer
