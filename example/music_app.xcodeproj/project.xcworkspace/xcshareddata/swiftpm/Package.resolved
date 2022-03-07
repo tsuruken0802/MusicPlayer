@@ -1,0 +1,16 @@
+{
+  "object": {
+    "pins": [
+      {
+        "package": "MusicPlayer",
+        "repositoryURL": "https://github.com/TsurumotoKentarou/MusicPlayer",
+        "state": {
+          "branch": "main",
+          "revision": "be342ee3a5cc2b043d3661d2d0c077b05f4890db",
+          "version": null
+        }
+      }
+    ]
+  },
+  "version": 1
+}
