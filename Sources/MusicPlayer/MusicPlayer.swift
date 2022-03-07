@@ -114,10 +114,10 @@ public final class MusicPlayer: ObservableObject {
 }
 
 @available(iOS 13.0, *)
-extension MusicPlayer {
+public extension MusicPlayer {
     
     /// Play current item
-    public func play() {
+    func play() {
         if isSeekOver || !isEnableAudio {
             return
         }
@@ -137,7 +137,7 @@ extension MusicPlayer {
     /// - Parameters:
     ///   - items: playback items
     ///   - index: item index
-    public func play(items: [MPMediaItem], index: Int) {
+    func play(items: [MPMediaItem], index: Int) {
         if !itemsSafe(items: items, index: index) {
             return
         }
@@ -149,7 +149,7 @@ extension MusicPlayer {
     }
     
     /// Play next item
-    public func next() {
+    func next() {
         let nextIndex = currentIndex + 1
         if !itemsSafe(index: nextIndex) {
             pause()
@@ -161,7 +161,7 @@ extension MusicPlayer {
     }
     
     /// Play previous item
-    public func back() {
+    func back() {
         // 数秒しか経ってないなら同じ曲を0秒から再生する
         if currentTime >= MusicPlayer.backSameMusicThreshold {
             currentTime = 0
@@ -179,7 +179,7 @@ extension MusicPlayer {
     }
     
     /// Pause playback
-    public func pause() {
+    func pause() {
         updateCurrentTime()
         audioEngine.pause()
         playerNode.pause()
@@ -190,13 +190,13 @@ extension MusicPlayer {
     
     /// set playback volume
     /// - Parameter value: volume
-    public func setVolume(value: Float) {
+    func setVolume(value: Float) {
         playerNode.volume = value
     }
     
     /// change current playback position
     /// - Parameter withPlay: true if playback is performed after the position is changed
-    public func setSeek(withPlay: Bool = false) {
+    func setSeek(withPlay: Bool = false) {
         let time = TimeInterval(currentTime)
         if time < 0 { return }
         guard let duration = duration else { return }
@@ -269,7 +269,7 @@ extension MusicPlayer {
     }
     
     /// set timer
-    public func startCurrentTimeTimer() {
+    func startCurrentTimeTimer() {
         if currentTimeTimer?.isValid == true {
             return
         }
@@ -277,7 +277,7 @@ extension MusicPlayer {
     }
     
     /// stop timer
-    public func stopCurrentTimeTimer() {
+    func stopCurrentTimeTimer() {
         currentTimeTimer?.invalidate()
         currentTimeTimer = nil
     }
