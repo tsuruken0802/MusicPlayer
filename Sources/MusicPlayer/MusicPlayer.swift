@@ -33,6 +33,8 @@ public final class MusicPlayer: ObservableObject {
         }
     }
     
+    private var currentTimeTimer: Timer?
+    
     private var cancellables: Set<AnyCancellable> = []
     
     /// Threshold value whether return to the previous song
@@ -71,18 +73,16 @@ public final class MusicPlayer: ObservableObject {
         }
     }
     
-    private var currentTimeTimer: Timer?
-    
     /// current playback time (seconed)
     @Published public var currentTime: Float = 0
     
     /// Pitch
-    @Published var pitch: Float = MPConstants.defaultPitchValue
-    @Published var pitchOptions: MusicEffectRangeOption = .init(minValue: MPConstants.defaultPitchMinValue, maxValue: MPConstants.defaultPitchMaxValue, unit: MPConstants.defaultPitchUnit, defaultValue: MPConstants.defaultPitchValue)
+    @Published public var pitch: Float = MPConstants.defaultPitchValue
+    @Published public var pitchOptions: MusicEffectRangeOption = .init(minValue: MPConstants.defaultPitchMinValue, maxValue: MPConstants.defaultPitchMaxValue, unit: MPConstants.defaultPitchUnit, defaultValue: MPConstants.defaultPitchValue)
     
     /// Rate
-    @Published var rate: Float = MPConstants.defaultRateValue
-    @Published var rateOptions: MusicEffectRangeOption = .init(minValue: MPConstants.defaultRateMinValue, maxValue: MPConstants.defaultRateMaxValue, unit: MPConstants.defaultRateUnit, defaultValue: MPConstants.defaultRateValue)
+    @Published public var rate: Float = MPConstants.defaultRateValue
+    @Published public var rateOptions: MusicEffectRangeOption = .init(minValue: MPConstants.defaultRateMinValue, maxValue: MPConstants.defaultRateMaxValue, unit: MPConstants.defaultRateUnit, defaultValue: MPConstants.defaultRateValue)
     
     private init() {
         setAudioSession()
