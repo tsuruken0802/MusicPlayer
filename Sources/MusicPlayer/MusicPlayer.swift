@@ -125,7 +125,7 @@ public extension MusicPlayer {
             try audioEngine.start()
             playerNode.play()
             _isPlaying = true
-            startCurrentTimeTimer()
+            startCurrentTimeRedering()
             setNowPlayingInfo()
         }
         catch let e {
@@ -185,7 +185,7 @@ public extension MusicPlayer {
         playerNode.pause()
         _isPlaying = false
         setNowPlayingInfo()
-        stopCurrentTimeTimer()
+        stopCurrentTimeRendering()
     }
     
     /// set playback volume
@@ -269,7 +269,7 @@ public extension MusicPlayer {
     }
     
     /// set timer
-    func startCurrentTimeTimer() {
+    func startCurrentTimeRedering() {
         if currentTimeTimer?.isValid == true {
             return
         }
@@ -277,7 +277,7 @@ public extension MusicPlayer {
     }
     
     /// stop timer
-    func stopCurrentTimeTimer() {
+    func stopCurrentTimeRendering() {
         currentTimeTimer?.invalidate()
         currentTimeTimer = nil
     }

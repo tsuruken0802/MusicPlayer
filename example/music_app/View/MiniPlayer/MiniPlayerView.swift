@@ -121,10 +121,10 @@ struct MiniPlayer: View {
                         Slider(value: $musicPlayer.currentTime, in: 0...Float(duration), step: 0.1) { isEditing in
                             isEditingSlideBar = isEditing
                             if isEditing {
-                                musicPlayer.stopCurrentTimeTimer()
+                                musicPlayer.stopCurrentTimeRendering()
                             }
                             else {
-                                musicPlayer.startCurrentTimeTimer()
+                                musicPlayer.startCurrentTimeRedering()
                             }
                             if !isEditing {
                                 musicPlayer.setSeek(withPlay: musicPlayer.isPlaying)

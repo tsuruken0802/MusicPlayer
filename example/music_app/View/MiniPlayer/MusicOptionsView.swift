@@ -35,8 +35,7 @@ struct MusicOptionsView: View {
                         .fontWeight(.bold)
                         .verticalSpace()
                     
-                    Slider(value: $musicPlayer.rate, in: musicPlayer.rateOptions.minValue...musicPlayer.rateOptions.maxValue, step: musicPlayer.rateOptions.unit) { isEditing in
-                    }
+                    Slider(value: $musicPlayer.rate, in: musicPlayer.rateOptions.minValue...musicPlayer.rateOptions.maxValue, step: musicPlayer.rateOptions.unit)
 
                     // tempo buttons
                     HStack {
@@ -67,8 +66,7 @@ struct MusicOptionsView: View {
                         .fontWeight(.bold)
                         .verticalSpace()
                     
-                    Slider(value: $musicPlayer.pitch, in: musicPlayer.pitchOptions.minValue...musicPlayer.pitchOptions.maxValue, step: musicPlayer.pitchOptions.unit) { isEditing in
-                    }
+                    Slider(value: $musicPlayer.pitch, in: musicPlayer.pitchOptions.minValue...musicPlayer.pitchOptions.maxValue, step: musicPlayer.pitchOptions.unit)
                     
                     // key buttons
                     HStack {
