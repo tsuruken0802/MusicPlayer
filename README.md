@@ -1,31 +1,31 @@
 Music Player
 ====
 
-このパッケージはミュージックプレイヤーを提供するSwiftUI製のパッケージです。
+This package is a Music Player created by SwiftUI.
 
 ## Description
 
-iOSの端末のAppleMusicの楽曲を再生します。
+It plays music in Apple Music in iOS device.
 
-機能一覧はこちら。
+### Features
 
-* 楽曲の再生、一時停止、次の曲の再生、前の曲の再生
-* 曲の再生速度の変更
-* 曲のキーの高さの変更
-* 再生時間の変更(シークバーを想定)
-* 曲のバックグラウンド再生
-* 画面オフ状態での曲の操作(MPRemoteCommandCenterの使用)
-* 電話やイヤホンなどの割り込みによる曲の再生、一時停止処理
+* Play music, pause, play next, play previous
+* Change playback rate
+* Change playback pitch
+* Change playback current time(seek bar also supported)
+* Play music in background
+* Operate playback in off screen(Using MPRemoteCommandCenter)
+* Playback and pause process due to interruptions from phone calls, earphones, etc.
 
 ## Demo
 ![demo](https://user-images.githubusercontent.com/15685633/157622495-8dda5fd0-89b5-4743-ab83-95cf2e7a66d0.gif)
 
 ## Requirement
-iOS13以降
+iOS 13 or later.
 
 ## Usage
 
-### 楽曲の再生
+### Play music
 
 ``` swift
 // songs are MPMediaItem's list
@@ -33,36 +33,36 @@ iOS13以降
 MusicPlayer.shared.play(items: songs, index: index)
 ```
 
-* 楽曲の一時停止
+* Pause
 
 ``` swift
 MusicPlayer.shared.pause()
 ```
 
-* 次の曲再生
+* Play next
 
 ``` swift
 MusicPlayer.shared.next()
 ```
 
-* 前の曲再生
+* Play previous
 
 ``` swift
 MusicPlayer.shared.back()
 ```
 
 
-### 曲の再生速度の変更
+### Change playback rate
 
-MusicPlayer.shared.rateで変更できる。
+You can change the playback rate using `MusicPlayer.shared.rate`
 
-SwiftUIのSliderなどで値をバインドすることができる。
+You can bind the value with Slider of SwiftUI.
 
 ``` swift
 Slider(value: $musicPlayer.rate, in: musicPlayer.rateOptions.minValue...musicPlayer.rateOptions.maxValue, step: musicPlayer.rateOptions.unit)
 ```
 
-rateを一段階上げ下げする場合はこちら。
+To raise or lower the rate value by one step, use following.
 
 ``` swift
 // increment rate
@@ -72,17 +72,17 @@ MusicPlayer.shared.incrementRate()
 MusicPlayer.shared.decrementRate()
 ```
 
-### 曲のキーの高さの変更
+### Change playback pitch
 
-MusicPlayer.shared.pitchで変更できる。
+You can change the pitch using `MusicPlayer.shared.pitch`
 
-SwiftUIのSliderなどで値をバインドすることができる。
+You can bind the value with Slider of SwiftUI.
 
 ``` swift
 Slider(value: $musicPlayer.pitch, in: musicPlayer.pitchOptions.minValue...musicPlayer.pitchOptions.maxValue, step: musicPlayer.pitchOptions.unit)
 ```
 
-pitchを一段階上げ下げする場合はこちら。
+To raise or lower the pitch value by one step, use following.
 
 ``` swift
 // increment pitch
@@ -92,11 +92,11 @@ MusicPlayer.shared.incrementPitch()
 MusicPlayer.shared.decrementPitch()
 ```
 
-### 再生時間の変更
+### Change playback current time
 
-MusicPlayer.shared.currentTimeで変更できる。
+You can change the current playback time using `MusicPlayer.shared.currentTime`
 
-SwiftUIのSliderなどで値をバインドすることができる。
+To raise or lower the pitch value by one step, use following.
 
 ``` swift
 Slider(value: $musicPlayer.currentTime, in: 0...Float(duration), step: 0.1) { isEditing in
@@ -111,12 +111,19 @@ Slider(value: $musicPlayer.currentTime, in: 0...Float(duration), step: 0.1) { is
 ```
 
 ## Install
-
-## Contribution
+Add it in the latest main branch in **Swift Package Manager**.
 
 ## Licence
 
-[MIT](https://github.com/tcnksm/tool/blob/master/LICENCE)
+```
+Copyright 2022 Kentaro Tsurumoto.
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+```
 
 ## Author
 
