@@ -125,8 +125,6 @@ struct MiniPlayer: View {
                             }
                             else {
                                 musicPlayer.startCurrentTimeRedering()
-                            }
-                            if !isEditing {
                                 musicPlayer.setSeek(withPlay: musicPlayer.isPlaying)
                             }
                         }
