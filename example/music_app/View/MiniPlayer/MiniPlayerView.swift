@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import MusicPlayer
 
 struct MiniPlayer: View {
     let animation: Namespace.ID

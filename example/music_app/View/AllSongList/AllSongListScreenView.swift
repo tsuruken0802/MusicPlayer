@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import MusicPlayer
 
 struct AllSongListScreenView: View {
     let songs = MPMediaService.getAllSongs()

@@ -7,7 +7,6 @@
 
 import SwiftUI
 import MediaPlayer
-import MusicPlayer
 
 struct SongListScreenView: View {
     @StateObject var viewModel: SongListViewModel

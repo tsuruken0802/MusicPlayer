@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import MusicPlayer
 
 struct MusicOptionsView: View {    
     @ObservedObject var musicPlayer = MusicPlayer.shared

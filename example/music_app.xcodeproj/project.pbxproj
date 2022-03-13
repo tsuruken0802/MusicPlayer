@@ -37,13 +37,16 @@
 		0357066B27D4A83F00A16545 /* AllSongListScreenView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0357066A27D4A83F00A16545 /* AllSongListScreenView.swift */; };
 		0357066E27D4BFEE00A16545 /* MediaCollectionListScreenView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0357066D27D4BFEE00A16545 /* MediaCollectionListScreenView.swift */; };
 		0357067027D4C0A900A16545 /* MediaCollectionListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0357066F27D4C0A900A16545 /* MediaCollectionListViewModel.swift */; };
+		036532AD27DDBA2B0077C967 /* MusicPlayerService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 036532A927DDBA2B0077C967 /* MusicPlayerService.swift */; };
+		036532AE27DDBA2B0077C967 /* MPConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 036532AA27DDBA2B0077C967 /* MPConstants.swift */; };
+		036532AF27DDBA2B0077C967 /* MusicPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 036532AB27DDBA2B0077C967 /* MusicPlayer.swift */; };
+		036532B027DDBA2B0077C967 /* MusicEffectRangeOption.swift in Sources */ = {isa = PBXBuildFile; fileRef = 036532AC27DDBA2B0077C967 /* MusicEffectRangeOption.swift */; };
 		037DBBCC27D2538000882D8F /* MiniPlayerPresentation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 037DBBCB27D2538000882D8F /* MiniPlayerPresentation.swift */; };
 		03C0649427D0F605000C1898 /* ArtistListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03C0649327D0F605000C1898 /* ArtistListViewModel.swift */; };
 		03C0649627D0F7D8000C1898 /* ArtistAlbumListScreenView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03C0649527D0F7D8000C1898 /* ArtistAlbumListScreenView.swift */; };
 		03C064A027D0FC12000C1898 /* MPMediaService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03C0649F27D0FC12000C1898 /* MPMediaService.swift */; };
 		03C064A227D0FD67000C1898 /* ArtistAlbumListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03C064A127D0FD67000C1898 /* ArtistAlbumListViewModel.swift */; };
 		03EE742A27D648B200835C68 /* MusicOptionsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03EE742927D648B200835C68 /* MusicOptionsViewModel.swift */; };
-		03EE742D27D65BDF00835C68 /* MusicPlayer in Frameworks */ = {isa = PBXBuildFile; productRef = 03EE742C27D65BDF00835C68 /* MusicPlayer */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -97,6 +100,10 @@
 		0357066A27D4A83F00A16545 /* AllSongListScreenView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AllSongListScreenView.swift; sourceTree = "<group>"; };
 		0357066D27D4BFEE00A16545 /* MediaCollectionListScreenView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaCollectionListScreenView.swift; sourceTree = "<group>"; };
 		0357066F27D4C0A900A16545 /* MediaCollectionListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaCollectionListViewModel.swift; sourceTree = "<group>"; };
+		036532A927DDBA2B0077C967 /* MusicPlayerService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MusicPlayerService.swift; sourceTree = "<group>"; };
+		036532AA27DDBA2B0077C967 /* MPConstants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MPConstants.swift; sourceTree = "<group>"; };
+		036532AB27DDBA2B0077C967 /* MusicPlayer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MusicPlayer.swift; sourceTree = "<group>"; };
+		036532AC27DDBA2B0077C967 /* MusicEffectRangeOption.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MusicEffectRangeOption.swift; sourceTree = "<group>"; };
 		037DBBCB27D2538000882D8F /* MiniPlayerPresentation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MiniPlayerPresentation.swift; sourceTree = "<group>"; };
 		03C0649327D0F605000C1898 /* ArtistListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArtistListViewModel.swift; sourceTree = "<group>"; };
 		03C0649527D0F7D8000C1898 /* ArtistAlbumListScreenView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArtistAlbumListScreenView.swift; sourceTree = "<group>"; };
@@ -110,7 +117,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				03EE742D27D65BDF00835C68 /* MusicPlayer in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -143,6 +149,7 @@
 		0353AB472775CF95004DD139 = {
 			isa = PBXGroup;
 			children = (
+				036532A827DDBA2B0077C967 /* MusicPlayer */,
 				0353AB522775CF95004DD139 /* music_app */,
 				0353AB632775CF95004DD139 /* music_appTests */,
 				0353AB6D2775CF95004DD139 /* music_appUITests */,
@@ -273,6 +280,18 @@
 			path = MediaCollectionList;
 			sourceTree = "<group>";
 		};
+		036532A827DDBA2B0077C967 /* MusicPlayer */ = {
+			isa = PBXGroup;
+			children = (
+				036532A927DDBA2B0077C967 /* MusicPlayerService.swift */,
+				036532AA27DDBA2B0077C967 /* MPConstants.swift */,
+				036532AB27DDBA2B0077C967 /* MusicPlayer.swift */,
+				036532AC27DDBA2B0077C967 /* MusicEffectRangeOption.swift */,
+			);
+			name = MusicPlayer;
+			path = ../Sources/MusicPlayer;
+			sourceTree = "<group>";
+		};
 		03C0649727D0FA27000C1898 /* MiniPlayer */ = {
 			isa = PBXGroup;
 			children = (
@@ -361,7 +380,6 @@
 			);
 			name = music_app;
 			packageProductDependencies = (
-				03EE742C27D65BDF00835C68 /* MusicPlayer */,
 			);
 			productName = music_app;
 			productReference = 0353AB502775CF95004DD139 /* music_app.app */;
@@ -436,7 +454,6 @@
 			);
 			mainGroup = 0353AB472775CF95004DD139;
 			packageReferences = (
-				03EE742B27D65BDF00835C68 /* XCRemoteSwiftPackageReference "MusicPlayer" */,
 			);
 			productRefGroup = 0353AB512775CF95004DD139 /* Products */;
 			projectDirPath = "";
@@ -482,11 +499,13 @@
 			files = (
 				0357066B27D4A83F00A16545 /* AllSongListScreenView.swift in Sources */,
 				0357066627D4A34A00A16545 /* MediaNumberItemView.swift in Sources */,
+				036532AD27DDBA2B0077C967 /* MusicPlayerService.swift in Sources */,
 				0328229D27C7ABE7002BC9FD /* PlaybackTimeConverter.swift in Sources */,
 				0353AB8B2775D2F8004DD139 /* PlaylistScreenView.swift in Sources */,
 				03C0649427D0F605000C1898 /* ArtistListViewModel.swift in Sources */,
 				037DBBCC27D2538000882D8F /* MiniPlayerPresentation.swift in Sources */,
 				03C064A027D0FC12000C1898 /* MPMediaService.swift in Sources */,
+				036532B027DDBA2B0077C967 /* MusicEffectRangeOption.swift in Sources */,
 				0353AB822775D152004DD139 /* MiniPlayerView.swift in Sources */,
 				03C064A227D0FD67000C1898 /* ArtistAlbumListViewModel.swift in Sources */,
 				0323B6F6277722F6001240C4 /* NoImageView.swift in Sources */,
@@ -500,10 +519,12 @@
 				0357066E27D4BFEE00A16545 /* MediaCollectionListScreenView.swift in Sources */,
 				0353AB802775D123004DD139 /* TabScreenView.swift in Sources */,
 				0353AB922775D35C004DD139 /* SongListScreenView.swift in Sources */,
+				036532AE27DDBA2B0077C967 /* MPConstants.swift in Sources */,
 				033FB2D127CBC6B500146123 /* MusicOptionButton.swift in Sources */,
 				0353AB8D2775D307004DD139 /* PlaylistScreenViewModel.swift in Sources */,
 				0353AB842775D196004DD139 /* MiniPlayerBackgroundView.swift in Sources */,
 				0353AB862775D1DF004DD139 /* LibraryScreenView.swift in Sources */,
+				036532AF27DDBA2B0077C967 /* MusicPlayer.swift in Sources */,
 				0353AB942775D370004DD139 /* SongListViewModel.swift in Sources */,
 				0357067027D4C0A900A16545 /* MediaCollectionListViewModel.swift in Sources */,
 				0353AB892775D1FF004DD139 /* NavigationLinkData.swift in Sources */,
@@ -865,25 +886,6 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
-
-/* Begin XCRemoteSwiftPackageReference section */
-		03EE742B27D65BDF00835C68 /* XCRemoteSwiftPackageReference "MusicPlayer" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/TsurumotoKentarou/MusicPlayer";
-			requirement = {
-				branch = main;
-				kind = branch;
-			};
-		};
-/* End XCRemoteSwiftPackageReference section */
-
-/* Begin XCSwiftPackageProductDependency section */
-		03EE742C27D65BDF00835C68 /* MusicPlayer */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 03EE742B27D65BDF00835C68 /* XCRemoteSwiftPackageReference "MusicPlayer" */;
-			productName = MusicPlayer;
-		};
-/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 0353AB482775CF95004DD139 /* Project object */;
 }
