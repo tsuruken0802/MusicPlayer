@@ -6,11 +6,20 @@
 //
 
 import SwiftUI
+import RangeSlider
 
 struct MusicOptionsView: View {    
     @ObservedObject var musicPlayer = MusicPlayer.shared
     
     @StateObject var viewModel: MusicOptionsViewModel = .init()
+    
+    @State var trimmingHighValue: Float = Float(MusicPlayer.shared.duration ?? 0.0)
+    
+    @State var trimmingLowValue: Float = 0.0
+    
+    private var duration: Float {
+        return Float(musicPlayer.duration ?? 0.0)
+    }
     
     private var pitchString: String {
         return viewModel.displayPitch(value: musicPlayer.pitch, unit: musicPlayer.pitchOptions.unit)
@@ -82,6 +91,24 @@ struct MusicOptionsView: View {
                         }
                     }
                     .verticalSpace()
+                }
+                .largeVerticalSpace()
+                
+                // key
+                VStack {
+                    Text("トリミング")
+                        .font(.title2)
+                        .verticalSpace()
+                    
+                    RangeSlider(highValue: $trimmingHighValue, lowValue: $trimmingLowValue, bounds: 0.0...duration) { isHigh, isEditing in
+                        
+                    }
+                    
+                    HStack {
+                        Text(PlayBackTimeConverter.toString(seconds: Float(trimmingLowValue)))
+                        Spacer()
+                        Text(PlayBackTimeConverter.toString(seconds: Float(trimmingHighValue)))
+                    }
                 }
                 .largeVerticalSpace()
             }
