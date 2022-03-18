@@ -3,6 +3,20 @@ import Foundation
 import AVFAudio
 import MediaPlayer
 
+@propertyWrapper
+public struct TrimmingSeconds {
+    private var value: Double
+    
+    public init(wrappedValue: Double) {
+        self.value = wrappedValue
+    }
+    
+    public var wrappedValue: Double {
+        get { value }
+        set { value = min(max(0.0, newValue), (MusicPlayer.shared.duration ?? 0.0) ) }
+    }
+}
+
 @available(iOS 13.0, *)
 public final class MusicPlayer: ObservableObject {
     /// instance
@@ -51,20 +65,14 @@ public final class MusicPlayer: ObservableObject {
     
     /// item duration
     public var duration: TimeInterval? {
-        return _currentItem?.playbackDuration
+        return currentItem?.playbackDuration
     }
     
     /// current playback item
-    @Published private(set) var _currentItem: MPMediaItem?
-    public var currentItem: MPMediaItem? {
-        return _currentItem
-    }
+    @Published private(set) var currentItem: MPMediaItem?
     
     /// true is player is playing
-    @Published private(set) var _isPlaying: Bool = false
-    public var isPlaying: Bool {
-        return _isPlaying
-    }
+    @Published private(set) var isPlaying: Bool = false
     
     /// playback items
     @Published private var items: [MPMediaItem] = [] {
@@ -83,6 +91,10 @@ public final class MusicPlayer: ObservableObject {
     /// Rate
     @Published public var rate: Float = MPConstants.defaultRateValue
     @Published public var rateOptions: MusicEffectRangeOption = .init(minValue: MPConstants.defaultRateMinValue, maxValue: MPConstants.defaultRateMaxValue, unit: MPConstants.defaultRateUnit, defaultValue: MPConstants.defaultRateValue)
+    
+    /// trimming(seconds)
+    @Published public var startPlayback: TrimmingSeconds = TrimmingSeconds(wrappedValue: 0.0)
+    @Published public var endPlayback: TrimmingSeconds = TrimmingSeconds(wrappedValue: 0.0)
     
     private init() {
         setAudioSession()
@@ -124,7 +136,7 @@ public extension MusicPlayer {
         do {
             try audioEngine.start()
             playerNode.play()
-            _isPlaying = true
+            isPlaying = true
             startCurrentTimeRedering()
             setNowPlayingInfo()
         }
@@ -165,7 +177,7 @@ public extension MusicPlayer {
         // 数秒しか経ってないなら同じ曲を0秒から再生する
         if currentTime >= MusicPlayer.backSameMusicThreshold {
             currentTime = 0
-            setSeek(withPlay: _isPlaying)
+            setSeek(withPlay: isPlaying)
             return
         }
         
@@ -183,7 +195,7 @@ public extension MusicPlayer {
         updateCurrentTime()
         audioEngine.pause()
         playerNode.pause()
-        _isPlaying = false
+        isPlaying = false
         setNowPlayingInfo()
         stopCurrentTimeRendering()
     }
@@ -301,7 +313,7 @@ private extension MusicPlayer {
     private func stop() {
         audioEngine.stop()
         playerNode.stop()
-        _isPlaying = false
+        isPlaying = false
     }
     
     /// check safe index
@@ -317,7 +329,7 @@ private extension MusicPlayer {
     /// set currentItem
     private func setCurrentItem() {
         if itemsSafe(index: currentIndex) {
-            _currentItem = items[currentIndex]
+            currentItem = items[currentIndex]
         }
     }
     
@@ -363,7 +375,7 @@ private extension MusicPlayer {
         commandCenter.changePlaybackPositionCommand.addTarget { [unowned self] event in
             guard let positionCommandEvent = event as? MPChangePlaybackPositionCommandEvent else { return .commandFailed }
             currentTime = Float(positionCommandEvent.positionTime)
-            setSeek(withPlay: _isPlaying)
+            setSeek(withPlay: isPlaying)
             return .success
         }
     }
@@ -373,10 +385,10 @@ private extension MusicPlayer {
         let center =  MPNowPlayingInfoCenter.default()
         var nowPlayingInfo = center.nowPlayingInfo ?? [String : Any]()
         
-        nowPlayingInfo[MPMediaItemPropertyTitle] = _currentItem?.title
+        nowPlayingInfo[MPMediaItemPropertyTitle] = currentItem?.title
         
         let size = CGSize(width: 50, height: 50)
-        if let image = _currentItem?.artwork?.image(at: size) {
+        if let image = currentItem?.artwork?.image(at: size) {
             nowPlayingInfo[MPMediaItemPropertyArtwork] =
             MPMediaItemArtwork(boundsSize: image.size) { _ in
                 return image
@@ -388,14 +400,14 @@ private extension MusicPlayer {
         
         nowPlayingInfo[MPNowPlayingInfoPropertyElapsedPlaybackTime] = currentTime
         
-        if _isPlaying {
+        if isPlaying {
             nowPlayingInfo[MPNowPlayingInfoPropertyPlaybackRate] = rate
         }
         else {
             nowPlayingInfo[MPNowPlayingInfoPropertyPlaybackRate] = 0.0
         }
         
-        nowPlayingInfo[MPMediaItemPropertyPlaybackDuration] = _currentItem?.playbackDuration
+        nowPlayingInfo[MPMediaItemPropertyPlaybackDuration] = currentItem?.playbackDuration
         
         // Set the metadata
         center.nowPlayingInfo = nowPlayingInfo
@@ -403,7 +415,7 @@ private extension MusicPlayer {
     
     /// set Schedule File
     private func setScheduleFile() {
-        guard let currentItem = _currentItem else { return }
+        guard let currentItem = currentItem else { return }
         do {
             audioFile = try AVAudioFile(forReading: currentItem.assetURL!)
             audioEngine.connect(playerNode, to: pitchControl, format: nil)
@@ -436,7 +448,7 @@ private extension MusicPlayer {
         }
         switch type {
         case .began:
-            if _isPlaying {
+            if isPlaying {
                 pause()
             }
             break
@@ -465,11 +477,11 @@ private extension MusicPlayer {
 
         switch reason {
         case .newDeviceAvailable:
-            if !_isPlaying {
+            if !isPlaying {
                 play()
             }
         case .oldDeviceUnavailable:
-            if _isPlaying {
+            if isPlaying {
                 pause()
             }
         default:
