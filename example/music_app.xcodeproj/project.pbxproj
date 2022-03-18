@@ -46,6 +46,7 @@
 		03C0649627D0F7D8000C1898 /* ArtistAlbumListScreenView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03C0649527D0F7D8000C1898 /* ArtistAlbumListScreenView.swift */; };
 		03C064A027D0FC12000C1898 /* MPMediaService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03C0649F27D0FC12000C1898 /* MPMediaService.swift */; };
 		03C064A227D0FD67000C1898 /* ArtistAlbumListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03C064A127D0FD67000C1898 /* ArtistAlbumListViewModel.swift */; };
+		03C2A73627E487FF00DB61AC /* RangeSlider in Frameworks */ = {isa = PBXBuildFile; productRef = 03C2A73527E487FF00DB61AC /* RangeSlider */; };
 		03EE742A27D648B200835C68 /* MusicOptionsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03EE742927D648B200835C68 /* MusicOptionsViewModel.swift */; };
 /* End PBXBuildFile section */
 
@@ -117,6 +118,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				03C2A73627E487FF00DB61AC /* RangeSlider in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -380,6 +382,7 @@
 			);
 			name = music_app;
 			packageProductDependencies = (
+				03C2A73527E487FF00DB61AC /* RangeSlider */,
 			);
 			productName = music_app;
 			productReference = 0353AB502775CF95004DD139 /* music_app.app */;
@@ -454,6 +457,7 @@
 			);
 			mainGroup = 0353AB472775CF95004DD139;
 			packageReferences = (
+				03C2A73427E487FF00DB61AC /* XCRemoteSwiftPackageReference "RangeSlider" */,
 			);
 			productRefGroup = 0353AB512775CF95004DD139 /* Products */;
 			projectDirPath = "";
@@ -886,6 +890,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		03C2A73427E487FF00DB61AC /* XCRemoteSwiftPackageReference "RangeSlider" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/TsurumotoKentarou/RangeSlider";
+			requirement = {
+				branch = main;
+				kind = branch;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		03C2A73527E487FF00DB61AC /* RangeSlider */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 03C2A73427E487FF00DB61AC /* XCRemoteSwiftPackageReference "RangeSlider" */;
+			productName = RangeSlider;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 0353AB482775CF95004DD139 /* Project object */;
 }
