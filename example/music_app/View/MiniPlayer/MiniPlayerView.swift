@@ -131,7 +131,7 @@ struct MiniPlayer: View {
                     HStack {
                         Text(PlayBackTimeConverter.toString(seconds: musicPlayer.currentTime))
                         Spacer()
-                        Text(PlayBackTimeConverter.toString(seconds:  Float(musicPlayer.duration ?? 0)))
+                        Text(PlayBackTimeConverter.toString(seconds: Float(musicPlayer.duration ?? 0)))
                     }
                 }
                 .padding(.horizontal)
