@@ -1,16 +1,14 @@
 {
-  "object": {
-    "pins": [
-      {
-        "package": "RangeSlider",
-        "repositoryURL": "https://github.com/TsurumotoKentarou/RangeSlider",
-        "state": {
-          "branch": "main",
-          "revision": "b3c48a4113427e2a47c74bd9aa99177ed4fd0bf8",
-          "version": null
-        }
+  "pins" : [
+    {
+      "identity" : "rangeslider",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/TsurumotoKentarou/RangeSlider",
+      "state" : {
+        "branch" : "main",
+        "revision" : "fd3da550a6147c9979a6ff1b50a6f343c5131702"
       }
-    ]
-  },
-  "version": 1
+    }
+  ],
+  "version" : 2
 }
