@@ -13,9 +13,7 @@ struct MusicOptionsView: View {
     
     @StateObject var viewModel: MusicOptionsViewModel = .init()
     
-    @State var trimmingHighValue: Float = Float(MusicPlayer.shared.duration ?? 0.0)
-    
-    @State var trimmingLowValue: Float = 0.0
+    @State var currentValue: ClosedRange<Float> = 0.0...Float(MusicPlayer.shared.duration ?? 0.0)
     
     private var duration: Float {
         return Float(musicPlayer.duration ?? 0.0)
@@ -74,7 +72,9 @@ struct MusicOptionsView: View {
                         .fontWeight(.bold)
                         .verticalSpace()
                     
-                    Slider(value: $musicPlayer.pitch, in: musicPlayer.pitchOptions.minValue...musicPlayer.pitchOptions.maxValue, step: musicPlayer.pitchOptions.unit)
+                    Slider(value: $musicPlayer.pitch,
+                           in: musicPlayer.pitchOptions.minValue...musicPlayer.pitchOptions.maxValue,
+                           step: musicPlayer.pitchOptions.unit)
                     
                     // key buttons
                     HStack {
@@ -100,14 +100,16 @@ struct MusicOptionsView: View {
                         .font(.title2)
                         .verticalSpace()
                     
-                    RangeSlider(highValue: $trimmingHighValue, lowValue: $trimmingLowValue, bounds: 0.0...duration) { isHigh, isEditing in
+                    RangeSlider(currentValue: $currentValue,
+                                bounds: 0.0...duration,
+                                isOverRange: true) { isHigh, isEditing in
                         
                     }
                     
                     HStack {
-                        Text(PlayBackTimeConverter.toString(seconds: Float(trimmingLowValue)))
+                        Text(PlayBackTimeConverter.toString(seconds: Float(currentValue.lowerBound)))
                         Spacer()
-                        Text(PlayBackTimeConverter.toString(seconds: Float(trimmingHighValue)))
+                        Text(PlayBackTimeConverter.toString(seconds: Float(currentValue.upperBound)))
                     }
                 }
                 .largeVerticalSpace()
