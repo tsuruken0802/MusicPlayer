@@ -39,7 +39,7 @@ struct MediaItemListView: View {
     
     var body: some View {
         List {
-            ForEach(items.indices) { (index) in
+            ForEach(items.indices, id: \.self) { (index) in
                 /// VStackでラップしないとList表示が最適化されず
                 /// 全てのViewを一気に全て読み込んでしまう
                 VStack {

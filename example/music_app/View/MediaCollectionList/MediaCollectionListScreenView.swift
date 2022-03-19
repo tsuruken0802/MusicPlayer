@@ -64,7 +64,7 @@ struct MediaCollectionListScreenView: View {
         ScrollView {
             VStack {
                 LazyVGrid(columns: columns) {
-                    ForEach(viewModel.mediaList.indices) { (index) in
+                    ForEach(viewModel.mediaList.indices, id: \.self) { (index) in
                         VStack(alignment: .leading, spacing: 0) {
                             image(album: viewModel.mediaList[index])
                                 .padding(.bottom, 6)
