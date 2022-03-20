@@ -115,7 +115,8 @@ struct MiniPlayer: View {
                 Spacer()
                 
                 // Slider
-                MusicPlaybackSliderView(isEditingSlideBar: $isEditingSlideBar)
+                MusicPlaybackSliderView(isEditingSlideBar: $isEditingSlideBar,
+                                        showTrimmingPosition: true)
                     .padding(.horizontal)
                 
                 Spacer()
@@ -177,10 +178,8 @@ struct MiniPlayer: View {
                     }
                     .padding(.horizontal)
                 }
-                .sheet(item: $presentation) {
-                    
-                } content: { $0.presentation }
-                
+                .sheet(item: $presentation, content: { $0.presentation })
+
                 Spacer()
             }
             .frame(height: expand ? nil : 0)

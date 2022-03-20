@@ -12,6 +12,28 @@ struct MusicPlaybackSliderView: View {
     
     var isEditingSlideBar: Binding<Bool>?
     
+    var showTrimmingPosition: Bool?
+    
+    private var duration: TimeInterval? {
+        guard let duration = musicPlayer.duration else { return nil }
+        return duration > 0.0 ? duration : nil
+    }
+    
+    private var trimmingLowerRate: Float? {
+        guard let lower = musicPlayer.playbackTimeRange?.lowerBound else { return nil }
+        guard let duration = duration else { return nil }
+        if lower <= 0.0 { return nil }
+        return lower / Float(duration)
+    }
+    
+    private var trimmingUpperRate: Float? {
+        guard let upper = musicPlayer.playbackTimeRange?.upperBound else { return nil }
+        guard let duration = duration else { return nil }
+        let fDuration = Float(duration)
+        if upper >= fDuration { return nil }
+        return upper / fDuration
+    }
+    
     var body: some View {
         VStack {
             if let duration = musicPlayer.duration, duration > 0.0 {
@@ -23,6 +45,16 @@ struct MusicPlaybackSliderView: View {
                     else {
                         musicPlayer.startCurrentTimeRedering()
                         musicPlayer.setSeek(withPlay: musicPlayer.isPlaying)
+                    }
+                }
+                
+                if trimmingLowerRate != nil || trimmingUpperRate != nil {
+                    if showTrimmingPosition == true {
+                        // Sliderと幅を揃えたいがSliderの内部で
+                        // 微量のPaddingを含んでいるため微調整する
+                        MusicTrimmingPositionView(lowerRate: trimmingLowerRate, upperRate: trimmingUpperRate)
+                            .padding(.horizontal, 1)
+                            .padding(.vertical, 20)
                     }
                 }
                 
