@@ -12,6 +12,7 @@ It plays music in Apple Music in iOS device.
 * Play music, pause, play next, play previous
 * Change playback rate
 * Change playback pitch
+* Trimming playback
 * Change playback current time(seek bar also supported)
 * Play music in background
 * Operate playback in off screen(Using MPRemoteCommandCenter)
@@ -90,6 +91,16 @@ MusicPlayer.shared.incrementPitch()
 
 // decrement pitch
 MusicPlayer.shared.decrementPitch()
+```
+
+### Trimming playback
+
+You can trim playback.
+
+Below sample is code that trim from a minute to three minutes.
+
+``` swift
+MusicPlayer.shared.playbackTimeRange = 60...180
 ```
 
 ### Change playback current time
