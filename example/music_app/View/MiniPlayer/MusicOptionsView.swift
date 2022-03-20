@@ -98,8 +98,8 @@ struct MusicOptionsView: View {
                     
                     RangeSlider(currentValue: $currentValue,
                                 bounds: musicPlayer.minPlaybackTime...musicPlayer.maxPlaybackTime,
-                                isOverRange: true) { isEditing in
-                        
+                                isOverRange: true,
+                                tintColor: Color.green) { isEditing in
                     }
                     
                     HStack {
@@ -107,6 +107,8 @@ struct MusicOptionsView: View {
                         Spacer()
                         Text(PlayBackTimeConverter.toString(seconds: Float(currentValue.upperBound)))
                     }
+                    
+                    MusicPlaybackSliderView()
                 }
                 .largeVerticalSpace()
             }

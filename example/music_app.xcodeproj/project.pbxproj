@@ -47,6 +47,7 @@
 		03C064A027D0FC12000C1898 /* MPMediaService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03C0649F27D0FC12000C1898 /* MPMediaService.swift */; };
 		03C064A227D0FD67000C1898 /* ArtistAlbumListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03C064A127D0FD67000C1898 /* ArtistAlbumListViewModel.swift */; };
 		03C2A73627E487FF00DB61AC /* RangeSlider in Frameworks */ = {isa = PBXBuildFile; productRef = 03C2A73527E487FF00DB61AC /* RangeSlider */; };
+		03CCD5B127E6EB860084E2E2 /* MusicPlaybackSliderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03CCD5B027E6EB860084E2E2 /* MusicPlaybackSliderView.swift */; };
 		03EE742A27D648B200835C68 /* MusicOptionsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03EE742927D648B200835C68 /* MusicOptionsViewModel.swift */; };
 /* End PBXBuildFile section */
 
@@ -110,6 +111,7 @@
 		03C0649527D0F7D8000C1898 /* ArtistAlbumListScreenView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArtistAlbumListScreenView.swift; sourceTree = "<group>"; };
 		03C0649F27D0FC12000C1898 /* MPMediaService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MPMediaService.swift; sourceTree = "<group>"; };
 		03C064A127D0FD67000C1898 /* ArtistAlbumListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArtistAlbumListViewModel.swift; sourceTree = "<group>"; };
+		03CCD5B027E6EB860084E2E2 /* MusicPlaybackSliderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MusicPlaybackSliderView.swift; sourceTree = "<group>"; };
 		03EE742927D648B200835C68 /* MusicOptionsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MusicOptionsViewModel.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -302,6 +304,7 @@
 				0353AB812775D152004DD139 /* MiniPlayerView.swift */,
 				0353AB832775D196004DD139 /* MiniPlayerBackgroundView.swift */,
 				037DBBCB27D2538000882D8F /* MiniPlayerPresentation.swift */,
+				03CCD5B027E6EB860084E2E2 /* MusicPlaybackSliderView.swift */,
 			);
 			path = MiniPlayer;
 			sourceTree = "<group>";
@@ -503,6 +506,7 @@
 			files = (
 				0357066B27D4A83F00A16545 /* AllSongListScreenView.swift in Sources */,
 				0357066627D4A34A00A16545 /* MediaNumberItemView.swift in Sources */,
+				03CCD5B127E6EB860084E2E2 /* MusicPlaybackSliderView.swift in Sources */,
 				036532AD27DDBA2B0077C967 /* MusicPlayerService.swift in Sources */,
 				0328229D27C7ABE7002BC9FD /* PlaybackTimeConverter.swift in Sources */,
 				0353AB8B2775D2F8004DD139 /* PlaylistScreenView.swift in Sources */,
