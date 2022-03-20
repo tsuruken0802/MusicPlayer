@@ -13,11 +13,7 @@ struct MusicOptionsView: View {
     
     @StateObject var viewModel: MusicOptionsViewModel = .init()
     
-    @State var currentValue: ClosedRange<Float> = 0.0...Float(MusicPlayer.shared.duration ?? 0.0)
-    
-    private var duration: Float {
-        return Float(musicPlayer.duration ?? 0.0)
-    }
+    @State var currentValue: ClosedRange<Float> = MusicPlayer.shared.minPlaybackTime...MusicPlayer.shared.maxPlaybackTime
     
     private var pitchString: String {
         return viewModel.displayPitch(value: musicPlayer.pitch, unit: musicPlayer.pitchOptions.unit)
@@ -101,8 +97,8 @@ struct MusicOptionsView: View {
                         .verticalSpace()
                     
                     RangeSlider(currentValue: $currentValue,
-                                bounds: 0.0...duration,
-                                isOverRange: true) { isHigh, isEditing in
+                                bounds: musicPlayer.minPlaybackTime...musicPlayer.maxPlaybackTime,
+                                isOverRange: true) { isEditing in
                         
                     }
                     

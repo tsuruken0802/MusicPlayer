@@ -3,19 +3,19 @@ import Foundation
 import AVFAudio
 import MediaPlayer
 
-@propertyWrapper
-public struct TrimmingSeconds {
-    private var value: Double
-    
-    public init(wrappedValue: Double) {
-        self.value = wrappedValue
-    }
-    
-    public var wrappedValue: Double {
-        get { value }
-        set { value = min(max(0.0, newValue), (MusicPlayer.shared.duration ?? 0.0) ) }
-    }
-}
+//@propertyWrapper
+//public struct TrimmingSeconds {
+//    private var value: Double
+//    
+//    public init(wrappedValue: Double) {
+//        self.value = wrappedValue
+//    }
+//    
+//    public var wrappedValue: Double {
+//        get { value }
+//        set { value = min(max(0.0, newValue), (MusicPlayer.shared.duration ?? 0.0) ) }
+//    }
+//}
 
 @available(iOS 13.0, *)
 public final class MusicPlayer: ObservableObject {
@@ -57,14 +57,11 @@ public final class MusicPlayer: ObservableObject {
     
     /// If true, the current Time exceeds the song playback time
     private var isSeekOver: Bool {
-        if let duration = duration {
-            return currentTime >= Float(duration)
-        }
-        return false
+        return currentTime >= maxPlaybackTime
     }
     
     /// item duration
-    public var duration: TimeInterval? {
+    private var duration: TimeInterval? {
         return currentItem?.playbackDuration
     }
     
@@ -93,8 +90,16 @@ public final class MusicPlayer: ObservableObject {
     @Published public var rateOptions: MusicEffectRangeOption = .init(minValue: MPConstants.defaultRateMinValue, maxValue: MPConstants.defaultRateMaxValue, unit: MPConstants.defaultRateUnit, defaultValue: MPConstants.defaultRateValue)
     
     /// trimming(seconds)
-    @Published public var startPlayback: TrimmingSeconds = TrimmingSeconds(wrappedValue: 0.0)
-    @Published public var endPlayback: TrimmingSeconds = TrimmingSeconds(wrappedValue: 0.0)
+    @Published public var playbackTimeRange: ClosedRange<Float>?
+    public var minPlaybackTime: Float {
+        return playbackTimeRange?.lowerBound ?? 0.0
+    }
+    public var maxPlaybackTime: Float {
+        if let max = playbackTimeRange?.upperBound {
+            return max
+        }
+        return Float(duration ?? 0.0)
+    }
     
     private init() {
         setAudioSession()
@@ -176,7 +181,7 @@ public extension MusicPlayer {
     func back() {
         // 数秒しか経ってないなら同じ曲を0秒から再生する
         if currentTime >= MusicPlayer.backSameMusicThreshold {
-            currentTime = 0
+            currentTime = minPlaybackTime
             setSeek(withPlay: isPlaying)
             return
         }

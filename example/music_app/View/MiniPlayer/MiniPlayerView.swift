@@ -116,8 +116,8 @@ struct MiniPlayer: View {
                 
                 // Slider
                 VStack {
-                    if let duration = musicPlayer.duration {
-                        Slider(value: $musicPlayer.currentTime, in: 0...Float(duration), step: 0.1) { isEditing in
+                    if musicPlayer.maxPlaybackTime > 0.0 {
+                        Slider(value: $musicPlayer.currentTime, in: musicPlayer.minPlaybackTime...Float(musicPlayer.maxPlaybackTime), step: 0.1) { isEditing in
                             isEditingSlideBar = isEditing
                             if isEditing {
                                 musicPlayer.stopCurrentTimeRendering()
@@ -128,10 +128,11 @@ struct MiniPlayer: View {
                             }
                         }
                     }
+                    
                     HStack {
                         Text(PlayBackTimeConverter.toString(seconds: musicPlayer.currentTime))
                         Spacer()
-                        Text(PlayBackTimeConverter.toString(seconds: Float(musicPlayer.duration ?? 0)))
+                        Text(PlayBackTimeConverter.toString(seconds: Float(musicPlayer.maxPlaybackTime)))
                     }
                 }
                 .padding(.horizontal)
