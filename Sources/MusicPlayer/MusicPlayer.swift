@@ -3,20 +3,6 @@ import Foundation
 import AVFAudio
 import MediaPlayer
 
-//@propertyWrapper
-//public struct TrimmingSeconds {
-//    private var value: Double
-//    
-//    public init(wrappedValue: Double) {
-//        self.value = wrappedValue
-//    }
-//    
-//    public var wrappedValue: Double {
-//        get { value }
-//        set { value = min(max(0.0, newValue), (MusicPlayer.shared.duration ?? 0.0) ) }
-//    }
-//}
-
 @available(iOS 13.0, *)
 public final class MusicPlayer: ObservableObject {
     /// instance
@@ -61,7 +47,12 @@ public final class MusicPlayer: ObservableObject {
     }
     
     /// current playback item
-    @Published private(set) var currentItem: MPMediaItem?
+    @Published private(set) var currentItem: MPMediaItem? {
+        didSet {
+            // reset trimming
+            playbackTimeRange = 0.0...Float(duration ?? 0.0)
+        }
+    }
     
     /// true is player is playing
     @Published private(set) var isPlaying: Bool = false
@@ -91,10 +82,10 @@ public final class MusicPlayer: ObservableObject {
     
     /// trimming(seconds)
     @Published public var playbackTimeRange: ClosedRange<Float>?
-    public var minPlaybackTime: Float {
+    private var minPlaybackTime: Float {
         return playbackTimeRange?.lowerBound ?? 0.0
     }
-    public var maxPlaybackTime: Float {
+    private var maxPlaybackTime: Float {
         if let max = playbackTimeRange?.upperBound {
             return max
         }
@@ -122,7 +113,17 @@ public final class MusicPlayer: ObservableObject {
         
         $playbackTimeRange.sink { [weak self] value in
             guard let self = self else { return }
-            print(value)
+            guard let value = value else { return }
+            let minPlaybackTime = value.lowerBound
+            let maxPlaybackTime = value.upperBound
+            if self.currentTime < minPlaybackTime {
+                self.currentTime = minPlaybackTime
+                self.setSeek(withPlay: self.isPlaying)
+            }
+            else if self.currentTime > maxPlaybackTime {
+                self.currentTime = maxPlaybackTime
+                self.setSeek(withPlay: self.isPlaying)
+            }
         }
         .store(in: &cancellables)
     }
@@ -220,8 +221,8 @@ public extension MusicPlayer {
     /// change current playback position
     /// - Parameter withPlay: true if playback is performed after the position is changed
     func setSeek(withPlay: Bool = false) {
-        let time = TimeInterval(currentTime)
-        if time < 0 { return }
+        let inRangeCurrentTime = min(max(minPlaybackTime, currentTime), maxPlaybackTime)
+        let time = TimeInterval(inRangeCurrentTime)
         guard let duration = duration else { return }
         guard let audioFile = audioFile else { return }
         if time > duration { return }

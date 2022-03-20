@@ -11,7 +11,7 @@ import RangeSlider
 struct MusicOptionTrimmingSliderView: View {
     @ObservedObject private var musicPlayer = MusicPlayer.shared
     
-    @ObservedObject private var viewModel: MusicOptionTrimmingSliderViewModel = .init()
+    @StateObject private var viewModel: MusicOptionTrimmingSliderViewModel = .init()
     
     var body: some View {
         VStack {
@@ -33,9 +33,3 @@ struct MusicOptionTrimmingSliderView: View {
         }
     }
 }
-
-//struct MusicOptionTrimmingSliderView_Previews: PreviewProvider {
-//    static var previews: some View {
-//        MusicOptionTrimmingSliderView()
-//    }
-//}
