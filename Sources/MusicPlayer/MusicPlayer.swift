@@ -139,7 +139,6 @@ public final class MusicPlayer: ObservableObject {
 
 @available(iOS 13.0, *)
 public extension MusicPlayer {
-    
     /// Play current item
     func play() {
         if isSeekOver || !isEnableAudio {
@@ -221,8 +220,13 @@ public extension MusicPlayer {
     /// change current playback position
     /// - Parameter withPlay: true if playback is performed after the position is changed
     func setSeek(withPlay: Bool = false) {
-        let inRangeCurrentTime = min(max(minPlaybackTime, currentTime), maxPlaybackTime)
-        let time = TimeInterval(inRangeCurrentTime)
+        // range外の再生時間でseekしようとした場合はrange内に収めてから行うようにする
+        if let playbackTimeRange = self.playbackTimeRange {
+            if !playbackTimeRange.contains(currentTime) {
+                currentTime = min(max(minPlaybackTime, currentTime), maxPlaybackTime)
+            }
+        }
+        let time = TimeInterval(currentTime)
         guard let duration = duration else { return }
         guard let audioFile = audioFile else { return }
         if time > duration { return }
@@ -419,7 +423,7 @@ private extension MusicPlayer {
             nowPlayingInfo[MPNowPlayingInfoPropertyPlaybackRate] = 0.0
         }
         
-        nowPlayingInfo[MPMediaItemPropertyPlaybackDuration] = currentItem?.playbackDuration
+        nowPlayingInfo[MPMediaItemPropertyPlaybackDuration] = duration
         
         // Set the metadata
         center.nowPlayingInfo = nowPlayingInfo
