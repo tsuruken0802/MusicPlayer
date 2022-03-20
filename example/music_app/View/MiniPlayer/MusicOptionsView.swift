@@ -6,14 +6,11 @@
 //
 
 import SwiftUI
-import RangeSlider
 
 struct MusicOptionsView: View {    
-    @ObservedObject var musicPlayer = MusicPlayer.shared
+    @ObservedObject private var musicPlayer = MusicPlayer.shared
     
-    @StateObject var viewModel: MusicOptionsViewModel = .init()
-    
-    @State var currentValue: ClosedRange<Float> = MusicPlayer.shared.minPlaybackTime...MusicPlayer.shared.maxPlaybackTime
+    @StateObject private var viewModel: MusicOptionsViewModel = .init()
     
     private var pitchString: String {
         return viewModel.displayPitch(value: musicPlayer.pitch, unit: musicPlayer.pitchOptions.unit)
@@ -96,22 +93,8 @@ struct MusicOptionsView: View {
                         .font(.title2)
                         .topSpace()
                     
-                    if let duration = musicPlayer.duration, duration > 0.0 {
-                        RangeSlider(currentValue: $currentValue,
-                                    bounds: 0.0...Float(duration),
-                                    isOverRange: true,
-                                    tintColor: Color.green) { isEditing in
-                            if !isEditing {
-                                musicPlayer.playbackTimeRange = currentValue
-                            }
-                        }
-                        
-                        HStack {
-                            Text(PlayBackTimeConverter.toString(seconds: Float(currentValue.lowerBound)))
-                            Spacer()
-                            Text(PlayBackTimeConverter.toString(seconds: Float(currentValue.upperBound)))
-                        }
-                    }
+                    MusicOptionTrimmingSliderView()
+
                     MusicPlaybackSliderView()
                 }
                 .largeTopSpace()
