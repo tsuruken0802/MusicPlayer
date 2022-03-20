@@ -30,12 +30,12 @@ struct MusicOptionsView: View {
                 VStack {
                     Text("テンポコントロール")
                         .font(.title2)
-                        .verticalSpace()
+                        .topSpace()
                     
                     Text(rateString)
                         .font(.title)
                         .fontWeight(.bold)
-                        .verticalSpace()
+                        .topSpace()
                     
                     Slider(value: $musicPlayer.rate, in: musicPlayer.rateOptions.minValue...musicPlayer.rateOptions.maxValue, step: musicPlayer.rateOptions.unit)
 
@@ -53,20 +53,20 @@ struct MusicOptionsView: View {
                             musicPlayer.incrementRate()
                         }
                     }
-                    .verticalSpace()
+                    .topSpace()
                 }
-                .largeVerticalSpace()
+                .largeTopSpace()
                 
                 // key
                 VStack {
                     Text("キーコントロール")
                         .font(.title2)
-                        .verticalSpace()
+                        .topSpace()
                     
                     Text(pitchString)
                         .font(.title)
                         .fontWeight(.bold)
-                        .verticalSpace()
+                        .topSpace()
                     
                     Slider(value: $musicPlayer.pitch,
                            in: musicPlayer.pitchOptions.minValue...musicPlayer.pitchOptions.maxValue,
@@ -86,20 +86,22 @@ struct MusicOptionsView: View {
                             musicPlayer.incrementPitch()
                         }
                     }
-                    .verticalSpace()
+                    .topSpace()
                 }
-                .largeVerticalSpace()
+                .largeTopSpace()
                 
                 // key
                 VStack {
                     Text("トリミング")
                         .font(.title2)
-                        .verticalSpace()
+                        .topSpace()
                     
-                    RangeSlider(currentValue: $currentValue,
-                                bounds: musicPlayer.minPlaybackTime...musicPlayer.maxPlaybackTime,
-                                isOverRange: true,
-                                tintColor: Color.green) { isEditing in
+                    if musicPlayer.maxPlaybackTime > 0.0 {
+                        RangeSlider(currentValue: $currentValue,
+                                    bounds: musicPlayer.minPlaybackTime...musicPlayer.maxPlaybackTime,
+                                    isOverRange: true,
+                                    tintColor: Color.green) { isEditing in
+                        }
                     }
                     
                     HStack {
@@ -107,10 +109,13 @@ struct MusicOptionsView: View {
                         Spacer()
                         Text(PlayBackTimeConverter.toString(seconds: Float(currentValue.upperBound)))
                     }
+
                     
                     MusicPlaybackSliderView()
                 }
-                .largeVerticalSpace()
+                .largeTopSpace()
+                
+                Spacer(minLength: 32)
             }
             .padding(.horizontal)
         }
@@ -124,12 +129,12 @@ struct MusicOptionsView_Previews: PreviewProvider {
 }
 
 private extension View {
-    func verticalSpace() -> some View {
+    func topSpace() -> some View {
         return self
             .padding(.top, 16)
     }
     
-    func largeVerticalSpace() -> some View {
+    func largeTopSpace() -> some View {
         return self
             .padding(.top, 32)
     }
