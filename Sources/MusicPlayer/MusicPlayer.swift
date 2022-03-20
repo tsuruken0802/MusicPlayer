@@ -60,11 +60,6 @@ public final class MusicPlayer: ObservableObject {
         return currentTime >= maxPlaybackTime
     }
     
-    /// item duration
-    private var duration: TimeInterval? {
-        return currentItem?.playbackDuration
-    }
-    
     /// current playback item
     @Published private(set) var currentItem: MPMediaItem?
     
@@ -76,6 +71,11 @@ public final class MusicPlayer: ObservableObject {
         didSet {
             setCurrentItem()
         }
+    }
+    
+    /// item duration
+    public var duration: TimeInterval? {
+        return currentItem?.playbackDuration
     }
     
     /// current playback time (seconed)
@@ -117,6 +117,12 @@ public final class MusicPlayer: ObservableObject {
         $rate.sink { [weak self] value in
             guard let self = self else { return }
             self.pitchControl.rate = MusicPlayerSerivce.enableRateValue(value: value)
+        }
+        .store(in: &cancellables)
+        
+        $playbackTimeRange.sink { [weak self] value in
+            guard let self = self else { return }
+            print(value)
         }
         .store(in: &cancellables)
     }

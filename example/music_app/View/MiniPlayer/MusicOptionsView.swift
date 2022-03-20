@@ -90,27 +90,28 @@ struct MusicOptionsView: View {
                 }
                 .largeTopSpace()
                 
-                // key
+                // trimming
                 VStack {
                     Text("トリミング")
                         .font(.title2)
                         .topSpace()
                     
-                    if musicPlayer.maxPlaybackTime > 0.0 {
+                    if let duration = musicPlayer.duration, duration > 0.0 {
                         RangeSlider(currentValue: $currentValue,
-                                    bounds: musicPlayer.minPlaybackTime...musicPlayer.maxPlaybackTime,
+                                    bounds: 0.0...Float(duration),
                                     isOverRange: true,
                                     tintColor: Color.green) { isEditing in
+                            if !isEditing {
+                                musicPlayer.playbackTimeRange = currentValue
+                            }
+                        }
+                        
+                        HStack {
+                            Text(PlayBackTimeConverter.toString(seconds: Float(currentValue.lowerBound)))
+                            Spacer()
+                            Text(PlayBackTimeConverter.toString(seconds: Float(currentValue.upperBound)))
                         }
                     }
-                    
-                    HStack {
-                        Text(PlayBackTimeConverter.toString(seconds: Float(currentValue.lowerBound)))
-                        Spacer()
-                        Text(PlayBackTimeConverter.toString(seconds: Float(currentValue.upperBound)))
-                    }
-
-                    
                     MusicPlaybackSliderView()
                 }
                 .largeTopSpace()

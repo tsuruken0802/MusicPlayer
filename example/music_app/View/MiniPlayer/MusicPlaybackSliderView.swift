@@ -8,14 +8,14 @@
 import SwiftUI
 
 struct MusicPlaybackSliderView: View {
-    @ObservedObject var musicPlayer = MusicPlayer.shared
+    @ObservedObject private var musicPlayer = MusicPlayer.shared
     
     var isEditingSlideBar: Binding<Bool>?
     
     var body: some View {
         VStack {
-            if musicPlayer.maxPlaybackTime > 0.0 {
-                Slider(value: $musicPlayer.currentTime, in: musicPlayer.minPlaybackTime...Float(musicPlayer.maxPlaybackTime), step: 0.1) { isEditing in
+            if let duration = musicPlayer.duration, duration > 0.0 {
+                Slider(value: $musicPlayer.currentTime, in: 0.0...Float(duration), step: 0.1) { isEditing in
                     isEditingSlideBar?.wrappedValue = isEditing
                     if isEditing {
                         musicPlayer.stopCurrentTimeRendering()
@@ -25,12 +25,12 @@ struct MusicPlaybackSliderView: View {
                         musicPlayer.setSeek(withPlay: musicPlayer.isPlaying)
                     }
                 }
-            }
-            
-            HStack {
-                Text(PlayBackTimeConverter.toString(seconds: musicPlayer.currentTime))
-                Spacer()
-                Text(PlayBackTimeConverter.toString(seconds: Float(musicPlayer.maxPlaybackTime)))
+                
+                HStack {
+                    Text(PlayBackTimeConverter.toString(seconds: musicPlayer.currentTime))
+                    Spacer()
+                    Text(PlayBackTimeConverter.toString(seconds: Float(duration)))
+                }
             }
         }
     }
