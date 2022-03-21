@@ -61,16 +61,22 @@ struct MiniPlayer: View {
     
     private var isExpanded: Bool { return layoutType.isExpanded }
     
+    private var isNormalExpanded: Bool { return layoutType == .normalExpanded }
+    
+    private var isMini: Bool { return layoutType == .mini }
+    
+    private var isShowList: Bool { return layoutType == .expandedAndShowList }
+    
     var body: some View {
         VStack(spacing: 0) {
             HStack(alignment: .center, spacing: 15) {
                 
-                if layoutType == .normalExpanded {
+                if isNormalExpanded {
                     Spacer()
                 }
                 
                 VStack {
-                    if layoutType == .normalExpanded {
+                    if isNormalExpanded {
                         Spacer()
                     }
                     
@@ -78,12 +84,12 @@ struct MiniPlayer: View {
                         .cornerRadius(5)
                 }
                 
-                if !isExpanded {
+                if isMini {
                     Text(songName)
                         .font(.body)
                 }
                 
-                if layoutType == .expandedAndShowList {
+                if isShowList {
                     VStack {
                         Text(songName)
                         
@@ -92,9 +98,8 @@ struct MiniPlayer: View {
                 }
                 
                 Spacer()
-                
-                // controllers
-                if !isExpanded {
+            
+                if isMini {
                     MiniPlayerMiniControllerView()
                 }
             }
@@ -103,7 +108,7 @@ struct MiniPlayer: View {
             VStack(spacing: 0) {
                 Spacer()
                 
-                if isExpanded {
+                if isNormalExpanded {
                     Text(songName)
                         .font(.title3)
                         .fontWeight(.bold)
