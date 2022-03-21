@@ -138,7 +138,7 @@ struct MiniPlayer: View {
             if isExpanded {
                 // options
                 MiniPlayerOptionsView(layoutType: $layoutType)
-                    .padding(.bottom, 40)
+                    .padding(.bottom, 30)
             }
         }
         .frame(maxHeight: isExpanded ? .infinity : MiniPlayer.miniPlayerHeight)

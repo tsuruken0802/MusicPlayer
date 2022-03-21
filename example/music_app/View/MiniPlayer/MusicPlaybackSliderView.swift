@@ -54,7 +54,7 @@ struct MusicPlaybackSliderView: View {
                         // 微量のPaddingを含んでいるため微調整する
                         MusicTrimmingPositionView(lowerRate: trimmingLowerRate, upperRate: trimmingUpperRate)
                             .padding(.horizontal, 1)
-                            .padding(.vertical, 20)
+                            .padding(.vertical, 10)
                     }
                 }
                 
