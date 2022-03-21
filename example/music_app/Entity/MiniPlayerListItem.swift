@@ -9,19 +9,19 @@ import Foundation
 import UIKit
 import MediaPlayer
 
-class SongItem {
+class MiniPlayerListItem: Identifiable {
     let id: MPMediaEntityPersistentID
     
-    let image: UIImage
+    let image: UIImage?
     
     let title: String
     
     let artist: String?
     
     init(id: MPMediaEntityPersistentID,
-         image: UIImage,
+         image: UIImage?,
          title: String,
-         artist: String) {
+         artist: String?) {
         self.id = id
         self.image = image
         self.title = title

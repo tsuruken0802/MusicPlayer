@@ -33,6 +33,13 @@ public final class MusicPlayer: ObservableObject {
         }
     }
     
+    /// playback items
+    private(set) var items: [MPMediaItem] = [] {
+        didSet {
+            setCurrentItem()
+        }
+    }
+    
     private var currentTimeTimer: Timer?
     
     private var cancellables: Set<AnyCancellable> = []
@@ -56,13 +63,6 @@ public final class MusicPlayer: ObservableObject {
     
     /// true is player is playing
     @Published private(set) var isPlaying: Bool = false
-    
-    /// playback items
-    @Published private var items: [MPMediaItem] = [] {
-        didSet {
-            setCurrentItem()
-        }
-    }
     
     /// item duration
     public var duration: TimeInterval? {

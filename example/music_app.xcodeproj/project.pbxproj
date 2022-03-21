@@ -55,8 +55,9 @@
 		03E6652C27E885D100CB76F8 /* MiniPlayerExpanedControllerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03E6652B27E885D100CB76F8 /* MiniPlayerExpanedControllerView.swift */; };
 		03E6652E27E8865500CB76F8 /* MiniPlayerOptionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03E6652D27E8865500CB76F8 /* MiniPlayerOptionsView.swift */; };
 		03E6653027E8B40D00CB76F8 /* MiniPlayerListHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03E6652F27E8B40D00CB76F8 /* MiniPlayerListHeaderView.swift */; };
-		03E6653227E8B7B200CB76F8 /* SongItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03E6653127E8B7B200CB76F8 /* SongItem.swift */; };
+		03E6653227E8B7B200CB76F8 /* MiniPlayerListItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03E6653127E8B7B200CB76F8 /* MiniPlayerListItem.swift */; };
 		03E6653627E8BA3F00CB76F8 /* MiniPlayerListItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03E6653527E8BA3F00CB76F8 /* MiniPlayerListItemView.swift */; };
+		03E6653827E8BCD200CB76F8 /* MiniPlayerListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03E6653727E8BCD200CB76F8 /* MiniPlayerListView.swift */; };
 		03EE742A27D648B200835C68 /* MusicOptionsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03EE742927D648B200835C68 /* MusicOptionsViewModel.swift */; };
 /* End PBXBuildFile section */
 
@@ -128,8 +129,9 @@
 		03E6652B27E885D100CB76F8 /* MiniPlayerExpanedControllerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MiniPlayerExpanedControllerView.swift; sourceTree = "<group>"; };
 		03E6652D27E8865500CB76F8 /* MiniPlayerOptionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MiniPlayerOptionsView.swift; sourceTree = "<group>"; };
 		03E6652F27E8B40D00CB76F8 /* MiniPlayerListHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MiniPlayerListHeaderView.swift; sourceTree = "<group>"; };
-		03E6653127E8B7B200CB76F8 /* SongItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SongItem.swift; sourceTree = "<group>"; };
+		03E6653127E8B7B200CB76F8 /* MiniPlayerListItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MiniPlayerListItem.swift; sourceTree = "<group>"; };
 		03E6653527E8BA3F00CB76F8 /* MiniPlayerListItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MiniPlayerListItemView.swift; sourceTree = "<group>"; };
+		03E6653727E8BCD200CB76F8 /* MiniPlayerListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MiniPlayerListView.swift; sourceTree = "<group>"; };
 		03EE742927D648B200835C68 /* MusicOptionsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MusicOptionsViewModel.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -266,7 +268,7 @@
 			isa = PBXGroup;
 			children = (
 				0353AB882775D1FF004DD139 /* NavigationLinkData.swift */,
-				03E6653127E8B7B200CB76F8 /* SongItem.swift */,
+				03E6653127E8B7B200CB76F8 /* MiniPlayerListItem.swift */,
 			);
 			path = Entity;
 			sourceTree = "<group>";
@@ -318,6 +320,7 @@
 		03C0649727D0FA27000C1898 /* MiniPlayer */ = {
 			isa = PBXGroup;
 			children = (
+				03E6653927E8BCE100CB76F8 /* List */,
 				03E6653427E8B90300CB76F8 /* Mini */,
 				03E6653327E8B8D900CB76F8 /* Option */,
 				03CCD5B027E6EB860084E2E2 /* MusicPlaybackSliderView.swift */,
@@ -404,11 +407,19 @@
 				03E6652927E8852C00CB76F8 /* MiniPlayerMiniControllerView.swift */,
 				03E6652B27E885D100CB76F8 /* MiniPlayerExpanedControllerView.swift */,
 				03E6652D27E8865500CB76F8 /* MiniPlayerOptionsView.swift */,
-				03E6652F27E8B40D00CB76F8 /* MiniPlayerListHeaderView.swift */,
 				03E6652527E76BEA00CB76F8 /* MiniPlayerTrimmingPositionView.swift */,
-				03E6653527E8BA3F00CB76F8 /* MiniPlayerListItemView.swift */,
 			);
 			path = Mini;
+			sourceTree = "<group>";
+		};
+		03E6653927E8BCE100CB76F8 /* List */ = {
+			isa = PBXGroup;
+			children = (
+				03E6652F27E8B40D00CB76F8 /* MiniPlayerListHeaderView.swift */,
+				03E6653527E8BA3F00CB76F8 /* MiniPlayerListItemView.swift */,
+				03E6653727E8BCD200CB76F8 /* MiniPlayerListView.swift */,
+			);
+			path = List;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -548,7 +559,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				0357066B27D4A83F00A16545 /* AllSongListScreenView.swift in Sources */,
-				03E6653227E8B7B200CB76F8 /* SongItem.swift in Sources */,
+				03E6653227E8B7B200CB76F8 /* MiniPlayerListItem.swift in Sources */,
 				0357066627D4A34A00A16545 /* MediaNumberItemView.swift in Sources */,
 				03CCD5B127E6EB860084E2E2 /* MusicPlaybackSliderView.swift in Sources */,
 				036532AD27DDBA2B0077C967 /* MusicPlayerService.swift in Sources */,
@@ -571,6 +582,7 @@
 				03E6653627E8BA3F00CB76F8 /* MiniPlayerListItemView.swift in Sources */,
 				03CCD5B727E715E30084E2E2 /* MusicOptionTrimmingSliderViewModel.swift in Sources */,
 				0353AB902775D329004DD139 /* MPMediaItem+Extension.swift in Sources */,
+				03E6653827E8BCD200CB76F8 /* MiniPlayerListView.swift in Sources */,
 				0357066E27D4BFEE00A16545 /* MediaCollectionListScreenView.swift in Sources */,
 				0353AB802775D123004DD139 /* TabScreenView.swift in Sources */,
 				03CCD5B527E714E00084E2E2 /* MusicOptionTrimmingSliderView.swift in Sources */,

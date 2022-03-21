@@ -71,6 +71,14 @@ struct MiniPlayer: View {
         return (MiniPlayer.miniPlayerHeight - smallSongImageSize) / 2
     }
     
+    private var items: [MiniPlayerListItem] {
+        var items: [MiniPlayerListItem] = []
+        musicPlayer.items.forEach { item in
+            items.append(MiniPlayerListItem(id: item.id, image: item.image(size: 50), title: item.title!, artist: item.artist))
+        }
+        return items
+    }
+    
     var body: some View {
         VStack(spacing: 0) {
             VStack(spacing: 0) {
@@ -106,8 +114,12 @@ struct MiniPlayer: View {
                 .padding(.horizontal, horizontalPadding)
                 
                 if isShowList {
-                    MiniPlayerListHeaderView()
-                        .padding(.horizontal, horizontalPadding)
+                    Group {
+                        MiniPlayerListHeaderView()
+                            
+                        MiniPlayerListView(items: items)
+                    }
+                    .padding(.horizontal, horizontalPadding)
                 }
                 
                 if isNormalExpanded {
