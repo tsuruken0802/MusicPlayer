@@ -52,7 +52,7 @@ struct MusicPlaybackSliderView: View {
                     if showTrimmingPosition == true {
                         // Sliderと幅を揃えたいがSliderの内部で
                         // 微量のPaddingを含んでいるため微調整する
-                        MusicTrimmingPositionView(lowerRate: trimmingLowerRate, upperRate: trimmingUpperRate)
+                        MiniPlayerTrimmingPositionView(lowerRate: trimmingLowerRate, upperRate: trimmingUpperRate)
                             .padding(.horizontal, 1)
                             .padding(.vertical, 10)
                     }

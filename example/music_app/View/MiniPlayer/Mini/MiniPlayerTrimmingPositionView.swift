@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct MusicTrimmingPositionView: View {
+struct MiniPlayerTrimmingPositionView: View {
     let lowerRate: Float?
     
     let upperRate: Float?
@@ -50,6 +50,6 @@ struct MusicTrimmingPositionView: View {
 
 struct MusicTrimmingPositionView_Previews: PreviewProvider {
     static var previews: some View {
-        MusicTrimmingPositionView(lowerRate: 0.2, upperRate: 0.8)
+        MiniPlayerTrimmingPositionView(lowerRate: 0.2, upperRate: 0.8)
     }
 }
