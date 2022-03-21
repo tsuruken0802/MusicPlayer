@@ -34,7 +34,7 @@ public final class MusicPlayer: ObservableObject {
     }
     
     /// playback items
-    private(set) var items: [MPMediaItem] = [] {
+    @Published private(set) var items: [MPMediaItem] = [] {
         didSet {
             setCurrentItem()
         }

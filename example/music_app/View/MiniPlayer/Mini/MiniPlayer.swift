@@ -43,6 +43,8 @@ struct MiniPlayer: View {
     
     @StateObject private var musicPlayer = MusicPlayer.shared
     
+    @StateObject private var viewModel: MiniPlayerViewModel = .init()
+    
     // song thumnbnail image size when mini player is small
     private let smallSongImageSize: CGFloat = 50
     
@@ -69,14 +71,6 @@ struct MiniPlayer: View {
     
     private var horizontalPadding: CGFloat {
         return (MiniPlayer.miniPlayerHeight - smallSongImageSize) / 2
-    }
-    
-    private var items: [MiniPlayerListItem] {
-        var items: [MiniPlayerListItem] = []
-        musicPlayer.items.forEach { item in
-            items.append(MiniPlayerListItem(id: item.id, image: item.image(size: 50), title: item.title!, artist: item.artist))
-        }
-        return items
     }
     
     var body: some View {
@@ -117,7 +111,7 @@ struct MiniPlayer: View {
                     Group {
                         MiniPlayerListHeaderView()
                             
-                        MiniPlayerListView(items: items)
+                        MiniPlayerListView(items: viewModel.currentItems)
                     }
                     .padding(.horizontal, horizontalPadding)
                 }
