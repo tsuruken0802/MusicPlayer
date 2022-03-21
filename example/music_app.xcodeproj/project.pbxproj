@@ -51,6 +51,7 @@
 		03CCD5B527E714E00084E2E2 /* MusicOptionTrimmingSliderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03CCD5B427E714E00084E2E2 /* MusicOptionTrimmingSliderView.swift */; };
 		03CCD5B727E715E30084E2E2 /* MusicOptionTrimmingSliderViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03CCD5B627E715E30084E2E2 /* MusicOptionTrimmingSliderViewModel.swift */; };
 		03E6652627E76BEA00CB76F8 /* MusicTrimmingPositionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03E6652527E76BEA00CB76F8 /* MusicTrimmingPositionView.swift */; };
+		03E6652827E8646F00CB76F8 /* AVAudioHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03E6652727E8646F00CB76F8 /* AVAudioHelper.swift */; };
 		03EE742A27D648B200835C68 /* MusicOptionsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03EE742927D648B200835C68 /* MusicOptionsViewModel.swift */; };
 /* End PBXBuildFile section */
 
@@ -118,6 +119,7 @@
 		03CCD5B427E714E00084E2E2 /* MusicOptionTrimmingSliderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MusicOptionTrimmingSliderView.swift; sourceTree = "<group>"; };
 		03CCD5B627E715E30084E2E2 /* MusicOptionTrimmingSliderViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MusicOptionTrimmingSliderViewModel.swift; sourceTree = "<group>"; };
 		03E6652527E76BEA00CB76F8 /* MusicTrimmingPositionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MusicTrimmingPositionView.swift; sourceTree = "<group>"; };
+		03E6652727E8646F00CB76F8 /* AVAudioHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AVAudioHelper.swift; sourceTree = "<group>"; };
 		03EE742927D648B200835C68 /* MusicOptionsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MusicOptionsViewModel.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -297,6 +299,7 @@
 				036532AA27DDBA2B0077C967 /* MPConstants.swift */,
 				036532AB27DDBA2B0077C967 /* MusicPlayer.swift */,
 				036532AC27DDBA2B0077C967 /* MusicEffectRangeOption.swift */,
+				03E6652727E8646F00CB76F8 /* AVAudioHelper.swift */,
 			);
 			name = MusicPlayer;
 			path = ../Sources/MusicPlayer;
@@ -530,6 +533,7 @@
 				033FB2D327CBCBED00146123 /* MusicOptionsView.swift in Sources */,
 				0357066827D4A3DA00A16545 /* MediaItemListView.swift in Sources */,
 				0353AB9A277620B8004DD139 /* ScreenHelper.swift in Sources */,
+				03E6652827E8646F00CB76F8 /* AVAudioHelper.swift in Sources */,
 				03EE742A27D648B200835C68 /* MusicOptionsViewModel.swift in Sources */,
 				03C0649627D0F7D8000C1898 /* ArtistAlbumListScreenView.swift in Sources */,
 				03CCD5B727E715E30084E2E2 /* MusicOptionTrimmingSliderViewModel.swift in Sources */,

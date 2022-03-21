@@ -13,6 +13,7 @@ public final class MusicPlayer: ObservableObject {
     private let playerNode: AVAudioPlayerNode = .init()
     private let pitchControl: AVAudioUnitTimePitch = .init()
     private var audioFile: AVAudioFile?
+    private var audioBuffer: AVAudioPCMBuffer?
     
     /// Cache of playback time when moving the seek bar
     private var cachedSeekBarSeconds: Float = 0
@@ -217,43 +218,6 @@ public extension MusicPlayer {
         playerNode.volume = value
     }
     
-    /// change current playback position
-    /// - Parameter withPlay: true if playback is performed after the position is changed
-    func setSeek(withPlay: Bool = false) {
-        // range外の再生時間でseekしようとした場合はrange内に収めてから行うようにする
-        if let playbackTimeRange = self.playbackTimeRange {
-            if !playbackTimeRange.contains(currentTime) {
-                currentTime = min(max(minPlaybackTime, currentTime), maxPlaybackTime)
-            }
-        }
-        let time = TimeInterval(currentTime)
-        guard let duration = duration else { return }
-        guard let audioFile = audioFile else { return }
-        if time > duration { return }
-        
-        let sampleRate = audioFile.processingFormat.sampleRate
-        let startFrame = AVAudioFramePosition(sampleRate * time)
-        
-        var length = duration - time
-        if length <= 0 { length = 0 }
-        var frameCount = AVAudioFrameCount(length * Double(sampleRate))
-        if frameCount <= 0 { frameCount = 1 }   // 0だとクラッシュするので極小値で対応
-
-        cachedSeekBarSeconds = Float(time)
-        
-        stop()
-    
-        playerNode.scheduleSegment(audioFile, startingFrame: startFrame, frameCount: frameCount, at: nil)
-        
-        if withPlay {
-            play()
-        }
-        else {
-            // 再生しない場合はnowPlayingInfoの値を更新しておく
-            setNowPlayingInfo()
-        }
-    }
-    
     /// increment playback pitch
     func incrementPitch() {
         if pitch >= pitchOptions.maxValue {
@@ -309,10 +273,90 @@ public extension MusicPlayer {
         currentTimeTimer?.invalidate()
         currentTimeTimer = nil
     }
+    
+    /// change current playback position
+    /// - Parameter withPlay: true if playback is performed after the position is changed
+    func setSeek(withPlay: Bool = false) {
+        // range外の再生時間でseekしようとした場合はrange内に収めてから行うようにする
+        if let playbackTimeRange = self.playbackTimeRange {
+            if !playbackTimeRange.contains(currentTime) {
+                currentTime = min(max(minPlaybackTime, currentTime), maxPlaybackTime)
+            }
+        }
+        let time = TimeInterval(currentTime)
+        guard let duration = duration else { return }
+        guard let audioFile = audioFile else { return }
+        if time > duration { return }
+        
+        let sampleRate = audioFile.processingFormat.sampleRate
+        let startFrame = AVAudioFramePosition(sampleRate * time)
+        
+        var length = duration - time
+        if length <= 0 { length = 0 }
+        var frameCount = AVAudioFrameCount(length * Double(sampleRate))
+        if frameCount <= 0 { frameCount = 1 }   // 0だとクラッシュするので極小値で対応
+
+        cachedSeekBarSeconds = Float(time)
+        
+        stop()
+        
+//        audioBuffer = AVAudioHelper.readBuffer(url: audioFile.url)
+//        guard let audioBuffer = audioBuffer else { return }
+        do {
+            
+            try audioFile.read(into: audioBuffer!)
+//            playerNode.scheduleBuffer(audioBuffer)
+//            let audioFile1 = AVAudioHelper.audioFile(url: currentItem!.assetURL!)!
+//            try audioFile1.write(from: audioBuffer)
+            playerNode.scheduleSegment(audioFile, startingFrame: startFrame, frameCount: frameCount, at: nil)
+            
+            if withPlay {
+                play()
+            }
+            else {
+                // 再生しない場合はnowPlayingInfoの値を更新しておく
+                setNowPlayingInfo()
+            }
+        }
+        catch let e {
+            print("だめだ")
+            print(e.localizedDescription)
+        }
+    }
 }
 
 @available(iOS 13.0, *)
 private extension MusicPlayer {
+    /// set Schedule File
+    private func setScheduleFile() {
+        guard let currentItem = currentItem else { return }
+        do {
+            
+            audioFile = try! AVAudioFile(forReading: currentItem.assetURL!)
+            guard let audioFile = audioFile else { return }
+            audioBuffer = AVAudioHelper.readBuffer(url: currentItem.assetURL!)
+            
+            let audioFrameCount = AVAudioFrameCount(audioFile.length)
+            audioBuffer = AVAudioPCMBuffer(pcmFormat: audioFile.processingFormat, frameCapacity: audioFrameCount)
+            guard let audioBuffer = audioBuffer else { return }
+            
+            try audioFile.read(into: audioBuffer)
+            
+            for num in 0 ..< Int(audioBuffer.frameLength) {
+                audioBuffer.floatChannelData![1][num] = audioBuffer.floatChannelData![0][num] + audioBuffer.floatChannelData![1][num]*(-1)
+                audioBuffer.floatChannelData![0][num] = audioBuffer.floatChannelData![1][num]
+            }
+
+            audioEngine.connect(playerNode, to: pitchControl, format: audioBuffer.format)
+            audioEngine.connect(pitchControl, to: audioEngine.mainMixerNode, format: audioBuffer.format)
+            playerNode.scheduleBuffer(audioBuffer)
+//            playerNode.scheduleFile(audioFile, at: nil)
+        }
+        catch let e {
+            print(e.localizedDescription)
+        }
+    }
+    
     /// update current playback time
     private func updateCurrentTime() {
         if let nodeTime = playerNode.lastRenderTime,
@@ -427,20 +471,6 @@ private extension MusicPlayer {
         
         // Set the metadata
         center.nowPlayingInfo = nowPlayingInfo
-    }
-    
-    /// set Schedule File
-    private func setScheduleFile() {
-        guard let currentItem = currentItem else { return }
-        do {
-            audioFile = try AVAudioFile(forReading: currentItem.assetURL!)
-            audioEngine.connect(playerNode, to: pitchControl, format: nil)
-            audioEngine.connect(pitchControl, to: audioEngine.mainMixerNode, format: nil)
-            playerNode.scheduleFile(audioFile!, at: nil)
-        }
-        catch let e {
-            print(e.localizedDescription)
-        }
     }
 }
 
