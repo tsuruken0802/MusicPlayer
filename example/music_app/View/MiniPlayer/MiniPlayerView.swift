@@ -41,8 +41,6 @@ struct MiniPlayer: View {
     
     @State var isEditingSlideBar: Bool = false
     
-    @State var presentation: MiniPlayerPresentation?
-    
     @ObservedObject var musicPlayer = MusicPlayer.shared
     
     // song thumnbnail image size when mini player is large
@@ -57,7 +55,7 @@ struct MiniPlayer: View {
     // mini player height
     static let miniPlayerHeight: CGFloat = 74
     
-    private let optionIconSize: CGFloat = 30
+
     
     private let tabbarHeight: CGFloat = 48
     
@@ -138,42 +136,7 @@ struct MiniPlayer: View {
                 Spacer()
                 
                 // options
-                HStack {
-                    Spacer()
-                    
-                    Button {
-                        presentation = .init(presentation: .optionView)
-                    } label: {
-                        Image(systemName: "music.quarternote.3")
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: optionIconSize, height: optionIconSize)
-                            .padding(4)
-                    }
-                    
-                    Spacer()
-                    
-                    Button {
-                        withAnimation(.spring(response: 0.4, dampingFraction: 0.8)) {
-                            if layoutType == .normalExpanded {
-                                layoutType = .expandedAndShowList
-                            }
-                            else {
-                                layoutType = .normalExpanded
-                            }
-                        }
-                    } label: {
-                        Image(systemName: "list.dash")
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: optionIconSize, height: optionIconSize)
-                            .padding(4)
-                    }
-                    
-                    Spacer()
-                }
-                .padding(.horizontal)
-                .sheet(item: $presentation, content: { $0.presentation })
+                MiniPlayerOptionsView(layoutType: $layoutType)
 
                 Spacer()
             }

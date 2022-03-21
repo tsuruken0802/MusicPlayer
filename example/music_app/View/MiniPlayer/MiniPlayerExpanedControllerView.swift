@@ -18,47 +18,45 @@ struct MiniPlayerExpanedControllerView: View {
     }
     
     var body: some View {
-        Group {
-            HStack {
-                Spacer()
-                Button {
-                    musicPlayer.back()
-                } label: {
-                    Image(systemName: "backward.fill")
-                        .resizable()
-                        .scaledToFit()
-                        .frame(width: playbackIconSize, height: playbackIconSize)
-                        .foregroundColor(Color.primary)
-                        .padding()
-                }
-                Spacer()
-                Button {
-                    if musicPlayer.isPlaying {
-                        musicPlayer.pause()
-                    }
-                    else {
-                        musicPlayer.play()
-                    }
-                } label: {
-                    playAndPauseImage
-                        .resizable()
-                        .scaledToFit()
-                        .frame(width: playbackIconSize, height: playbackIconSize)
-                        .foregroundColor(Color.primary)
-                }
-                Spacer()
-                Button {
-                    musicPlayer.next()
-                } label: {
-                    Image(systemName: "forward.fill")
-                        .resizable()
-                        .scaledToFit()
-                        .frame(width: playbackIconSize, height: playbackIconSize)
-                        .foregroundColor(Color.primary)
-                        .padding()
-                }
-                Spacer()
+        HStack {
+            Spacer()
+            Button {
+                musicPlayer.back()
+            } label: {
+                Image(systemName: "backward.fill")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: playbackIconSize, height: playbackIconSize)
+                    .foregroundColor(Color.primary)
+                    .padding()
             }
+            Spacer()
+            Button {
+                if musicPlayer.isPlaying {
+                    musicPlayer.pause()
+                }
+                else {
+                    musicPlayer.play()
+                }
+            } label: {
+                playAndPauseImage
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: playbackIconSize, height: playbackIconSize)
+                    .foregroundColor(Color.primary)
+            }
+            Spacer()
+            Button {
+                musicPlayer.next()
+            } label: {
+                Image(systemName: "forward.fill")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: playbackIconSize, height: playbackIconSize)
+                    .foregroundColor(Color.primary)
+                    .padding()
+            }
+            Spacer()
         }
     }
 }
