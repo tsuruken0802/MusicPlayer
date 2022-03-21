@@ -7,10 +7,31 @@
 
 import SwiftUI
 
+enum MiniPlayerLayoutType {
+    case mini
+    case normalExpanded
+    case expandedAndShowList
+    
+    var isExpanded: Bool {
+        return self == .normalExpanded || self == .expandedAndShowList
+    }
+    
+    var imageSize: CGFloat {
+        switch self {
+        case .mini:
+            return 50
+        case .normalExpanded:
+            return UIScreen.main.bounds.height / 3
+        case .expandedAndShowList:
+            return 50
+        }
+    }
+}
+
 struct MiniPlayer: View {
     let animation: Namespace.ID
     
-    @Binding var expand: Bool
+    @State var layoutType: MiniPlayerLayoutType = .mini
     
     // Dragged y offset
     @State var draggingOffsetY: CGFloat = 0
@@ -44,36 +65,46 @@ struct MiniPlayer: View {
         return musicPlayer.currentItem?.title ?? "再生停止中"
     }
     
-    private var artistName: String? {
-        return musicPlayer.currentItem?.artist
+    private var artistName: String {
+        return musicPlayer.currentItem?.artist ?? ""
     }
+    
+    private var isExpanded: Bool { return layoutType.isExpanded }
     
     var body: some View {
         VStack(spacing: 0) {
             HStack(alignment: .center, spacing: 15) {
                 
-                if expand {
-                    Spacer(minLength: 0)
+                if layoutType == .normalExpanded {
+                    Spacer()
                 }
                 
                 VStack {
-                    if expand {
+                    if layoutType == .normalExpanded {
                         Spacer()
                     }
-
+                    
                     songImage
                         .cornerRadius(5)
                 }
                 
-                if !expand, let songName = self.songName {
+                if !isExpanded {
                     Text(songName)
                         .font(.body)
+                }
+                
+                if layoutType == .expandedAndShowList {
+                    VStack {
+                        Text(songName)
+                        
+                        Text(artistName)
+                    }
                 }
                 
                 Spacer()
                 
                 // controllers
-                if !expand {
+                if !isExpanded {
                     Button {
                         if musicPlayer.isPlaying {
                             musicPlayer.pause()
@@ -103,7 +134,7 @@ struct MiniPlayer: View {
             VStack(spacing: 0) {
                 Spacer()
                 
-                if expand, let songName = self.songName, let artistName = self.artistName {
+                if isExpanded {
                     Text(songName)
                         .font(.title3)
                         .fontWeight(.bold)
@@ -112,6 +143,7 @@ struct MiniPlayer: View {
                     Text(artistName)
                         .font(.title3)
                 }
+                
                 Spacer()
                 
                 // Slider
@@ -167,6 +199,8 @@ struct MiniPlayer: View {
                 
                 // options
                 HStack {
+                    Spacer()
+                    
                     Button {
                         presentation = .init(presentation: .optionView)
                     } label: {
@@ -176,42 +210,62 @@ struct MiniPlayer: View {
                             .frame(width: optionIconSize, height: optionIconSize)
                             .padding(4)
                     }
-                    .padding(.horizontal)
+                    
+                    Spacer()
+                    
+                    Button {
+                        withAnimation(.spring(response: 0.4, dampingFraction: 0.8)) {
+                            if layoutType == .normalExpanded {
+                                layoutType = .expandedAndShowList
+                            }
+                            else {
+                                layoutType = .normalExpanded
+                            }
+                        }
+                    } label: {
+                        Image(systemName: "list.dash")
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: optionIconSize, height: optionIconSize)
+                            .padding(4)
+                    }
+                    
+                    Spacer()
                 }
+                .padding(.horizontal)
                 .sheet(item: $presentation, content: { $0.presentation })
 
                 Spacer()
             }
-            .frame(height: expand ? nil : 0)
-            .opacity(expand ? 1 : 0)
+            .frame(height: isExpanded ? nil : 0)
+            .opacity(isExpanded ? 1 : 0)
         }
-        .frame(maxHeight: expand ? .infinity : MiniPlayer.miniPlayerHeight)
+        .frame(maxHeight: isExpanded ? .infinity : MiniPlayer.miniPlayerHeight)
         .background(
             VStack(spacing: 0) {
                 MiniPlayerBackgroundView()
                 Divider()
             }
         )
-        .cornerRadius(expand ? 20 : 0)
-        .offset(y: expand ? draggingOffsetY : -tabbarHeight)
+        .cornerRadius(isExpanded ? 20 : 0)
+        .offset(y: isExpanded ? draggingOffsetY : -tabbarHeight)
         .ignoresSafeArea()
         .gesture(DragGesture().onEnded(onEnded(value:)).onChanged(onChanged(value:)))
         .onTapGesture {
-            withAnimation(.spring(response: 0.4, dampingFraction: 0.8)) { expand = true }
+            withAnimation(.spring(response: 0.4, dampingFraction: 0.8)) { layoutType = .normalExpanded }
         }
     }
     
     @ViewBuilder
     private var songImage: some View {
-        let size = expand ? largeSongImageSize : smallSongImageSize
-        if let image = musicPlayer.currentItem?.artwork?.image(at: CGSize(width: size, height: size)) {
+        if let image = musicPlayer.currentItem?.artwork?.image(at: CGSize(width: layoutType.imageSize, height: layoutType.imageSize)) {
             Image(uiImage: image)
                 .resizable()
                 .scaledToFill()
-                .frame(width: size, height: size)
+                .frame(width: layoutType.imageSize, height: layoutType.imageSize)
         }
         else {
-            NoImageView(size: size)
+            NoImageView(size: layoutType.imageSize)
         }
     }
     
@@ -227,7 +281,7 @@ struct MiniPlayer: View {
             startDraggingDate = value.time
         }
         
-        if value.translation.height > 0 && expand {
+        if value.translation.height > 0 && isExpanded {
             withAnimation(.interactiveSpring()) {
                 draggingOffsetY = value.translation.height
             }
@@ -243,12 +297,12 @@ struct MiniPlayer: View {
             let velocity: CGFloat = CGFloat(value.translation.height) / CGFloat(second)
             // ある程度早い速度だったら閉じる
             if velocity > 1500 {
-                expand = false
+                layoutType = .mini
             }
             
             // ある程度の高さまでドラッグしていたら閉じる
             if value.translation.height > UIScreen.main.bounds.height / 3 {
-                expand = false
+                layoutType = .mini
             }
             
             draggingOffsetY = 0

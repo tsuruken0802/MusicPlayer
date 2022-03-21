@@ -8,8 +8,6 @@
 import SwiftUI
 
 struct TabScreenView: View {
-    @State var isExpand = false
-    
     @Namespace var animation
     
     @StateObject var musicPlayer: MusicPlayer = MusicPlayer.shared
@@ -24,7 +22,7 @@ struct TabScreenView: View {
             }
             .accentColor(Color.blue)
             
-            MiniPlayer(animation: animation, expand: $isExpand)
+            MiniPlayer(animation: animation)
                 .transition(AnyTransition.offset().animation(.easeInOut))
         }
     }
