@@ -67,6 +67,10 @@ struct MiniPlayer: View {
     
     private var isShowList: Bool { return layoutType == .expandedAndShowList }
     
+    private var horizontalPadding: CGFloat {
+        return (MiniPlayer.miniPlayerHeight - smallSongImageSize) / 2
+    }
+    
     var body: some View {
         VStack(spacing: 0) {
             VStack(spacing: 0) {
@@ -99,7 +103,12 @@ struct MiniPlayer: View {
                         MiniPlayerMiniControllerView()
                     }
                 }
-                .padding(.horizontal, (MiniPlayer.miniPlayerHeight - smallSongImageSize) / 2)
+                .padding(.horizontal, horizontalPadding)
+                
+                if isShowList {
+                    MiniPlayerListHeaderView()
+                        .padding(.horizontal, horizontalPadding)
+                }
                 
                 if isNormalExpanded {
                     Spacer()
