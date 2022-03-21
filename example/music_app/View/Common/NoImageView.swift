@@ -12,7 +12,7 @@ struct NoImageView: View {
     
     var body: some View {
         ZStack {
-            Color(red: 0.2, green: 0.2, blue: 0.2)
+            Color("noImageBg")
                 .frame(width: size, height: size)
             
             Image(systemName: "music.note.list")
@@ -20,7 +20,6 @@ struct NoImageView: View {
                 .frame(width: size / 2, height: size / 2)
                 .foregroundColor(Color.red)
         }
-
     }
 }
 

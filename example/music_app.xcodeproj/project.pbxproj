@@ -56,6 +56,7 @@
 		03E6652E27E8865500CB76F8 /* MiniPlayerOptionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03E6652D27E8865500CB76F8 /* MiniPlayerOptionsView.swift */; };
 		03E6653027E8B40D00CB76F8 /* MiniPlayerListHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03E6652F27E8B40D00CB76F8 /* MiniPlayerListHeaderView.swift */; };
 		03E6653227E8B7B200CB76F8 /* SongItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03E6653127E8B7B200CB76F8 /* SongItem.swift */; };
+		03E6653627E8BA3F00CB76F8 /* MiniPlayerListItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03E6653527E8BA3F00CB76F8 /* MiniPlayerListItemView.swift */; };
 		03EE742A27D648B200835C68 /* MusicOptionsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03EE742927D648B200835C68 /* MusicOptionsViewModel.swift */; };
 /* End PBXBuildFile section */
 
@@ -128,6 +129,7 @@
 		03E6652D27E8865500CB76F8 /* MiniPlayerOptionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MiniPlayerOptionsView.swift; sourceTree = "<group>"; };
 		03E6652F27E8B40D00CB76F8 /* MiniPlayerListHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MiniPlayerListHeaderView.swift; sourceTree = "<group>"; };
 		03E6653127E8B7B200CB76F8 /* SongItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SongItem.swift; sourceTree = "<group>"; };
+		03E6653527E8BA3F00CB76F8 /* MiniPlayerListItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MiniPlayerListItemView.swift; sourceTree = "<group>"; };
 		03EE742927D648B200835C68 /* MusicOptionsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MusicOptionsViewModel.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -404,6 +406,7 @@
 				03E6652D27E8865500CB76F8 /* MiniPlayerOptionsView.swift */,
 				03E6652F27E8B40D00CB76F8 /* MiniPlayerListHeaderView.swift */,
 				03E6652527E76BEA00CB76F8 /* MiniPlayerTrimmingPositionView.swift */,
+				03E6653527E8BA3F00CB76F8 /* MiniPlayerListItemView.swift */,
 			);
 			path = Mini;
 			sourceTree = "<group>";
@@ -565,6 +568,7 @@
 				0353AB9A277620B8004DD139 /* ScreenHelper.swift in Sources */,
 				03EE742A27D648B200835C68 /* MusicOptionsViewModel.swift in Sources */,
 				03C0649627D0F7D8000C1898 /* ArtistAlbumListScreenView.swift in Sources */,
+				03E6653627E8BA3F00CB76F8 /* MiniPlayerListItemView.swift in Sources */,
 				03CCD5B727E715E30084E2E2 /* MusicOptionTrimmingSliderViewModel.swift in Sources */,
 				0353AB902775D329004DD139 /* MPMediaItem+Extension.swift in Sources */,
 				0357066E27D4BFEE00A16545 /* MediaCollectionListScreenView.swift in Sources */,
