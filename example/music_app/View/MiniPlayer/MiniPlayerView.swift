@@ -105,40 +105,37 @@ struct MiniPlayer: View {
             }
             .padding(.horizontal, (MiniPlayer.miniPlayerHeight - smallSongImageSize) / 2)
             
-            VStack(spacing: 0) {
-                Spacer()
+            if isNormalExpanded {
+                Text(songName)
+                    .font(.title3)
+                    .fontWeight(.bold)
+                    .padding(.bottom)
                 
-                if isNormalExpanded {
-                    Text(songName)
-                        .font(.title3)
-                        .fontWeight(.bold)
-                        .padding(.bottom)
-                    
-                    Text(artistName)
-                        .font(.title3)
-                }
-                
-                Spacer()
-                
-                // Slider
-                MusicPlaybackSliderView(isEditingSlideBar: $isEditingSlideBar,
-                                        showTrimmingPosition: true)
-                    .padding(.horizontal)
-                
-                Spacer()
-                
-                // controller
-                MiniPlayerExpanedControllerView()
-                
-                Spacer()
-                
-                // options
-                MiniPlayerOptionsView(layoutType: $layoutType)
-
-                Spacer()
+                Text(artistName)
+                    .font(.title3)
             }
-            .frame(height: isExpanded ? nil : 0)
-            .opacity(isExpanded ? 1 : 0)
+            
+            if isExpanded {
+                VStack(spacing: 0) {
+                    // Slider
+                    MusicPlaybackSliderView(isEditingSlideBar: $isEditingSlideBar,
+                                            showTrimmingPosition: true)
+                        .padding(.horizontal)
+                    
+                    Spacer()
+                    
+                    // controller
+                    MiniPlayerExpanedControllerView()
+                    
+                    Spacer()
+                    
+                    // options
+                    MiniPlayerOptionsView(layoutType: $layoutType)
+
+                    Spacer()
+                }
+                .frame(height: UIScreen.main.bounds.height / 3)
+            }
         }
         .frame(maxHeight: isExpanded ? .infinity : MiniPlayer.miniPlayerHeight)
         .background(
