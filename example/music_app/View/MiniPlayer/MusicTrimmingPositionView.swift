@@ -16,18 +16,20 @@ struct MusicTrimmingPositionView: View {
     
     private let barHeight: CGFloat = 4
     
+    private let sliderCircleSize: CGFloat = 28
+    
     private func rectangle(rate: Float, width: CGFloat) -> some View {
         return Rectangle()
             .frame(width: rectangleWidth,
                    height: barHeight)
             .foregroundColor(.green)
             .contentShape(Rectangle())
-            .position(x: width * CGFloat(rate) + rectangleWidth / 2, y: barHeight / 2)
+            .position(x: (width - sliderCircleSize) * CGFloat(rate), y: barHeight / 2)
     }
     
     var body: some View {
         GeometryReader { geometry in
-            RoundedRectangle(cornerSize: CGSize(width: 4, height: 4), style: .circular)
+            RoundedRectangle(cornerRadius: 4)
                 .foregroundColor(Color(UIColor.label.withAlphaComponent(0.15)))
                 .frame(height: barHeight)
                 .overlay(
