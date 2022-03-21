@@ -35,7 +35,7 @@ struct MusicPlaybackSliderView: View {
     }
     
     var body: some View {
-        VStack {
+        VStack(spacing: 0) {
             if let duration = musicPlayer.duration, duration > 0.0 {
                 Slider(value: $musicPlayer.currentTime, in: 0.0...Float(duration), step: 0.1) { isEditing in
                     isEditingSlideBar?.wrappedValue = isEditing

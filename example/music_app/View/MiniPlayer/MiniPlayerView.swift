@@ -69,54 +69,54 @@ struct MiniPlayer: View {
     
     var body: some View {
         VStack(spacing: 0) {
-            HStack(alignment: .center, spacing: 15) {
-                
-                if isNormalExpanded {
-                    Spacer()
-                }
-                
-                VStack {
-                    if isNormalExpanded {
-                        Spacer()
+            
+            VStack(spacing: 0) {
+                HStack(spacing: 15) {
+                    VStack {
+                        if isNormalExpanded {
+                            Spacer()
+                        }
+                        
+                        songImage
+                            .cornerRadius(5)
                     }
                     
-                    songImage
-                        .cornerRadius(5)
-                }
-                
-                if isMini {
-                    Text(songName)
-                        .font(.body)
-                }
-                
-                if isShowList {
-                    VStack {
+                    if isMini {
                         Text(songName)
+                            .font(.body)
+                    }
+                    
+                    if isShowList {
+                        VStack(alignment: .leading) {
+                            Text(songName)
+                            
+                            Text(artistName)
+                        }
+                    }
+                
+                    if isMini {
+                        Spacer()
                         
-                        Text(artistName)
+                        MiniPlayerMiniControllerView()
                     }
                 }
+                .padding(.horizontal, (MiniPlayer.miniPlayerHeight - smallSongImageSize) / 2)
                 
-                Spacer()
-            
-                if isMini {
-                    MiniPlayerMiniControllerView()
+                if isNormalExpanded {
+                    Text(songName)
+                        .font(.title3)
+                        .fontWeight(.bold)
+                    
+                    Text(artistName)
+                        .font(.title3)
                 }
             }
-            .padding(.horizontal, (MiniPlayer.miniPlayerHeight - smallSongImageSize) / 2)
-            
-            if isNormalExpanded {
-                Text(songName)
-                    .font(.title3)
-                    .fontWeight(.bold)
-                    .padding(.bottom)
-                
-                Text(artistName)
-                    .font(.title3)
-            }
+            .frame(height: UIScreen.main.bounds.height / 1.5)
             
             if isExpanded {
                 VStack(spacing: 0) {
+                    Spacer()
+                    
                     // Slider
                     MusicPlaybackSliderView(isEditingSlideBar: $isEditingSlideBar,
                                             showTrimmingPosition: true)
@@ -128,13 +128,13 @@ struct MiniPlayer: View {
                     MiniPlayerExpanedControllerView()
                     
                     Spacer()
-                    
-                    // options
-                    MiniPlayerOptionsView(layoutType: $layoutType)
-
-                    Spacer()
                 }
-                .frame(height: UIScreen.main.bounds.height / 3)
+            }
+            
+            if isExpanded {
+                // options
+                MiniPlayerOptionsView(layoutType: $layoutType)
+                    .padding(.bottom, 40)
             }
         }
         .frame(maxHeight: isExpanded ? .infinity : MiniPlayer.miniPlayerHeight)
