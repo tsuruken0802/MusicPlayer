@@ -105,28 +105,7 @@ struct MiniPlayer: View {
                 
                 // controllers
                 if !isExpanded {
-                    Button {
-                        if musicPlayer.isPlaying {
-                            musicPlayer.pause()
-                        }
-                        else {
-                            musicPlayer.play()
-                        }
-                    } label: {
-                        playAndPauseImage
-                            .font(.title2)
-                            .foregroundColor(.primary)
-                            .padding(6)
-                    }
-                    
-                    Button {
-                        musicPlayer.next()
-                    } label: {
-                        Image(systemName: "forward.fill")
-                            .font(.title2)
-                            .foregroundColor(.primary)
-                            .padding(6)
-                    }
+                    MiniPlayerControllerView()
                 }
             }
             .padding(.horizontal, (MiniPlayer.miniPlayerHeight - smallSongImageSize) / 2)
