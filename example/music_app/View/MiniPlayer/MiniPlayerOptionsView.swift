@@ -10,7 +10,7 @@ import SwiftUI
 struct MiniPlayerOptionsView: View {
     @Binding var layoutType: MiniPlayerLayoutType
     
-    @State var presentation: MiniPlayerPresentation?
+    @State private var presentation: MiniPlayerPresentation?
     
     private let optionIconSize: CGFloat = 30
     

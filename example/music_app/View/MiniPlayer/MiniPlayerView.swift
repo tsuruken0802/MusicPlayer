@@ -31,31 +31,23 @@ enum MiniPlayerLayoutType {
 struct MiniPlayer: View {
     let animation: Namespace.ID
     
-    @State var layoutType: MiniPlayerLayoutType = .mini
+    @State private var layoutType: MiniPlayerLayoutType = .mini
     
     // Dragged y offset
-    @State var draggingOffsetY: CGFloat = 0
+    @State private var draggingOffsetY: CGFloat = 0
     
     // Date at the start of dragging
-    @State var startDraggingDate: Date?
+    @State private var startDraggingDate: Date?
     
-    @State var isEditingSlideBar: Bool = false
+    @State private var isEditingSlideBar: Bool = false
     
-    @ObservedObject var musicPlayer = MusicPlayer.shared
-    
-    // song thumnbnail image size when mini player is large
-    private let largeSongImageSize: CGFloat = UIScreen.main.bounds.height / 3
+    @StateObject private var musicPlayer = MusicPlayer.shared
     
     // song thumnbnail image size when mini player is small
     private let smallSongImageSize: CGFloat = 50
     
-    // playback icon size
-    private let playbackIconSize: CGFloat = 40
-    
     // mini player height
     static let miniPlayerHeight: CGFloat = 74
-    
-
     
     private let tabbarHeight: CGFloat = 48
     
@@ -170,10 +162,6 @@ struct MiniPlayer: View {
         else {
             NoImageView(size: layoutType.imageSize)
         }
-    }
-    
-    private var playAndPauseImage: Image {
-        return Image(systemName: musicPlayer.isPlaying ? "pause.fill" : "play.fill")
     }
     
     private func onChanged(value: DragGesture.Value) {
