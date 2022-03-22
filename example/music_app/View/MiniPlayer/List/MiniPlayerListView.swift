@@ -16,10 +16,13 @@ struct MiniPlayerListView: View {
         List {
             ForEach(viewModel.currentItems) { (item) in
                 MiniPlayerListItemView(item: item)
+                    .listRowBackground(Color.clear)
             }
             .onMove { indexSet, index in
                 viewModel.currentItems.move(fromOffsets: indexSet, toOffset: index)
             }
+            .listRowInsets(EdgeInsets(top: 8, leading: 0, bottom: 8, trailing: 8))
+            .listRowSeparator(.hidden)
         }
         .listStyle(PlainListStyle())
         .onAppear {

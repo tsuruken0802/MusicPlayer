@@ -23,9 +23,11 @@ struct MiniPlayerExpandedSongNameView: View {
             Text(songName)
                 .font(.title2)
                 .fontWeight(.bold)
+                .lineLimit(1)
                 .padding(.bottom, 10)
             
             Text(artistName)
+                .lineLimit(1)
                 .font(.title2)
         }
     }

@@ -58,7 +58,12 @@ struct MiniPlayer: View {
     private var isShowList: Bool { return layoutType == .expandedAndShowList }
     
     private var horizontalPadding: CGFloat {
-        return (MiniPlayer.miniPlayerHeight - smallSongImageSize) / 2
+        if isMini {
+            return (MiniPlayer.miniPlayerHeight - smallSongImageSize) / 2
+        }
+        else {
+            return 20
+        }
     }
     
     private func miniOffset(bottomSafeArea: CGFloat) -> CGFloat {

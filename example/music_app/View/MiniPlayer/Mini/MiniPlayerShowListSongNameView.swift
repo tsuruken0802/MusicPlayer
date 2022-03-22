@@ -21,8 +21,10 @@ struct MiniPlayerShowListSongNameView: View {
     var body: some View {
         VStack(alignment: .leading) {
             Text(songName)
+                .lineLimit(1)
             
             Text(artistName)
+                .lineLimit(1)
         }
     }
 }
