@@ -146,6 +146,8 @@ struct MiniPlayer: View {
                 // controller
                 if isExpanded {
                     VStack(spacing: 0) {
+                        Spacer()
+                        
                         // Slider
                         MusicPlaybackSliderView(isEditingSlideBar: $isEditingSlideBar,
                                                 showTrimmingPosition: true)
@@ -168,7 +170,9 @@ struct MiniPlayer: View {
             .background(
                 VStack(spacing: 0) {
                     MiniPlayerBackgroundView()
-                    Divider()
+                    if isMini {
+                        Divider()
+                    }
                 }
             )
             .cornerRadius(isExpanded ? 20 : 0)
