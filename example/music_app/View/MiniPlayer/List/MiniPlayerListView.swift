@@ -13,30 +13,36 @@ struct MiniPlayerListView: View {
     @StateObject private var viewModel: MiniPlayerListViewModel = .init()
     
     var body: some View {
-        List {
-            ForEach(viewModel.currentItems) { (item) in
-                MiniPlayerListItemView(item: item)
-                    .listRowBackground(Color.clear)
+        ZStack(alignment: .bottom) {
+            List {
+                ForEach(viewModel.currentItems) { (item) in
+                    MiniPlayerListItemView(item: item)
+                        .listRowBackground(Color.clear)
+                }
+                .onMove { indexSet, index in
+                    viewModel.currentItems.move(fromOffsets: indexSet, toOffset: index)
+                }
+                .listRowInsets(EdgeInsets(top: 10, leading: 0, bottom: 0, trailing: 0))
+                .listRowSeparator(.hidden)
             }
-            .onMove { indexSet, index in
-                viewModel.currentItems.move(fromOffsets: indexSet, toOffset: index)
-            }
-            .listRowInsets(EdgeInsets(top: 8, leading: 0, bottom: 8, trailing: 8))
-            .listRowSeparator(.hidden)
+            .listStyle(PlainListStyle())
+            
+            LinearGradient(gradient: Gradient(colors: [.black.opacity(0.4), .clear]), startPoint: .bottom, endPoint: .top)
+                .frame(height: 30)
         }
-        .listStyle(PlainListStyle())
         .onAppear {
             editMode?.wrappedValue = .active
         }
         .onDisappear {
             editMode?.wrappedValue = .inactive
         }
-        
     }
 }
 
 struct MiniPlayerListView_Previews: PreviewProvider {
     static var previews: some View {
         MiniPlayerListView()
+            .environment(\.colorScheme, .dark)
+            .frame(height: 300)
     }
 }
