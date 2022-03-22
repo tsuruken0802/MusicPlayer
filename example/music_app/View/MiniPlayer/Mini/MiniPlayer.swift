@@ -39,8 +39,6 @@ struct MiniPlayer: View {
     // Date at the start of dragging
     @State private var startDraggingDate: Date?
     
-    @State private var isEditingSlideBar: Bool = false
-    
     // song thumnbnail image size when mini player is small
     private let smallSongImageSize: CGFloat = 50
     
@@ -125,8 +123,7 @@ struct MiniPlayer: View {
                         Spacer(minLength: 0)
                         
                         // Slider
-                        MusicPlaybackSliderView(isEditingSlideBar: $isEditingSlideBar,
-                                                showTrimmingPosition: true)
+                        MusicPlaybackSliderView(showTrimmingPosition: true)
                         .padding(.horizontal)
                         
                         Spacer(minLength: 0)
@@ -167,9 +164,6 @@ struct MiniPlayer: View {
     }
     
     private func onChanged(value: DragGesture.Value) {
-        if isEditingSlideBar {
-            return
-        }
         if startDraggingDate == nil {
             startDraggingDate = value.time
         }

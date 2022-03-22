@@ -32,6 +32,7 @@ struct MiniPlayerListItemView: View {
                         .lineLimit(1)
                 }
             }
+            Spacer(minLength: 0)
         }
     }
 }
