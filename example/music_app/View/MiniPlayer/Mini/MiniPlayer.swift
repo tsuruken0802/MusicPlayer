@@ -73,108 +73,114 @@ struct MiniPlayer: View {
         return (MiniPlayer.miniPlayerHeight - smallSongImageSize) / 2
     }
     
+    private func miniOffset(bottomSafeArea: CGFloat) -> CGFloat {
+        return UIScreen.main.bounds.height - bottomSafeArea - tabbarHeight - MiniPlayer.miniPlayerHeight
+    }
+    
     var body: some View {
-        VStack(spacing: 0) {
+        GeometryReader { geometry in
             VStack(spacing: 0) {
-                
-                if isNormalExpanded {
-                    Spacer()
-                    Spacer()
-                }
-                
-                if isShowList {
-                    Spacer(minLength: 50)
-                }
-                
-                HStack(spacing: 15) {
-                    songImage
-                        .cornerRadius(5)
+                VStack(spacing: 0) {
+                    if isNormalExpanded {
+                        Spacer()
+                        Spacer()
+                    }
                     
                     if isShowList {
-                        VStack(alignment: .leading) {
-                            Text(songName)
+                        Spacer(minLength: geometry.safeAreaInsets.top + 20)
+                    }
+                    
+                    HStack(spacing: 15) {
+                        songImage
+                            .cornerRadius(5)
+                        
+                        if isShowList {
+                            VStack(alignment: .leading) {
+                                Text(songName)
+                                
+                                Text(artistName)
+                            }
                             
-                            Text(artistName)
+                            Spacer()
                         }
-                        
-                        Spacer()
-                    }
-                
-                    if isMini {
-                        Text(songName)
-                            .font(.body)
-                        
-                        Spacer()
-                        
-                        MiniPlayerMiniControllerView()
-                    }
-                }
-                .padding(.horizontal, horizontalPadding)
-                
-                if isShowList {
-                    Group {
-                        MiniPlayerListHeaderView()
-                            .frame(height: 50)
+                    
+                        if isMini {
+                            Text(songName)
+                                .font(.body)
                             
-                        MiniPlayerListView(items: viewModel.currentItems)
-                            .padding(.bottom)
+                            Spacer()
+                            
+                            MiniPlayerMiniControllerView()
+                        }
                     }
                     .padding(.horizontal, horizontalPadding)
+                    
+                    if isShowList {
+                        Group {
+                            MiniPlayerListHeaderView()
+                                .frame(height: 50)
+                                
+                            MiniPlayerListView(items: viewModel.currentItems)
+                                .padding(.bottom)
+                        }
+                        .padding(.horizontal, horizontalPadding)
+                    }
+                    
+                    if isNormalExpanded {
+                        Spacer()
+                        
+                        Text(songName)
+                            .font(.title2)
+                            .fontWeight(.bold)
+                            .padding(.bottom, 10)
+                        
+                        Text(artistName)
+                            .font(.title2)
+                        
+                        Spacer()
+                    }
+                }
+                .frame(height: UIScreen.main.bounds.height / 1.55)
+                
+                // controller
+                if isExpanded {
+                    VStack(spacing: 0) {
+                        // Slider
+                        MusicPlaybackSliderView(isEditingSlideBar: $isEditingSlideBar,
+                                                showTrimmingPosition: true)
+                            .padding(.horizontal)
+                        
+                        Spacer()
+                        
+                        // controller
+                        MiniPlayerExpanedControllerView()
+                        
+                        Spacer()
+                    }
                 }
                 
-                if isNormalExpanded {
-                    Spacer()
-                    
-                    Text(songName)
-                        .font(.title2)
-                        .fontWeight(.bold)
-                        .padding(.bottom, 10)
-                    
-                    Text(artistName)
-                        .font(.title2)
-                    
-                    Spacer()
+                // option button
+                if isExpanded {
+                    // options
+                    MiniPlayerOptionsView(layoutType: $layoutType)
+
+                    Spacer(minLength: 30)
                 }
             }
-            .frame(height: UIScreen.main.bounds.height / 1.55)
-            
-            // controller
-            if isExpanded {
+            .frame(maxHeight: isExpanded ? .infinity : MiniPlayer.miniPlayerHeight)
+            .background(
                 VStack(spacing: 0) {
-                    // Slider
-                    MusicPlaybackSliderView(isEditingSlideBar: $isEditingSlideBar,
-                                            showTrimmingPosition: true)
-                        .padding(.horizontal)
-                    
-                    Spacer()
-                    
-                    // controller
-                    MiniPlayerExpanedControllerView()
-                    
-                    Spacer()
+                    MiniPlayerBackgroundView()
+                    Divider()
                 }
+            )
+            .cornerRadius(isExpanded ? 20 : 0)
+            .offset(y: isExpanded ? draggingOffsetY : miniOffset(bottomSafeArea: geometry.safeAreaInsets.bottom))
+            .ignoresSafeArea()
+            .gesture(DragGesture().onEnded(onEnded(value:)).onChanged(onChanged(value:)))
+            .onTapGesture {
+                withAnimation(.spring(response: 0.4, dampingFraction: 0.8)) { layoutType = .normalExpanded }
             }
-            
-            // option button
-            if isExpanded {
-                // options
-                MiniPlayerOptionsView(layoutType: $layoutType)
-                    .padding(.bottom, 35)
-            }
-        }
-        .frame(maxHeight: isExpanded ? .infinity : MiniPlayer.miniPlayerHeight)
-        .background(
-            VStack(spacing: 0) {
-                MiniPlayerBackgroundView()
-                Divider()
-            }
-        )
-        .cornerRadius(isExpanded ? 20 : 0)
-        .offset(y: isExpanded ? draggingOffsetY : -tabbarHeight)
-        .ignoresSafeArea()
-        .gesture(DragGesture().onEnded(onEnded(value:)).onChanged(onChanged(value:)))
-        .onTapGesture {
-            withAnimation(.spring(response: 0.4, dampingFraction: 0.8)) { layoutType = .normalExpanded }
         }
     }
     
