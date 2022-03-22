@@ -301,7 +301,7 @@ public extension MusicPlayer {
         if currentTimeTimer?.isValid == true {
             return
         }
-        currentTimeTimer = Timer.scheduledTimer(timeInterval: 0.1, target: self, selector: #selector(self.onUpdateCurrentTime), userInfo: nil, repeats: true)
+        currentTimeTimer = Timer.scheduledTimer(timeInterval: 0.5, target: self, selector: #selector(self.onUpdateCurrentTime), userInfo: nil, repeats: true)
     }
     
     /// stop timer

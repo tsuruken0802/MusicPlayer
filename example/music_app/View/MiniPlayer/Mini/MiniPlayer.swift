@@ -156,7 +156,11 @@ struct MiniPlayer: View {
             .ignoresSafeArea()
             .gesture(DragGesture().onEnded(onEnded(value:)).onChanged(onChanged(value:)))
             .onTapGesture {
-                withAnimation(.spring(response: 0.4, dampingFraction: 0.8)) { layoutType = .normalExpanded }
+                withAnimation(.spring(response: 0.4, dampingFraction: 0.8)) {
+                    if layoutType == .mini {
+                        layoutType = .normalExpanded
+                    }
+                }
             }
         }
     }
