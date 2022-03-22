@@ -149,23 +149,24 @@ struct MiniPlayer: View {
                 // controller
                 if isExpanded {
                     VStack(spacing: 0) {
-                        Spacer()
+                        Spacer(minLength: 0)
                         
                         // Slider
                         MusicPlaybackSliderView(isEditingSlideBar: $isEditingSlideBar,
                                                 showTrimmingPosition: true)
                             .padding(.horizontal)
                         
-                        Spacer()
+                        Spacer(minLength: 0)
                         
                         // controller
                         MiniPlayerExpanedControllerView()
                         
-                        Spacer()
+                        Spacer(minLength: 0)
                         
                         MiniPlayerOptionsView(layoutType: $layoutType)
                         
-                        Spacer()
+                        Spacer(minLength: 0)
+                        Spacer(minLength: 0)
                     }
                 }
             }
