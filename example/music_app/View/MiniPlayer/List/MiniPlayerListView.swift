@@ -8,8 +8,6 @@
 import SwiftUI
 
 struct MiniPlayerListView: View {
-    @Environment(\.editMode) private var editMode
-    
     @StateObject private var viewModel: MiniPlayerListViewModel = .init()
     
     var body: some View {
@@ -22,19 +20,13 @@ struct MiniPlayerListView: View {
                 .onMove { indexSet, index in
                     viewModel.currentItems.move(fromOffsets: indexSet, toOffset: index)
                 }
-                .listRowInsets(EdgeInsets(top: 10, leading: 0, bottom: 0, trailing: 0))
+                .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 10, trailing: 0))
                 .listRowSeparator(.hidden)
             }
             .listStyle(PlainListStyle())
             
             LinearGradient(gradient: Gradient(colors: [.black.opacity(0.4), .clear]), startPoint: .bottom, endPoint: .top)
                 .frame(height: 30)
-        }
-        .onAppear {
-            editMode?.wrappedValue = .active
-        }
-        .onDisappear {
-            editMode?.wrappedValue = .inactive
         }
     }
 }

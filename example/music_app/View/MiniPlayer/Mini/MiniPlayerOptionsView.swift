@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct MiniPlayerOptionsView: View {
-    @Binding var layoutType: MiniPlayerLayoutType
+    let onTapShowList: () -> Void
     
     @State private var presentation: MiniPlayerPresentation?
     
@@ -32,12 +32,7 @@ struct MiniPlayerOptionsView: View {
             
             Button {
                 withAnimation(.spring(response: 0.4, dampingFraction: 0.8)) {
-                    if layoutType == .normalExpanded {
-                        layoutType = .expandedAndShowList
-                    }
-                    else {
-                        layoutType = .normalExpanded
-                    }
+                    onTapShowList()
                 }
             } label: {
                 Image(systemName: "list.dash")
@@ -56,6 +51,6 @@ struct MiniPlayerOptionsView: View {
 
 struct MiniPlayerOptionsView_Previews: PreviewProvider {
     static var previews: some View {
-        MiniPlayerOptionsView(layoutType: .constant(.mini))
+        MiniPlayerOptionsView(onTapShowList: {})
     }
 }
