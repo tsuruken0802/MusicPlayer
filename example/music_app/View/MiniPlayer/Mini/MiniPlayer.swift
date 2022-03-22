@@ -106,6 +106,7 @@ struct MiniPlayer: View {
                     
                         if isMini {
                             Text(songName)
+                                .lineLimit(1)
                                 .font(.body)
                             
                             Spacer()
@@ -118,10 +119,12 @@ struct MiniPlayer: View {
                     if isShowList {
                         Group {
                             MiniPlayerListHeaderView()
-                                .frame(height: 50)
+                                .frame(height: 30)
+                                .padding(.top, 20)
                                 
                             MiniPlayerListView(items: viewModel.currentItems)
-                                .padding(.bottom)
+                                .padding(.top, 20)
+                                .padding(.bottom, 20)
                         }
                         .padding(.horizontal, horizontalPadding)
                     }
