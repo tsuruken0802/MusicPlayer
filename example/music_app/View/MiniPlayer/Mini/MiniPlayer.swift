@@ -92,7 +92,7 @@ struct MiniPlayer: View {
                             
                             Spacer()
                         }
-                    
+                        
                         if isMini {
                             MiniPlayerMiniContentView()
                         }
@@ -104,12 +104,9 @@ struct MiniPlayer: View {
                             MiniPlayerListHeaderView()
                                 .frame(height: 30)
                                 .padding(.top, 20)
-                                
+                            
                             MiniPlayerListView()
                                 .padding(.top, 10)
-                                .gesture(DragGesture()  // 全体のViewをスクロールさせないためにGestureを追加する
-                                    .onChanged { _ in }
-                                    .onEnded { _ in })
                         }
                         .padding(.horizontal, horizontalPadding)
                     }
@@ -130,7 +127,7 @@ struct MiniPlayer: View {
                         // Slider
                         MusicPlaybackSliderView(isEditingSlideBar: $isEditingSlideBar,
                                                 showTrimmingPosition: true)
-                            .padding(.horizontal)
+                        .padding(.horizontal)
                         
                         Spacer(minLength: 0)
                         
@@ -154,18 +151,18 @@ struct MiniPlayer: View {
                         Divider()
                     }
                 }
+                    .gesture(DragGesture().onEnded(onEnded(value:)).onChanged(onChanged(value:)), including: .gesture)
+                    .gesture(TapGesture().onEnded {
+                        withAnimation(.spring(response: 0.4, dampingFraction: 0.8)) {
+                            if layoutType == .mini {
+                                layoutType = .normalExpanded
+                            }
+                        }
+                    }, including: .all)
             )
             .cornerRadius(isExpanded ? 20 : 0)
             .offset(y: isExpanded ? draggingOffsetY : miniOffset(bottomSafeArea: geometry.safeAreaInsets.bottom))
             .ignoresSafeArea()
-            .gesture(DragGesture().onEnded(onEnded(value:)).onChanged(onChanged(value:)))
-            .onTapGesture {
-                withAnimation(.spring(response: 0.4, dampingFraction: 0.8)) {
-                    if layoutType == .mini {
-                        layoutType = .normalExpanded
-                    }
-                }
-            }
         }
     }
     
