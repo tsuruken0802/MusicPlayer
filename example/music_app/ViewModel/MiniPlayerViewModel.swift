@@ -21,7 +21,7 @@ class MiniPlayerViewModel: ObservableObject {
         musicPlayer.$items.sink { value in
             let index = min(value.count, MiniPlayerViewModel.maxListCount)
             if index <= 0 { return }
-            let array = value[0...index]
+            let array = value[0..<index]
             self.currentItems = array.map({ item in
                 return MiniPlayerListItem.init(id: item.id, image: item.image(size: 50), title: item.title!, artist: item.artist)
             })

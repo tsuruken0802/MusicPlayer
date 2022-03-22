@@ -82,6 +82,10 @@ struct MiniPlayer: View {
                     Spacer()
                 }
                 
+                if isShowList {
+                    Spacer(minLength: 50)
+                }
+                
                 HStack(spacing: 15) {
                     songImage
                         .cornerRadius(5)
@@ -110,8 +114,10 @@ struct MiniPlayer: View {
                 if isShowList {
                     Group {
                         MiniPlayerListHeaderView()
+                            .frame(height: 50)
                             
                         MiniPlayerListView(items: viewModel.currentItems)
+                            .padding(.bottom)
                     }
                     .padding(.horizontal, horizontalPadding)
                 }
@@ -130,7 +136,7 @@ struct MiniPlayer: View {
                     Spacer()
                 }
             }
-            .frame(height: UIScreen.main.bounds.height / 1.5)
+            .frame(height: UIScreen.main.bounds.height / 1.55)
             
             // controller
             if isExpanded {
