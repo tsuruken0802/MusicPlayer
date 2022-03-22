@@ -41,8 +41,6 @@ struct MiniPlayer: View {
     
     @State private var isEditingSlideBar: Bool = false
     
-    @StateObject private var viewModel: MiniPlayerViewModel = .init()
-    
     // song thumnbnail image size when mini player is small
     private let smallSongImageSize: CGFloat = 50
     
@@ -102,7 +100,7 @@ struct MiniPlayer: View {
                                 .frame(height: 30)
                                 .padding(.top, 20)
                                 
-                            MiniPlayerListView(items: viewModel.currentItems)
+                            MiniPlayerListView()
                                 .padding(.top, 20)
                                 .padding(.bottom, 20)
                                 .gesture(DragGesture()  // 全体のViewをスクロールさせないためにGestureを追加する

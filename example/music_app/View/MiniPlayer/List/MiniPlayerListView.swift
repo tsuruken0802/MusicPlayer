@@ -10,15 +10,15 @@ import SwiftUI
 struct MiniPlayerListView: View {
     @Environment(\.editMode) private var editMode
     
-    @State var items: [MiniPlayerListItem]
+    @StateObject private var viewModel: MiniPlayerListViewModel = .init()
     
     var body: some View {
         List {
-            ForEach(items) { (item) in
+            ForEach(viewModel.currentItems) { (item) in
                 MiniPlayerListItemView(item: item)
             }
             .onMove { indexSet, index in
-                items.move(fromOffsets: indexSet, toOffset: index)
+                viewModel.currentItems.move(fromOffsets: indexSet, toOffset: index)
             }
         }
         .listStyle(PlainListStyle())
@@ -34,9 +34,6 @@ struct MiniPlayerListView: View {
 
 struct MiniPlayerListView_Previews: PreviewProvider {
     static var previews: some View {
-        MiniPlayerListView(items: [
-            .init(id: 1, image: nil, title: "タイトル1", artist: "アーティスト"),
-            .init(id: 2, image: nil, title: "タイトル2", artist: "アーティスト"),
-        ])
+        MiniPlayerListView()
     }
 }

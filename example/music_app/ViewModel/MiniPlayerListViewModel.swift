@@ -8,7 +8,7 @@
 import Foundation
 import Combine
 
-class MiniPlayerViewModel: ObservableObject {
+class MiniPlayerListViewModel: ObservableObject {
     @Published var currentItems: [MiniPlayerListItem] = []
     
     @Published var musicPlayer: MusicPlayer = MusicPlayer.shared
@@ -19,7 +19,7 @@ class MiniPlayerViewModel: ObservableObject {
     
     init() {
         musicPlayer.$items.sink { value in
-            let index = min(value.count, MiniPlayerViewModel.maxListCount)
+            let index = min(value.count, MiniPlayerListViewModel.maxListCount)
             if index <= 0 { return }
             let array = value[0..<index]
             self.currentItems = array.map({ item in
