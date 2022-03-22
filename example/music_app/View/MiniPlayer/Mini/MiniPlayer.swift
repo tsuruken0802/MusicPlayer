@@ -49,7 +49,7 @@ struct MiniPlayer: View {
     private let smallSongImageSize: CGFloat = 50
     
     // mini player height
-    static let miniPlayerHeight: CGFloat = 74
+    static let miniPlayerHeight: CGFloat = 72
     
     private let tabbarHeight: CGFloat = 48
     
@@ -139,11 +139,9 @@ struct MiniPlayer: View {
                         
                         Text(artistName)
                             .font(.title2)
-                        
-                        Spacer()
                     }
                 }
-                .frame(height: UIScreen.main.bounds.height / 1.55)
+                .frame(height: UIScreen.main.bounds.height / 1.5)
                 
                 // controller
                 if isExpanded {
@@ -159,15 +157,11 @@ struct MiniPlayer: View {
                         MiniPlayerExpanedControllerView()
                         
                         Spacer()
+                        
+                        MiniPlayerOptionsView(layoutType: $layoutType)
+                        
+                        Spacer()
                     }
-                }
-                
-                // option button
-                if isExpanded {
-                    // options
-                    MiniPlayerOptionsView(layoutType: $layoutType)
-
-                    Spacer(minLength: 30)
                 }
             }
             .frame(maxHeight: isExpanded ? .infinity : MiniPlayer.miniPlayerHeight)
