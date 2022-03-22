@@ -121,13 +121,13 @@ struct MiniPlayer: View {
                             MiniPlayerListHeaderView()
                                 .frame(height: 30)
                                 .padding(.top, 20)
-                                .onTapGesture {
-                                    // 画面全体のGestureより反応させるために枠だけ用意しておく
-                                }
                                 
                             MiniPlayerListView(items: viewModel.currentItems)
                                 .padding(.top, 20)
                                 .padding(.bottom, 20)
+                                .gesture(DragGesture()  // 全体のViewをスクロールさせないためにGestureを追加する
+                                    .onChanged { _ in }
+                                    .onEnded { _ in })
                         }
                         .padding(.horizontal, horizontalPadding)
                     }

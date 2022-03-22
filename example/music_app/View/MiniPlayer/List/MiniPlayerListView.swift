@@ -28,6 +28,7 @@ struct MiniPlayerListView: View {
         .onDisappear {
             editMode?.wrappedValue = .inactive
         }
+        
     }
 }
 

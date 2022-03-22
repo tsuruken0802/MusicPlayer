@@ -33,13 +33,6 @@ public final class MusicPlayer: ObservableObject {
         }
     }
     
-    /// playback items
-    @Published private(set) var items: [MPMediaItem] = [] {
-        didSet {
-            setCurrentItem()
-        }
-    }
-    
     private var currentTimeTimer: Timer?
     
     private var cancellables: Set<AnyCancellable> = []
@@ -51,6 +44,13 @@ public final class MusicPlayer: ObservableObject {
     /// If true, the current Time exceeds the song playback time
     private var isSeekOver: Bool {
         return currentTime >= maxPlaybackTime
+    }
+    
+    /// playback items
+    @Published private(set) var items: [MPMediaItem] = [] {
+        didSet {
+            setCurrentItem()
+        }
     }
     
     /// current playback item
