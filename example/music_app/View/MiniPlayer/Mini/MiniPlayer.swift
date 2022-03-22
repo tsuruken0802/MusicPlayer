@@ -121,6 +121,9 @@ struct MiniPlayer: View {
                             MiniPlayerListHeaderView()
                                 .frame(height: 30)
                                 .padding(.top, 20)
+                                .onTapGesture {
+                                    // 画面全体のGestureより反応させるために枠だけ用意しておく
+                                }
                                 
                             MiniPlayerListView(items: viewModel.currentItems)
                                 .padding(.top, 20)
