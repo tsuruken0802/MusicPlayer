@@ -59,6 +59,10 @@
 		03E6653627E8BA3F00CB76F8 /* MiniPlayerListItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03E6653527E8BA3F00CB76F8 /* MiniPlayerListItemView.swift */; };
 		03E6653827E8BCD200CB76F8 /* MiniPlayerListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03E6653727E8BCD200CB76F8 /* MiniPlayerListView.swift */; };
 		03E6653B27E8D25100CB76F8 /* MiniPlayerViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03E6653A27E8D25100CB76F8 /* MiniPlayerViewModel.swift */; };
+		03E6653D27E9A6E700CB76F8 /* MiniPlayerShowListSongNameView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03E6653C27E9A6E700CB76F8 /* MiniPlayerShowListSongNameView.swift */; };
+		03E6653F27E9A72C00CB76F8 /* MiniPlayerExpandedSongNameView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03E6653E27E9A72C00CB76F8 /* MiniPlayerExpandedSongNameView.swift */; };
+		03E6654127E9A77800CB76F8 /* MiniPlayerMiniContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03E6654027E9A77800CB76F8 /* MiniPlayerMiniContentView.swift */; };
+		03E6654327E9A7BA00CB76F8 /* MiniPlayerSongImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03E6654227E9A7BA00CB76F8 /* MiniPlayerSongImage.swift */; };
 		03EE742A27D648B200835C68 /* MusicOptionsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03EE742927D648B200835C68 /* MusicOptionsViewModel.swift */; };
 /* End PBXBuildFile section */
 
@@ -134,6 +138,10 @@
 		03E6653527E8BA3F00CB76F8 /* MiniPlayerListItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MiniPlayerListItemView.swift; sourceTree = "<group>"; };
 		03E6653727E8BCD200CB76F8 /* MiniPlayerListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MiniPlayerListView.swift; sourceTree = "<group>"; };
 		03E6653A27E8D25100CB76F8 /* MiniPlayerViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MiniPlayerViewModel.swift; sourceTree = "<group>"; };
+		03E6653C27E9A6E700CB76F8 /* MiniPlayerShowListSongNameView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MiniPlayerShowListSongNameView.swift; sourceTree = "<group>"; };
+		03E6653E27E9A72C00CB76F8 /* MiniPlayerExpandedSongNameView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MiniPlayerExpandedSongNameView.swift; sourceTree = "<group>"; };
+		03E6654027E9A77800CB76F8 /* MiniPlayerMiniContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MiniPlayerMiniContentView.swift; sourceTree = "<group>"; };
+		03E6654227E9A7BA00CB76F8 /* MiniPlayerSongImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MiniPlayerSongImage.swift; sourceTree = "<group>"; };
 		03EE742927D648B200835C68 /* MusicOptionsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MusicOptionsViewModel.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -411,6 +419,10 @@
 				03E6652B27E885D100CB76F8 /* MiniPlayerExpanedControllerView.swift */,
 				03E6652D27E8865500CB76F8 /* MiniPlayerOptionsView.swift */,
 				03E6652527E76BEA00CB76F8 /* MiniPlayerTrimmingPositionView.swift */,
+				03E6653C27E9A6E700CB76F8 /* MiniPlayerShowListSongNameView.swift */,
+				03E6653E27E9A72C00CB76F8 /* MiniPlayerExpandedSongNameView.swift */,
+				03E6654027E9A77800CB76F8 /* MiniPlayerMiniContentView.swift */,
+				03E6654227E9A7BA00CB76F8 /* MiniPlayerSongImage.swift */,
 			);
 			path = Mini;
 			sourceTree = "<group>";
@@ -580,9 +592,11 @@
 				033FB2D327CBCBED00146123 /* MusicOptionsView.swift in Sources */,
 				0357066827D4A3DA00A16545 /* MediaItemListView.swift in Sources */,
 				0353AB9A277620B8004DD139 /* ScreenHelper.swift in Sources */,
+				03E6653D27E9A6E700CB76F8 /* MiniPlayerShowListSongNameView.swift in Sources */,
 				03EE742A27D648B200835C68 /* MusicOptionsViewModel.swift in Sources */,
 				03C0649627D0F7D8000C1898 /* ArtistAlbumListScreenView.swift in Sources */,
 				03E6653627E8BA3F00CB76F8 /* MiniPlayerListItemView.swift in Sources */,
+				03E6654127E9A77800CB76F8 /* MiniPlayerMiniContentView.swift in Sources */,
 				03CCD5B727E715E30084E2E2 /* MusicOptionTrimmingSliderViewModel.swift in Sources */,
 				0353AB902775D329004DD139 /* MPMediaItem+Extension.swift in Sources */,
 				03E6653827E8BCD200CB76F8 /* MiniPlayerListView.swift in Sources */,
@@ -591,6 +605,7 @@
 				03CCD5B527E714E00084E2E2 /* MusicOptionTrimmingSliderView.swift in Sources */,
 				03E6652C27E885D100CB76F8 /* MiniPlayerExpanedControllerView.swift in Sources */,
 				0353AB922775D35C004DD139 /* SongListScreenView.swift in Sources */,
+				03E6653F27E9A72C00CB76F8 /* MiniPlayerExpandedSongNameView.swift in Sources */,
 				036532AE27DDBA2B0077C967 /* MPConstants.swift in Sources */,
 				033FB2D127CBC6B500146123 /* MusicOptionButton.swift in Sources */,
 				03E6653B27E8D25100CB76F8 /* MiniPlayerViewModel.swift in Sources */,
@@ -602,6 +617,7 @@
 				0353AB942775D370004DD139 /* SongListViewModel.swift in Sources */,
 				0357067027D4C0A900A16545 /* MediaCollectionListViewModel.swift in Sources */,
 				0353AB892775D1FF004DD139 /* NavigationLinkData.swift in Sources */,
+				03E6654327E9A7BA00CB76F8 /* MiniPlayerSongImage.swift in Sources */,
 				0357066427D4A05000A16545 /* MediaThumbnailItemView.swift in Sources */,
 				03E6652A27E8852C00CB76F8 /* MiniPlayerMiniControllerView.swift in Sources */,
 				0353AB542775CF95004DD139 /* music_appApp.swift in Sources */,

@@ -41,8 +41,6 @@ struct MiniPlayer: View {
     
     @State private var isEditingSlideBar: Bool = false
     
-    @StateObject private var musicPlayer = MusicPlayer.shared
-    
     @StateObject private var viewModel: MiniPlayerViewModel = .init()
     
     // song thumnbnail image size when mini player is small
@@ -52,14 +50,6 @@ struct MiniPlayer: View {
     static let miniPlayerHeight: CGFloat = 72
     
     private let tabbarHeight: CGFloat = 48
-    
-    private var songName: String {
-        return musicPlayer.currentItem?.title ?? "再生停止中"
-    }
-    
-    private var artistName: String {
-        return musicPlayer.currentItem?.artist ?? ""
-    }
     
     private var isExpanded: Bool { return layoutType.isExpanded }
     
@@ -91,27 +81,17 @@ struct MiniPlayer: View {
                     }
                     
                     HStack(spacing: 15) {
-                        songImage
+                        MiniPlayerSongImage(layoutType: layoutType)
                             .cornerRadius(5)
                         
                         if isShowList {
-                            VStack(alignment: .leading) {
-                                Text(songName)
-                                
-                                Text(artistName)
-                            }
+                            MiniPlayerShowListSongNameView()
                             
                             Spacer()
                         }
                     
                         if isMini {
-                            Text(songName)
-                                .lineLimit(1)
-                                .font(.body)
-                            
-                            Spacer()
-                            
-                            MiniPlayerMiniControllerView()
+                            MiniPlayerMiniContentView()
                         }
                     }
                     .padding(.horizontal, horizontalPadding)
@@ -135,13 +115,7 @@ struct MiniPlayer: View {
                     if isNormalExpanded {
                         Spacer()
                         
-                        Text(songName)
-                            .font(.title2)
-                            .fontWeight(.bold)
-                            .padding(.bottom, 10)
-                        
-                        Text(artistName)
-                            .font(.title2)
+                        MiniPlayerExpandedSongNameView()
                     }
                 }
                 .frame(height: UIScreen.main.bounds.height / 1.5)
@@ -186,19 +160,6 @@ struct MiniPlayer: View {
             .onTapGesture {
                 withAnimation(.spring(response: 0.4, dampingFraction: 0.8)) { layoutType = .normalExpanded }
             }
-        }
-    }
-    
-    @ViewBuilder
-    private var songImage: some View {
-        if let image = musicPlayer.currentItem?.artwork?.image(at: CGSize(width: layoutType.imageSize, height: layoutType.imageSize)) {
-            Image(uiImage: image)
-                .resizable()
-                .scaledToFill()
-                .frame(width: layoutType.imageSize, height: layoutType.imageSize)
-        }
-        else {
-            NoImageView(size: layoutType.imageSize)
         }
     }
     
