@@ -10,6 +10,8 @@ import SwiftUI
 struct MiniPlayerListView: View {
     @StateObject private var viewModel: MiniPlayerListViewModel = .init()
     
+    private let leadingEditModePadding: CGFloat = -40
+    
     var body: some View {
         ZStack(alignment: .bottom) {
             List {
@@ -20,9 +22,10 @@ struct MiniPlayerListView: View {
                 .onMove { indexSet, index in
                     viewModel.currentItems.move(fromOffsets: indexSet, toOffset: index)
                 }
-                .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 10, trailing: 0))
+                .listRowInsets(EdgeInsets(top: 0, leading: leadingEditModePadding, bottom: 10, trailing: 0))
                 .listRowSeparator(.hidden)
             }
+            .environment(\.editMode, .constant(.active))
             .listStyle(PlainListStyle())
             
             LinearGradient(gradient: Gradient(colors: [.black.opacity(0.4), .clear]), startPoint: .bottom, endPoint: .top)

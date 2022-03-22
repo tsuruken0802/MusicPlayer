@@ -31,15 +31,7 @@ enum MiniPlayerLayoutType {
 struct MiniPlayer: View {
     let animation: Namespace.ID
     
-    @Environment(\.editMode) private var editMode
-    
-    @State private var layoutType: MiniPlayerLayoutType = .mini {
-        willSet {
-            if newValue == .expandedAndShowList {
-                editMode?.wrappedValue = .active
-            }
-        }
-    }
+    @State private var layoutType: MiniPlayerLayoutType = .mini
     
     // Dragged y offset
     @State private var draggingOffsetY: CGFloat = 0
@@ -147,14 +139,7 @@ struct MiniPlayer: View {
                         
                         Spacer(minLength: 0)
                         
-                        MiniPlayerOptionsView {
-                            if layoutType == .normalExpanded {
-                                layoutType = .expandedAndShowList
-                            }
-                            else if layoutType == .expandedAndShowList {
-                                layoutType = .normalExpanded
-                            }
-                        }
+                        MiniPlayerOptionsView(layoutType: $layoutType)
                         
                         Spacer(minLength: 0)
                         Spacer(minLength: 0)
