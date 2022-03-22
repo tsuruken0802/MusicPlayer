@@ -106,8 +106,7 @@ struct MiniPlayer: View {
                                 .padding(.top, 20)
                                 
                             MiniPlayerListView()
-                                .padding(.top, 20)
-                                .padding(.bottom, 20)
+                                .padding(.top, 10)
                                 .gesture(DragGesture()  // 全体のViewをスクロールさせないためにGestureを追加する
                                     .onChanged { _ in }
                                     .onEnded { _ in })
