@@ -168,7 +168,7 @@ public extension MusicPlayer {
         }
     }
     
-    /// Play item
+    /// Play and set items
     /// - Parameters:
     ///   - items: playback items
     ///   - index: item index
@@ -183,6 +183,19 @@ public extension MusicPlayer {
         if isShuffle {
             shuffle()
         }
+        setScheduleFile()
+        play()
+    }
+    
+    /// Play by id
+    /// - Parameter id: item id
+    func play(id: MPMediaEntityPersistentID) {
+        guard let index = items.firstIndex(where: { $0.id == id }) else { return }
+        if !itemsSafe(items: items, index: index) {
+            return
+        }
+        currentIndex = index
+        resetPlaybackTime()
         setScheduleFile()
         play()
     }
@@ -339,7 +352,11 @@ public extension MusicPlayer {
         currentTimeTimer = nil
     }
     
-    func moveItemPosition(fromOffsets: IndexSet, toOffset: Int) {
+    /// move item
+    /// - Parameters:
+    ///   - fromOffsets: from item offsets
+    ///   - toOffset: to item offset
+    func moveItem(fromOffsets: IndexSet, toOffset: Int) {
         guard let preId = currentItem?.id else { return }
         let index = currentIndex+1
         let prefixItems = items[0 ..< index]

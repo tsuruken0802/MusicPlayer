@@ -18,13 +18,17 @@ struct MiniPlayerListView: View {
                 ForEach(viewModel.currentItems) { (item) in
                     MiniPlayerListItemView(item: item)
                         .listRowBackground(Color.clear)
+                        .onTapGesture {
+                            viewModel.onTapItem(item: item)
+                        }
                 }
                 .onMove { fromOffsets, toOffset in
                     viewModel.onMove(fromOffsets: fromOffsets, toOffset: toOffset)
                 }
-                .listRowInsets(EdgeInsets(top: 0, leading: leadingEditModePadding, bottom: 10, trailing: 0))
+                .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 10, trailing: 0))
                 .listRowSeparator(.hidden)
             }
+            .padding(.leading, leadingEditModePadding)
             .environment(\.editMode, .constant(.active))
             .listStyle(PlainListStyle())
             

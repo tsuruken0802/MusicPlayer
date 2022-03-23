@@ -29,7 +29,11 @@ class MiniPlayerListViewModel: ObservableObject {
 
 extension MiniPlayerListViewModel {
     func onMove(fromOffsets: IndexSet, toOffset: Int) {
-        musicPlayer.moveItemPosition(fromOffsets: fromOffsets, toOffset: toOffset)
+        musicPlayer.moveItem(fromOffsets: fromOffsets, toOffset: toOffset)
+    }
+    
+    func onTapItem(item: MiniPlayerListItem) {
+        musicPlayer.play(id: item.id)
     }
 }
 
