@@ -21,10 +21,13 @@ class MiniPlayerListViewModel: ObservableObject {
         musicPlayer.$currentIndex.sink { [weak self] value in
             guard let self = self else { return }
             let fromIndex = value + 1
-            let toIndex = value+MiniPlayerListViewModel.maxListCount
+            let toIndex = min(value+MiniPlayerListViewModel.maxListCount, self.musicPlayer.items.count-1)
             let indices = self.musicPlayer.items.indices
-            if !indices.contains(fromIndex) || !indices.contains(toIndex) { return }
-            let items = self.musicPlayer.items[fromIndex ..< toIndex]
+            if !indices.contains(fromIndex) || !indices.contains(toIndex) {
+                self.currentItems.removeAll()
+                return
+            }
+            let items = self.musicPlayer.items[fromIndex ... toIndex]
             self.currentItems = items.map({ item in
                 return MiniPlayerListItem.init(id: item.id, image: item.image(size: 50), title: item.title!, artist: item.artist)
             })
