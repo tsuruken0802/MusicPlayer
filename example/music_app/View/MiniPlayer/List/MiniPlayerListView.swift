@@ -17,7 +17,6 @@ struct MiniPlayerListView: View {
             List {
                 ForEach(viewModel.currentItems) { (item) in
                     MiniPlayerListItemView(item: item)
-                        .id(item.id)
                         .listRowBackground(Color.clear)
                 }
                 .onMove { fromOffsets, toOffset in

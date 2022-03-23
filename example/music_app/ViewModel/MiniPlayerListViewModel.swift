@@ -7,6 +7,7 @@
 
 import Foundation
 import Combine
+import SwiftUI
 
 class MiniPlayerListViewModel: ObservableObject {
     @Published var currentItems: [MiniPlayerListItem] = []
@@ -17,7 +18,7 @@ class MiniPlayerListViewModel: ObservableObject {
     
     private static let maxListCount: Int = 20
     
-    init() {        
+    init() {
         musicPlayer.$currentIndex.sink { [weak self] value in
             guard let self = self else { return }
             let fromIndex = value + 1
@@ -28,9 +29,11 @@ class MiniPlayerListViewModel: ObservableObject {
                 return
             }
             let items = self.musicPlayer.items[fromIndex ... toIndex]
-            self.currentItems = items.map({ item in
-                return MiniPlayerListItem.init(id: item.id, image: item.image(size: 50), title: item.title!, artist: item.artist)
-            })
+            withAnimation {
+                self.currentItems = items.map({ item in
+                    return MiniPlayerListItem.init(id: item.id, image: item.image(size: 50), title: item.title!, artist: item.artist)
+                })
+            }
         }
         .store(in: &cancellables)
     }
