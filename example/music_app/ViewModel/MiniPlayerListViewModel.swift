@@ -21,24 +21,34 @@ class MiniPlayerListViewModel: ObservableObject {
     init() {
         musicPlayer.$currentIndex.sink { [weak self] value in
             guard let self = self else { return }
-            let fromIndex = value + 1
-            let toIndex = min(value+MiniPlayerListViewModel.maxListCount, self.musicPlayer.items.count-1)
-            let indices = self.musicPlayer.items.indices
-            if !indices.contains(fromIndex) || !indices.contains(toIndex) {
-                self.currentItems.removeAll()
-                return
-            }
-            let items = self.musicPlayer.items[fromIndex ... toIndex]
-            withAnimation {
-                self.currentItems = items.map({ item in
-                    return MiniPlayerListItem.init(id: item.id, image: item.image(size: 50), title: item.title!, artist: item.artist)
-                })
-            }
+            self.updateCurrentItems(currentItemIndex: value)
         }
         .store(in: &cancellables)
     }
-    
+}
+
+extension MiniPlayerListViewModel {
     func onMove(fromOffsets: IndexSet, toOffset: Int) {
         musicPlayer.moveItemPosition(fromOffsets: fromOffsets, toOffset: toOffset)
+    }
+}
+
+private extension MiniPlayerListViewModel {
+    /// update current items
+    /// - Parameter currentItemIndex: current item index
+    func updateCurrentItems(currentItemIndex: Int) {
+        let fromIndex = currentItemIndex + 1
+        let toIndex = min(currentItemIndex+MiniPlayerListViewModel.maxListCount, self.musicPlayer.items.count-1)
+        let indices = self.musicPlayer.items.indices
+        if !indices.contains(fromIndex) || !indices.contains(toIndex) {
+            self.currentItems.removeAll()
+            return
+        }
+        let items = self.musicPlayer.items[fromIndex ... toIndex]
+        withAnimation {
+            self.currentItems = items.map({ item in
+                return MiniPlayerListItem.init(id: item.id, image: item.image(size: 50), title: item.title!, artist: item.artist)
+            })
+        }
     }
 }
