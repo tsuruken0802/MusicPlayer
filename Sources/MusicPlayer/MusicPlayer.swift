@@ -51,13 +51,6 @@ public final class MusicPlayer: ObservableObject {
     /// index of current playing MPMediaItem
     @Published private(set) var currentIndex: Int = 0 {
         didSet {
-            if oldValue == currentIndex {
-                return
-            }
-            // 曲が変われば秒数もリセットする
-            cachedSeekBarSeconds = 0
-            currentTime = 0
-            
             resetPlaybackTimeRange()
         }
     }
@@ -194,6 +187,7 @@ public extension MusicPlayer {
         self.originalItems = items
         self.items = items
         self.currentIndex = index
+        resetPlaybackTime()
         if isShuffle {
             shuffle()
         }
@@ -220,6 +214,7 @@ public extension MusicPlayer {
             }
         }
         currentIndex = nextIndex
+        resetPlaybackTime()
         setScheduleFile()
         play()
     }
@@ -238,6 +233,7 @@ public extension MusicPlayer {
             return
         }
         currentIndex = nextIndex
+        resetPlaybackTime()
         setScheduleFile()
         play()
     }
@@ -376,11 +372,6 @@ private extension MusicPlayer {
         }
     }
     
-    /// reset playback time range
-    func resetPlaybackTimeRange() {
-        playbackTimeRange = 0.0...Float(duration ?? 0.0)
-    }
-    
     /// stop playback
     func stop() {
         audioEngine.stop()
@@ -508,6 +499,17 @@ private extension MusicPlayer {
         guard let originalIndex = originalItems.firstIndex(where: { $0.id == currentItem?.id }) else { return }
         items = originalItems
         currentIndex = originalIndex
+    }
+    
+    /// reset playback time
+    func resetPlaybackTime() {
+        cachedSeekBarSeconds = 0
+        currentTime = 0
+    }
+    
+    /// reset playback time range
+    func resetPlaybackTimeRange() {
+        playbackTimeRange = 0.0...Float(duration ?? 0.0)
     }
 }
 
