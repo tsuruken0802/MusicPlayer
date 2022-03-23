@@ -84,6 +84,7 @@ struct MiniPlayer: View {
                     HStack(spacing: 15) {
                         MiniPlayerSongImage(layoutType: layoutType)
                             .cornerRadius(5)
+                            .gesture(DragGesture().onChanged(onChanged(value:)).onEnded(onEnded(value:)))
                         
                         if isShowList {
                             MiniPlayerShowListSongNameView()
@@ -148,14 +149,12 @@ struct MiniPlayer: View {
                         Divider()
                     }
                 }
-                    .gesture(DragGesture().onEnded(onEnded(value:)).onChanged(onChanged(value:)), including: .gesture)
                     .gesture(TapGesture().onEnded {
                         withAnimation(.spring(response: 0.4, dampingFraction: 0.8)) {
-                            if layoutType == .mini {
-                                layoutType = .normalExpanded
-                            }
+                            layoutType = .normalExpanded
                         }
-                    }, including: .all)
+                    }, including: layoutType == .mini ? .all : .none)
+                    .gesture(DragGesture().onChanged(onChanged(value:)).onEnded(onEnded(value:)))
             )
             .cornerRadius(isExpanded ? 20 : 0)
             .offset(y: isExpanded ? draggingOffsetY : miniOffset(bottomSafeArea: geometry.safeAreaInsets.bottom))
