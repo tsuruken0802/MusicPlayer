@@ -194,6 +194,9 @@ public extension MusicPlayer {
         self.originalItems = items
         self.items = items
         self.currentIndex = index
+        if isShuffle {
+            shuffle()
+        }
         setScheduleFile()
         play()
     }
@@ -490,6 +493,7 @@ private extension MusicPlayer {
     }
     
     /// shuffle items
+    /// make currentItem the first element and shuffle the rest
     func shuffle() {
         guard let currentItemId = currentItem?.id else { return }
         var shuffled = items.shuffled()
