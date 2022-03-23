@@ -49,18 +49,10 @@ public final class MusicPlayer: ObservableObject {
     }
     
     /// index of current playing MPMediaItem
-    @Published private(set) var currentIndex: Int = 0 {
-        didSet {
-            resetPlaybackTimeRange()
-        }
-    }
+    @Published private(set) var currentIndex: Int = 0
     
     /// playback items
-    @Published private(set) var items: [MPMediaItem] = [] {
-        didSet {
-            resetPlaybackTimeRange()
-        }
-    }
+    @Published private(set) var items: [MPMediaItem] = []
     private var originalItems: [MPMediaItem] = []
     
     /// true is player is playing
@@ -492,6 +484,7 @@ private extension MusicPlayer {
         shuffled.move(fromOffsets: [currentItemIndex], toOffset: 0)
         items = shuffled
         currentIndex = 0
+        resetPlaybackTimeRange()
     }
     
     /// set original sort
@@ -499,12 +492,14 @@ private extension MusicPlayer {
         guard let originalIndex = originalItems.firstIndex(where: { $0.id == currentItem?.id }) else { return }
         items = originalItems
         currentIndex = originalIndex
+        resetPlaybackTimeRange()
     }
     
     /// reset playback time
     func resetPlaybackTime() {
         cachedSeekBarSeconds = 0
         currentTime = 0
+        resetPlaybackTimeRange()
     }
     
     /// reset playback time range
