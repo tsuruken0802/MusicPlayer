@@ -22,17 +22,6 @@ public final class MusicPlayer: ObservableObject {
         return audioFile != nil
     }
     
-    /// index of current playing MPMediaItem
-    private var currentIndex: Int = 0 {
-        didSet {
-            // 曲が変われば秒数もリセットする
-            cachedSeekBarSeconds = 0
-            currentTime = 0
-            
-            setCurrentItem()
-        }
-    }
-    
     private var currentTimeTimer: Timer?
     
     private var cancellables: Set<AnyCancellable> = []
@@ -44,6 +33,17 @@ public final class MusicPlayer: ObservableObject {
     /// If true, the current Time exceeds the song playback time
     private var isSeekOver: Bool {
         return currentTime >= maxPlaybackTime
+    }
+    
+    /// index of current playing MPMediaItem
+    @Published private(set) var currentIndex: Int = 0 {
+        didSet {
+            // 曲が変われば秒数もリセットする
+            cachedSeekBarSeconds = 0
+            currentTime = 0
+            
+            setCurrentItem()
+        }
     }
     
     /// playback items
@@ -74,11 +74,17 @@ public final class MusicPlayer: ObservableObject {
     
     /// Pitch
     @Published public var pitch: Float = MPConstants.defaultPitchValue
-    @Published public var pitchOptions: MusicEffectRangeOption = .init(minValue: MPConstants.defaultPitchMinValue, maxValue: MPConstants.defaultPitchMaxValue, unit: MPConstants.defaultPitchUnit, defaultValue: MPConstants.defaultPitchValue)
+    @Published public var pitchOptions: MusicEffectRangeOption = .init(minValue: MPConstants.defaultPitchMinValue,
+                                                                       maxValue: MPConstants.defaultPitchMaxValue,
+                                                                       unit: MPConstants.defaultPitchUnit,
+                                                                       defaultValue: MPConstants.defaultPitchValue)
     
     /// Rate
     @Published public var rate: Float = MPConstants.defaultRateValue
-    @Published public var rateOptions: MusicEffectRangeOption = .init(minValue: MPConstants.defaultRateMinValue, maxValue: MPConstants.defaultRateMaxValue, unit: MPConstants.defaultRateUnit, defaultValue: MPConstants.defaultRateValue)
+    @Published public var rateOptions: MusicEffectRangeOption = .init(minValue: MPConstants.defaultRateMinValue,
+                                                                      maxValue: MPConstants.defaultRateMaxValue,
+                                                                      unit: MPConstants.defaultRateUnit,
+                                                                      defaultValue: MPConstants.defaultRateValue)
     
     /// trimming(seconds)
     @Published public var playbackTimeRange: ClosedRange<Float>?
