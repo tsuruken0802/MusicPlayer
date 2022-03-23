@@ -42,11 +42,11 @@
 		036532AF27DDBA2B0077C967 /* MusicPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 036532AB27DDBA2B0077C967 /* MusicPlayer.swift */; };
 		036532B027DDBA2B0077C967 /* MusicEffectRangeOption.swift in Sources */ = {isa = PBXBuildFile; fileRef = 036532AC27DDBA2B0077C967 /* MusicEffectRangeOption.swift */; };
 		037DBBCC27D2538000882D8F /* MiniPlayerPresentation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 037DBBCB27D2538000882D8F /* MiniPlayerPresentation.swift */; };
+		03B0A6C527EB1F5900906767 /* RangeSlider in Frameworks */ = {isa = PBXBuildFile; productRef = 03B0A6C427EB1F5900906767 /* RangeSlider */; };
 		03C0649427D0F605000C1898 /* ArtistListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03C0649327D0F605000C1898 /* ArtistListViewModel.swift */; };
 		03C0649627D0F7D8000C1898 /* ArtistAlbumListScreenView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03C0649527D0F7D8000C1898 /* ArtistAlbumListScreenView.swift */; };
 		03C064A027D0FC12000C1898 /* MPMediaService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03C0649F27D0FC12000C1898 /* MPMediaService.swift */; };
 		03C064A227D0FD67000C1898 /* ArtistAlbumListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03C064A127D0FD67000C1898 /* ArtistAlbumListViewModel.swift */; };
-		03C2A73627E487FF00DB61AC /* RangeSlider in Frameworks */ = {isa = PBXBuildFile; productRef = 03C2A73527E487FF00DB61AC /* RangeSlider */; };
 		03CCD5B127E6EB860084E2E2 /* MusicPlaybackSliderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03CCD5B027E6EB860084E2E2 /* MusicPlaybackSliderView.swift */; };
 		03CCD5B527E714E00084E2E2 /* MusicOptionTrimmingSliderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03CCD5B427E714E00084E2E2 /* MusicOptionTrimmingSliderView.swift */; };
 		03CCD5B727E715E30084E2E2 /* MusicOptionTrimmingSliderViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03CCD5B627E715E30084E2E2 /* MusicOptionTrimmingSliderViewModel.swift */; };
@@ -150,7 +150,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				03C2A73627E487FF00DB61AC /* RangeSlider in Frameworks */,
+				03B0A6C527EB1F5900906767 /* RangeSlider in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -454,7 +454,7 @@
 			);
 			name = music_app;
 			packageProductDependencies = (
-				03C2A73527E487FF00DB61AC /* RangeSlider */,
+				03B0A6C427EB1F5900906767 /* RangeSlider */,
 			);
 			productName = music_app;
 			productReference = 0353AB502775CF95004DD139 /* music_app.app */;
@@ -529,7 +529,7 @@
 			);
 			mainGroup = 0353AB472775CF95004DD139;
 			packageReferences = (
-				03C2A73427E487FF00DB61AC /* XCRemoteSwiftPackageReference "RangeSlider" */,
+				03B0A6C327EB1F5900906767 /* XCRemoteSwiftPackageReference "RangeSlider" */,
 			);
 			productRefGroup = 0353AB512775CF95004DD139 /* Products */;
 			projectDirPath = "";
@@ -980,7 +980,7 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		03C2A73427E487FF00DB61AC /* XCRemoteSwiftPackageReference "RangeSlider" */ = {
+		03B0A6C327EB1F5900906767 /* XCRemoteSwiftPackageReference "RangeSlider" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/TsurumotoKentarou/RangeSlider";
 			requirement = {
@@ -991,9 +991,9 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		03C2A73527E487FF00DB61AC /* RangeSlider */ = {
+		03B0A6C427EB1F5900906767 /* RangeSlider */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 03C2A73427E487FF00DB61AC /* XCRemoteSwiftPackageReference "RangeSlider" */;
+			package = 03B0A6C327EB1F5900906767 /* XCRemoteSwiftPackageReference "RangeSlider" */;
 			productName = RangeSlider;
 		};
 /* End XCSwiftPackageProductDependency section */
