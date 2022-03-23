@@ -205,6 +205,11 @@ public extension MusicPlayer {
             if isRepeat {
                 // restart
                 nextIndex = 0
+                
+                // reshuffle
+                if isShuffle {
+                    items = originalItems.shuffled()
+                }
             }
             else {
                 pause()
@@ -494,6 +499,7 @@ private extension MusicPlayer {
         currentIndex = 0
     }
     
+    /// set original sort
     func setOriginalSort() {
         guard let originalIndex = originalItems.firstIndex(where: { $0.id == currentItem?.id }) else { return }
         items = originalItems
