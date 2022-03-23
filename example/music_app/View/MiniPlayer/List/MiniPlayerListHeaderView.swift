@@ -12,11 +12,11 @@ struct MiniPlayerListHeaderView: View {
     @StateObject var musicPlayer = MusicPlayer.shared
     
     private var shuffleBg: some View {
-        return  musicPlayer.isShuffle ? Color.gray.opacity(0.05).cornerRadius(6) : Color.gray.opacity(0.2).cornerRadius(6)
+        return musicPlayer.isShuffle ? Color.white.opacity(0.4) : Color.clear
     }
     
     private var repeatBg: some View {
-        return  musicPlayer.isRepeat ? Color.gray.opacity(0.05).cornerRadius(6) : Color.gray.opacity(0.2).cornerRadius(6)
+        return  musicPlayer.isRepeat ? Color.white.opacity(0.4) : Color.clear
     }
     
     var body: some View {
@@ -34,7 +34,7 @@ struct MiniPlayerListHeaderView: View {
                     .foregroundColor(.primary)
                     .padding(.horizontal, 4)
                     .padding(.vertical, 6)
-                    .background(shuffleBg)
+                    .background(shuffleBg.cornerRadius(6))
             }
             .padding(.leading)
             
@@ -46,7 +46,7 @@ struct MiniPlayerListHeaderView: View {
                     .foregroundColor(.primary)
                     .padding(.horizontal, 4)
                     .padding(.vertical, 6)
-                    .background(repeatBg)
+                    .background(repeatBg.cornerRadius(6))
             }
         }
     }

@@ -68,6 +68,7 @@ public final class MusicPlayer: ObservableObject {
             resetPlaybackTimeRange()
         }
     }
+    private var originalItems: [MPMediaItem] = []
     
     /// true is player is playing
     @Published private(set) var isPlaying: Bool = false
@@ -141,6 +142,17 @@ public final class MusicPlayer: ObservableObject {
             }
         }
         .store(in: &cancellables)
+        
+        $isShuffle.sink { [weak self] value in
+            guard let self = self else { return }
+            if value {
+                self.shuffle()
+            }
+            else {
+                self.setOriginalSort()
+            }
+        }
+        .store(in: &cancellables)
     }
     
     deinit {
@@ -179,6 +191,7 @@ public extension MusicPlayer {
         if !itemsSafe(items: items, index: index) {
             return
         }
+        self.originalItems = items
         self.items = items
         self.currentIndex = index
         setScheduleFile()
@@ -344,7 +357,7 @@ public extension MusicPlayer {
 @available(iOS 13.0, *)
 private extension MusicPlayer {
     /// update current playback time
-    private func updateCurrentTime() {
+    func updateCurrentTime() {
         if let nodeTime = playerNode.lastRenderTime,
            let playerTime = playerNode.playerTime(forNodeTime: nodeTime) {
             let sampleRate = playerTime.sampleRate
@@ -356,12 +369,12 @@ private extension MusicPlayer {
     }
     
     /// reset playback time range
-    private func resetPlaybackTimeRange() {
+    func resetPlaybackTimeRange() {
         playbackTimeRange = 0.0...Float(duration ?? 0.0)
     }
     
     /// stop playback
-    private func stop() {
+    func stop() {
         audioEngine.stop()
         playerNode.stop()
         isPlaying = false
@@ -372,26 +385,26 @@ private extension MusicPlayer {
     ///   - items: playback list
     ///   - index: index
     /// - Returns: return true if index is safe
-    private func itemsSafe(items: [MPMediaItem]? = nil, index: Int) -> Bool {
+    func itemsSafe(items: [MPMediaItem]? = nil, index: Int) -> Bool {
         let checkItems = items ?? self.items
         return checkItems.indices.contains(index)
     }
     
     /// set audio session
-    private func setAudioSession() {
+    func setAudioSession() {
         let session = AVAudioSession.sharedInstance()
         try! session.setCategory(.playback, mode: .default)
         try! session.setActive(true)
     }
     
     /// set notification
-    private func setNotification() {
+    func setNotification() {
         NotificationCenter.default.addObserver(self, selector: #selector(onInterruption(_:)), name: AVAudioSession.interruptionNotification, object: AVAudioSession.sharedInstance())
         NotificationCenter.default.addObserver(self, selector: #selector(onAudioSessionRouteChanged(_:)), name: AVAudioSession.routeChangeNotification, object: nil)
     }
     
     /// set RemoteCommand
-    private func setRemoteCommand() {
+    func setRemoteCommand() {
         let commandCenter = MPRemoteCommandCenter.shared()
         
         commandCenter.playCommand.isEnabled = true
@@ -425,7 +438,7 @@ private extension MusicPlayer {
     }
     
     /// set nowPlayingInfo
-    private func setNowPlayingInfo() {
+    func setNowPlayingInfo() {
         let center =  MPNowPlayingInfoCenter.default()
         var nowPlayingInfo = center.nowPlayingInfo ?? [String : Any]()
         
@@ -458,7 +471,7 @@ private extension MusicPlayer {
     }
     
     /// set Schedule File
-    private func setScheduleFile() {
+    func setScheduleFile() {
         guard let currentItem = currentItem else { return }
         do {
             audioFile = try AVAudioFile(forReading: currentItem.assetURL!)
@@ -469,6 +482,22 @@ private extension MusicPlayer {
         catch let e {
             print(e.localizedDescription)
         }
+    }
+    
+    /// shuffle items
+    func shuffle() {
+        guard let currentItemId = currentItem?.id else { return }
+        var shuffled = items.shuffled()
+        guard let currentItemIndex = shuffled.firstIndex(where: { $0.id == currentItemId }) else { return }
+        shuffled.move(fromOffsets: [currentItemIndex], toOffset: 0)
+        items = shuffled
+        currentIndex = 0
+    }
+    
+    func setOriginalSort() {
+        guard let originalIndex = originalItems.firstIndex(where: { $0.id == currentItem?.id }) else { return }
+        items = originalItems
+        currentIndex = originalIndex
     }
 }
 
