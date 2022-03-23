@@ -9,7 +9,7 @@ import UIKit
 import MediaPlayer
 
 extension MPMediaItemCollection: Identifiable {
-    public var id: UInt64 { self.persistentID }
+    public var id: MPMediaEntityPersistentID { self.persistentID }
 }
 
 extension MPMediaItemCollection {
@@ -19,7 +19,7 @@ extension MPMediaItemCollection {
 }
 
 extension MPMediaItem: Identifiable {
-    public var id: UInt64 { self.persistentID }
+    public var id: MPMediaEntityPersistentID { self.persistentID }
 }
 
 extension MPMediaItem {

@@ -34,4 +34,8 @@ class MiniPlayerListViewModel: ObservableObject {
         }
         .store(in: &cancellables)
     }
+    
+    func onMove(fromOffsets: IndexSet, toOffset: Int) {
+        musicPlayer.moveItemPosition(fromOffsets: fromOffsets, toOffset: toOffset)
+    }
 }

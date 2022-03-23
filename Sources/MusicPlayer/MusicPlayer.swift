@@ -315,6 +315,16 @@ public extension MusicPlayer {
         currentTimeTimer?.invalidate()
         currentTimeTimer = nil
     }
+    
+    func moveItemPosition(fromOffsets: IndexSet, toOffset: Int) {
+        guard let preId = currentItem?.id else { return }
+        let index = currentIndex+1
+        let prefixItems = items[0 ..< index]
+        var suffixItems = items[index ..< items.count]
+        suffixItems.move(fromOffsets: IndexSet(fromOffsets), toOffset: toOffset)
+        items = Array(prefixItems) + Array(suffixItems)
+        currentIndex = items.firstIndex(where: { $0.id == preId })!
+    }
 }
 
 @available(iOS 13.0, *)
