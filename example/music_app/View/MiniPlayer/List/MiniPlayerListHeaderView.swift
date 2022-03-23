@@ -9,8 +9,14 @@ import SwiftUI
 
 struct MiniPlayerListHeaderView: View {
     
-    private var iconBg: some View {
-        Color.gray.opacity(0.05).cornerRadius(6)
+    @StateObject var musicPlayer = MusicPlayer.shared
+    
+    private var shuffleBg: some View {
+        return  musicPlayer.isShuffle ? Color.gray.opacity(0.05).cornerRadius(6) : Color.gray.opacity(0.2).cornerRadius(6)
+    }
+    
+    private var repeatBg: some View {
+        return  musicPlayer.isRepeat ? Color.gray.opacity(0.05).cornerRadius(6) : Color.gray.opacity(0.2).cornerRadius(6)
     }
     
     var body: some View {
@@ -21,26 +27,26 @@ struct MiniPlayerListHeaderView: View {
             
             Spacer()
             Button {
-                
+                musicPlayer.isShuffle.toggle()
             } label: {
                 Image(systemName: "shuffle")
                     .font(.body)
                     .foregroundColor(.primary)
                     .padding(.horizontal, 4)
                     .padding(.vertical, 6)
-                    .background(iconBg)
+                    .background(shuffleBg)
             }
             .padding(.leading)
             
             Button {
-                
+                musicPlayer.isRepeat.toggle()
             } label: {
                 Image(systemName: "repeat")
                     .font(.body)
                     .foregroundColor(.primary)
                     .padding(.horizontal, 4)
                     .padding(.vertical, 6)
-                    .background(iconBg)
+                    .background(repeatBg)
             }
         }
     }

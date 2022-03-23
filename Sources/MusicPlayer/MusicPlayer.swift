@@ -101,6 +101,12 @@ public final class MusicPlayer: ObservableObject {
         return Float(duration ?? 0.0)
     }
     
+    /// shuffle
+    @Published var isShuffle: Bool = false
+    
+    /// repeat
+    @Published var isRepeat: Bool = false
+    
     private init() {
         setAudioSession()
         setNotification()
@@ -173,7 +179,6 @@ public extension MusicPlayer {
         if !itemsSafe(items: items, index: index) {
             return
         }
-        
         self.items = items
         self.currentIndex = index
         setScheduleFile()
@@ -182,10 +187,16 @@ public extension MusicPlayer {
     
     /// Play next item
     func next() {
-        let nextIndex = currentIndex + 1
+        var nextIndex = currentIndex + 1
         if !itemsSafe(index: nextIndex) {
-            pause()
-            return
+            if isRepeat {
+                // restart
+                nextIndex = 0
+            }
+            else {
+                pause()
+                return
+            }
         }
         currentIndex = nextIndex
         setScheduleFile()
