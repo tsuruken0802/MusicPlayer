@@ -137,7 +137,6 @@ struct MiniPlayer: View {
                         MiniPlayerOptionsView(layoutType: $layoutType)
                         
                         Spacer(minLength: 0)
-                        Spacer(minLength: 0)
                     }
                 }
             }

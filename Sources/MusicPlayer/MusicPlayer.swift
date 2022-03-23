@@ -119,11 +119,11 @@ public final class MusicPlayer: ObservableObject {
             let maxPlaybackTime = value.upperBound
             if self.currentTime < minPlaybackTime {
                 self.currentTime = minPlaybackTime
-                self.setSeek(withPlay: self.isPlaying)
+                self.setSeek()
             }
             else if self.currentTime > maxPlaybackTime {
                 self.currentTime = maxPlaybackTime
-                self.setSeek(withPlay: self.isPlaying)
+                self.setSeek()
             }
         }
         .store(in: &cancellables)
@@ -229,7 +229,7 @@ public extension MusicPlayer {
         // 数秒しか経ってないなら同じ曲を0秒から再生する
         if currentTime >= MusicPlayer.backSameMusicThreshold {
             currentTime = minPlaybackTime
-            setSeek(withPlay: isPlaying)
+            setSeek()
             return
         }
         
@@ -261,7 +261,7 @@ public extension MusicPlayer {
     
     /// change current playback position
     /// - Parameter withPlay: true if playback is performed after the position is changed
-    func setSeek(withPlay: Bool = false) {
+    func setSeek(withPlay: Bool? = nil) {
         // range外の再生時間でseekしようとした場合はrange内に収めてから行うようにする
         if let playbackTimeRange = self.playbackTimeRange {
             if !playbackTimeRange.contains(currentTime) {
@@ -269,6 +269,7 @@ public extension MusicPlayer {
             }
         }
         let time = TimeInterval(currentTime)
+        let isPlay = withPlay ?? isPlaying
         guard let duration = duration else { return }
         guard let audioFile = audioFile else { return }
         if time > duration { return }
@@ -286,14 +287,23 @@ public extension MusicPlayer {
         stop()
     
         playerNode.scheduleSegment(audioFile, startingFrame: startFrame, frameCount: frameCount, at: nil)
-        
-        if withPlay {
+    
+        if isPlay {
             play()
         }
         else {
             // 再生しない場合はnowPlayingInfoの値を更新しておく
             setNowPlayingInfo()
         }
+    }
+    
+    /// change current playback position
+    /// - Parameters:
+    ///   - seconds: move seconds time
+    ///   - withPlay: with play
+    func setSeek(seconds: Float, withPlay: Bool? = nil) {
+        currentTime += seconds
+        setSeek(withPlay: withPlay)
     }
     
     /// increment playback pitch
@@ -440,7 +450,7 @@ private extension MusicPlayer {
         commandCenter.changePlaybackPositionCommand.addTarget { [unowned self] event in
             guard let positionCommandEvent = event as? MPChangePlaybackPositionCommandEvent else { return .commandFailed }
             currentTime = Float(positionCommandEvent.positionTime)
-            setSeek(withPlay: isPlaying)
+            setSeek()
             return .success
         }
     }

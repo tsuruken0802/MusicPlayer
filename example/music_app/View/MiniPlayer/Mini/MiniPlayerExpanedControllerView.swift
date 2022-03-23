@@ -11,52 +11,77 @@ struct MiniPlayerExpanedControllerView: View {
     @StateObject private var musicPlayer = MusicPlayer.shared
     
     // playback icon size
-    private let playbackIconSize: CGFloat = 40
+    private let playbackIconSize: CGFloat = 35
     
-    private var playAndPauseImage: Image {
-        return Image(systemName: musicPlayer.isPlaying ? "pause.fill" : "play.fill")
+    // seek seconds
+    private let seekSeconds: Float = 5
+    
+    private var playAndPauseImage: some View {
+        return image(name: musicPlayer.isPlaying ? "pause.fill" : "play.fill")
+    }
+    
+    private var spacer: some View {
+        return Spacer(minLength: 0)
+    }
+    
+    private func image(name: String) -> some View {
+        Image(systemName: name)
+            .resizable()
+            .scaledToFit()
+            .frame(width: playbackIconSize, height: playbackIconSize)
+            .foregroundColor(Color.primary)
     }
     
     var body: some View {
         HStack {
-            Spacer()
+            spacer
+            
             Button {
-                musicPlayer.back()
+                musicPlayer.setSeek(seconds: -seekSeconds)
             } label: {
-                Image(systemName: "backward.fill")
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: playbackIconSize, height: playbackIconSize)
-                    .foregroundColor(Color.primary)
-                    .padding()
+                image(name: "gobackward.\(Int(seekSeconds))")
             }
-            Spacer()
-            Button {
-                if musicPlayer.isPlaying {
-                    musicPlayer.pause()
+            
+            spacer
+            
+            Group {
+                Button {
+                    musicPlayer.back()
+                } label: {
+                    image(name: "backward.fill")
                 }
-                else {
-                    musicPlayer.play()
+                
+                spacer
+                
+                Button {
+                    if musicPlayer.isPlaying {
+                        musicPlayer.pause()
+                    }
+                    else {
+                        musicPlayer.play()
+                    }
+                } label: {
+                    playAndPauseImage
                 }
-            } label: {
-                playAndPauseImage
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: playbackIconSize, height: playbackIconSize)
-                    .foregroundColor(Color.primary)
+                
+                spacer
+                
+                Button {
+                    musicPlayer.next()
+                } label: {
+                    image(name: "forward.fill")
+                }
             }
-            Spacer()
+            
+            spacer
+            
             Button {
-                musicPlayer.next()
+                musicPlayer.setSeek(seconds: seekSeconds)
             } label: {
-                Image(systemName: "forward.fill")
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: playbackIconSize, height: playbackIconSize)
-                    .foregroundColor(Color.primary)
-                    .padding()
+                image(name: "goforward.\(Int(seekSeconds))")
             }
-            Spacer()
+            
+            spacer
         }
     }
 }

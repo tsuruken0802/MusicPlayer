@@ -41,7 +41,7 @@ struct MusicPlaybackSliderView: View {
                     }
                     else {
                         musicPlayer.startCurrentTimeRedering()
-                        musicPlayer.setSeek(withPlay: musicPlayer.isPlaying)
+                        musicPlayer.setSeek()
                     }
                 }
                 
