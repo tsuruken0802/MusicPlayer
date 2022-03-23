@@ -35,39 +35,42 @@ public final class MusicPlayer: ObservableObject {
         return currentTime >= maxPlaybackTime
     }
     
+    /// item duration
+    public var duration: TimeInterval? {
+        return currentItem?.playbackDuration
+    }
+    
+    /// current playback item
+    public var currentItem: MPMediaItem? {
+        if !items.indices.contains(currentIndex) {
+            return nil
+        }
+        return items[currentIndex]
+    }
+    
     /// index of current playing MPMediaItem
     @Published private(set) var currentIndex: Int = 0 {
         didSet {
+            if oldValue == currentIndex {
+                return
+            }
             // 曲が変われば秒数もリセットする
             cachedSeekBarSeconds = 0
             currentTime = 0
             
-            setCurrentItem()
+            resetPlaybackTimeRange()
         }
     }
     
     /// playback items
     @Published private(set) var items: [MPMediaItem] = [] {
         didSet {
-            setCurrentItem()
-        }
-    }
-    
-    /// current playback item
-    @Published private(set) var currentItem: MPMediaItem? {
-        didSet {
-            // reset trimming
-            playbackTimeRange = 0.0...Float(duration ?? 0.0)
+            resetPlaybackTimeRange()
         }
     }
     
     /// true is player is playing
     @Published private(set) var isPlaying: Bool = false
-    
-    /// item duration
-    public var duration: TimeInterval? {
-        return currentItem?.playbackDuration
-    }
     
     /// current playback time (seconed)
     @Published public var currentTime: Float = 0
@@ -341,6 +344,11 @@ private extension MusicPlayer {
         }
     }
     
+    /// reset playback time range
+    private func resetPlaybackTimeRange() {
+        playbackTimeRange = 0.0...Float(duration ?? 0.0)
+    }
+    
     /// stop playback
     private func stop() {
         audioEngine.stop()
@@ -356,13 +364,6 @@ private extension MusicPlayer {
     private func itemsSafe(items: [MPMediaItem]? = nil, index: Int) -> Bool {
         let checkItems = items ?? self.items
         return checkItems.indices.contains(index)
-    }
-    
-    /// set currentItem
-    private func setCurrentItem() {
-        if itemsSafe(index: currentIndex) {
-            currentItem = items[currentIndex]
-        }
     }
     
     /// set audio session
