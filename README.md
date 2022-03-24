@@ -13,13 +13,15 @@ It plays music in Apple Music in iOS device.
 * Change playback rate
 * Change playback pitch
 * Trimming playback
+* Shuffle items
+* Repeat items
 * Change playback current time(seek bar also supported)
 * Play music in background
 * Operate playback in off screen(Using MPRemoteCommandCenter)
 * Playback and pause process due to interruptions from phone calls, earphones, etc.
 
 ## Demo
-![demo](https://user-images.githubusercontent.com/15685633/157622495-8dda5fd0-89b5-4743-ab83-95cf2e7a66d0.gif)
+![demo](https://user-images.githubusercontent.com/15685633/159834456-eaf6171b-6d63-4715-b7ca-1605439497e2.gif)
 
 ## Requirement
 iOS 13 or later.
@@ -51,7 +53,6 @@ MusicPlayer.shared.next()
 ``` swift
 MusicPlayer.shared.back()
 ```
-
 
 ### Change playback rate
 
@@ -97,10 +98,30 @@ MusicPlayer.shared.decrementPitch()
 
 You can trim playback.
 
-Below sample is code that trim from a minute to three minutes.
+Below code that trim from a minute to three minutes.
 
 ``` swift
 MusicPlayer.shared.playbackTimeRange = 60...180
+```
+
+### Shuffle items
+
+You can shuffle items.
+
+Below code that change shuffle flg.
+
+``` swift
+MusicPlayer.shared.isShuffle.toggle()
+```
+
+### Repeat items
+
+You can repeat items.
+
+Below code that change repeat flg.
+
+``` swift
+MusicPlayer.shared.isRepeat.toggle()
 ```
 
 ### Change playback current time
