@@ -190,7 +190,7 @@ public extension MusicPlayer {
     /// Play by id
     /// - Parameter id: item id
     func play(id: MPMediaEntityPersistentID) {
-        guard let index = items.firstIndex(where: { $0.id == id }) else { return }
+        guard let index = items.firstIndex(where: { $0.persistentID == id }) else { return }
         if !itemsSafe(items: items, index: index) {
             return
         }
@@ -367,13 +367,13 @@ public extension MusicPlayer {
     ///   - fromOffsets: from item offsets
     ///   - toOffset: to item offset
     func moveItem(fromOffsets: IndexSet, toOffset: Int) {
-        guard let preId = currentItem?.id else { return }
+        guard let preId = currentItem?.persistentID else { return }
         let index = currentIndex+1
         let prefixItems = items[0 ..< index]
         var suffixItems = items[index ..< items.count]
         suffixItems.move(fromOffsets: IndexSet(fromOffsets), toOffset: toOffset)
         items = Array(prefixItems) + Array(suffixItems)
-        currentIndex = items.firstIndex(where: { $0.id == preId })!
+        currentIndex = items.firstIndex(where: { $0.persistentID == preId })!
     }
 }
 
