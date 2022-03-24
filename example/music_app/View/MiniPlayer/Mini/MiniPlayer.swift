@@ -21,7 +21,7 @@ enum MiniPlayerLayoutType {
         case .mini:
             return 50
         case .normalExpanded:
-            return UIScreen.main.bounds.height / 2.5
+            return UIScreen.main.bounds.height / 2.6
         case .expandedAndShowList:
             return 50
         }
