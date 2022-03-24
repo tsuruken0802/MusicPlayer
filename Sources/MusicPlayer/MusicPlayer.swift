@@ -95,7 +95,6 @@ public final class MusicPlayer: ObservableObject {
     @Published public var isRepeat: Bool = false
     
     private init() {
-        setAudioSession()
         setNotification()
         audioEngine.attach(playerNode)
         audioEngine.attach(pitchControl)
@@ -407,13 +406,6 @@ private extension MusicPlayer {
     func itemsSafe(items: [MPMediaItem]? = nil, index: Int) -> Bool {
         let checkItems = items ?? self.items
         return checkItems.indices.contains(index)
-    }
-    
-    /// set audio session
-    func setAudioSession() {
-        let session = AVAudioSession.sharedInstance()
-        try! session.setCategory(.playback, mode: .default)
-        try! session.setActive(true)
     }
     
     /// set notification
