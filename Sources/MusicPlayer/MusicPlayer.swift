@@ -2,6 +2,7 @@ import Combine
 import Foundation
 import AVFAudio
 import MediaPlayer
+import SwiftUI
 
 @available(iOS 13.0, *)
 public final class MusicPlayer: ObservableObject {
