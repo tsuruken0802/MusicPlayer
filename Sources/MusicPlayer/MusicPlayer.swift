@@ -369,10 +369,10 @@ public extension MusicPlayer {
     func moveItem(fromOffsets: IndexSet, toOffset: Int) {
         guard let preId = currentItem?.persistentID else { return }
         let index = currentIndex+1
-        let prefixItems = items[0 ..< index]
-        var suffixItems = items[index ..< items.count]
+        let prefixItems = Array(items[0 ..< index])
+        var suffixItems = Array(items[index ..< items.count])
         suffixItems.move(fromOffsets: IndexSet(fromOffsets), toOffset: toOffset)
-        items = Array(prefixItems) + Array(suffixItems)
+        items = prefixItems + suffixItems
         currentIndex = items.firstIndex(where: { $0.persistentID == preId })!
     }
 }
