@@ -84,7 +84,7 @@ struct MiniPlayer: View {
                     HStack(spacing: 15) {
                         MiniPlayerSongImage(layoutType: layoutType)
                             .cornerRadius(5)
-                            .gesture(DragGesture().onChanged(onChanged(value:)).onEnded(onEnded(value:)))
+                            .allowsHitTesting(false)
                         
                         if isShowList {
                             MiniPlayerShowListSongNameView()

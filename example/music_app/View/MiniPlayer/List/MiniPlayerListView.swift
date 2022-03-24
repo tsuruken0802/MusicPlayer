@@ -17,6 +17,7 @@ struct MiniPlayerListView: View {
             List {
                 ForEach(viewModel.currentItems) { (item) in
                     MiniPlayerListItemView(item: item)
+                        .contentShape(Rectangle())
                         .listRowBackground(Color.clear)
                         .onTapGesture {
                             viewModel.onTapItem(item: item)
