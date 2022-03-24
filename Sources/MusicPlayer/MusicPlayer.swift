@@ -50,7 +50,7 @@ public final class MusicPlayer: ObservableObject {
     }
     
     /// index of current playing MPMediaItem
-    @Published private(set) var currentIndex: Int = 0
+    @Published private(set) public var currentIndex: Int = 0
     
     /// playback items
     @Published private(set) var items: [MPMediaItem] = []
