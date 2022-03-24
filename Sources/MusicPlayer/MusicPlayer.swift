@@ -89,10 +89,10 @@ public final class MusicPlayer: ObservableObject {
     }
     
     /// shuffle
-    @Published var isShuffle: Bool = false
+    @Published public var isShuffle: Bool = false
     
     /// repeat
-    @Published var isRepeat: Bool = false
+    @Published public var isRepeat: Bool = false
     
     private init() {
         setAudioSession()
