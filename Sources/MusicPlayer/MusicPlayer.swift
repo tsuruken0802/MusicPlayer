@@ -57,7 +57,7 @@ public final class MusicPlayer: ObservableObject {
     private var originalItems: [MPMediaItem] = []
     
     /// true is player is playing
-    @Published private(set) var isPlaying: Bool = false
+    @Published private(set) public var isPlaying: Bool = false
     
     /// current playback time (seconed)
     @Published public var currentTime: Float = 0
