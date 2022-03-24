@@ -505,9 +505,9 @@ private extension MusicPlayer {
     /// shuffle items
     /// make currentItem the first element and shuffle the rest
     func shuffle() {
-        guard let currentItemId = currentItem?.id else { return }
+        guard let currentItemId = currentItem?.persistentID else { return }
         var shuffled = items.shuffled()
-        guard let currentItemIndex = shuffled.firstIndex(where: { $0.id == currentItemId }) else { return }
+        guard let currentItemIndex = shuffled.firstIndex(where: { $0.persistentID == currentItemId }) else { return }
         shuffled.move(fromOffsets: [currentItemIndex], toOffset: 0)
         items = shuffled
         currentIndex = 0
@@ -516,7 +516,7 @@ private extension MusicPlayer {
     
     /// set original sort
     func setOriginalSort() {
-        guard let originalIndex = originalItems.firstIndex(where: { $0.id == currentItem?.id }) else { return }
+        guard let originalIndex = originalItems.firstIndex(where: { $0.persistentID == currentItem?.id }) else { return }
         items = originalItems
         currentIndex = originalIndex
         resetPlaybackTimeRange()
