@@ -517,7 +517,7 @@ private extension MusicPlayer {
     
     /// set original sort
     func setOriginalSort() {
-        guard let originalIndex = originalItems.firstIndex(where: { $0.persistentID == currentItem?.id }) else { return }
+        guard let originalIndex = originalItems.firstIndex(where: { $0.persistentID == currentItem?.persistentID }) else { return }
         items = originalItems
         currentIndex = originalIndex
         resetPlaybackTimeRange()
