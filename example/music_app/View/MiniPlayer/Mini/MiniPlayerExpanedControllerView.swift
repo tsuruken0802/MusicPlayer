@@ -37,7 +37,7 @@ struct MiniPlayerExpanedControllerView: View {
             spacer
             
             Button {
-                musicPlayer.setSeek(seconds: -seekSeconds)
+                musicPlayer.setSeek(addingSeconds: -seekSeconds)
             } label: {
                 image(name: "gobackward.\(Int(seekSeconds))")
             }
@@ -76,7 +76,7 @@ struct MiniPlayerExpanedControllerView: View {
             spacer
             
             Button {
-                musicPlayer.setSeek(seconds: seekSeconds)
+                musicPlayer.setSeek(addingSeconds: seekSeconds)
             } label: {
                 image(name: "goforward.\(Int(seekSeconds))")
             }

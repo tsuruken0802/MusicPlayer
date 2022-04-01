@@ -16,7 +16,20 @@ struct MiniPlayerListHeaderView: View {
     }
     
     private var repeatBg: some View {
-        return  musicPlayer.isRepeat ? Color.white.opacity(0.4) : Color.clear
+        return musicPlayer.repeatType != .none ? Color.white.opacity(0.4) : Color.clear
+    }
+    
+    private var imageName: String {
+        switch MusicPlayer.shared.repeatType {
+        case .list:
+            return "repeat"
+            
+        case .one:
+            return "repeat.1"
+            
+        case .none:
+            return "repeat"
+        }
     }
     
     var body: some View {
@@ -39,9 +52,9 @@ struct MiniPlayerListHeaderView: View {
             .padding(.leading)
             
             Button {
-                musicPlayer.isRepeat.toggle()
+                MPMusicPlayerRepeatService.next()
             } label: {
-                Image(systemName: "repeat")
+                Image(systemName: imageName)
                     .font(.body)
                     .foregroundColor(.primary)
                     .padding(.horizontal, 4)

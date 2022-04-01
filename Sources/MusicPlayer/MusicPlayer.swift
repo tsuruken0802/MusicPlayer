@@ -92,7 +92,7 @@ public final class MusicPlayer: ObservableObject {
     @Published public var isShuffle: Bool = false
     
     /// repeat
-    @Published public var isRepeat: Bool = false
+    @Published public var repeatType: MPRepeatType = .none
     
     private init() {
         setNotification()
@@ -203,17 +203,24 @@ public extension MusicPlayer {
     /// Play next item
     func next() {
         var nextIndex = currentIndex + 1
-        if !itemsSafe(index: nextIndex) {
-            if isRepeat {
-                // restart
+        let isSafe = itemsSafe(index: nextIndex)
+        switch repeatType {
+        case .list:
+            // restart
+            if isSafe {
                 nextIndex = 0
-                
-                // reshuffle
-                if isShuffle {
-                    items = originalItems.shuffled()
-                }
             }
-            else {
+            // reshuffle
+            if isShuffle {
+                items = originalItems.shuffled()
+            }
+        case .one:
+            if !isSafe {
+                setSeek(seconds: 0)
+                return
+            }
+        case .none:
+            if !isSafe {
                 pause()
                 return
             }
@@ -228,8 +235,7 @@ public extension MusicPlayer {
     func back() {
         // 数秒しか経ってないなら同じ曲を0秒から再生する
         if currentTime >= MusicPlayer.backSameMusicThreshold {
-            currentTime = minPlaybackTime
-            setSeek()
+            setSeek(seconds: minPlaybackTime)
             return
         }
         
@@ -302,7 +308,16 @@ public extension MusicPlayer {
     ///   - seconds: move seconds time
     ///   - withPlay: with play
     func setSeek(seconds: Float, withPlay: Bool? = nil) {
-        currentTime += seconds
+        currentTime = seconds
+        setSeek(withPlay: withPlay)
+    }
+    
+    /// change current playback position
+    /// - Parameters:
+    ///   - addingSeconds: adding seconds time
+    ///   - withPlay: with play
+    func setSeek(addingSeconds: Float, withPlay: Bool? = nil) {
+        currentTime += addingSeconds
         setSeek(withPlay: withPlay)
     }
     
@@ -534,7 +549,12 @@ private extension MusicPlayer {
     /// current time timer handler
     @objc private func onUpdateCurrentTime() {
         if isSeekOver {
-            next()
+            if repeatType == .one {
+                setSeek(seconds: 0)
+            }
+            else {
+                next()
+            }
             return
         }
         updateCurrentTime()
