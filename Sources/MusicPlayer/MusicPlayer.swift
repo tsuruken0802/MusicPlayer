@@ -31,6 +31,9 @@ public final class MusicPlayer: ObservableObject {
     /// value is seconds
     private static let backSameMusicThreshold: Float = 2.5
     
+    /// Current time timer schedule time
+    private static let currentTimeTimerScheduleTime: Float = 0.4
+    
     /// If true, the current Time exceeds the song playback time
     private var isSeekOver: Bool {
         return currentTime >= maxPlaybackTime
@@ -109,6 +112,7 @@ public final class MusicPlayer: ObservableObject {
         $rate.sink { [weak self] value in
             guard let self = self else { return }
             self.pitchControl.rate = MusicPlayerSerivce.enableRateValue(value: value)
+            self.startCurrentTimeRedering(currentRate: value)
         }
         .store(in: &cancellables)
         
@@ -364,11 +368,15 @@ public extension MusicPlayer {
     }
     
     /// set timer
-    func startCurrentTimeRedering() {
+    /// currentRate: current playback rate
+    func startCurrentTimeRedering(currentRate: Float? = nil) {
         if currentTimeTimer?.isValid == true {
-            return
+            stopCurrentTimeRendering()
         }
-        currentTimeTimer = Timer.scheduledTimer(timeInterval: 0.5, target: self, selector: #selector(self.onUpdateCurrentTime), userInfo: nil, repeats: true)
+        let rate = currentRate ?? rate
+        let valueRate = rate / MPConstants.defaultRateValue
+        let value = MusicPlayer.currentTimeTimerScheduleTime / valueRate
+        currentTimeTimer = Timer.scheduledTimer(timeInterval: TimeInterval(value), target: self, selector: #selector(self.onUpdateCurrentTime), userInfo: nil, repeats: true)
     }
     
     /// stop timer
