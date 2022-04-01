@@ -121,10 +121,19 @@ MusicPlayer.shared.isShuffle.toggle()
 
 You can repeat items.
 
-Below code that change repeat flg.
+Below code that change repeat type.
 
 ``` swift
-MusicPlayer.shared.isRepeat.toggle()
+switch MusicPlayer.shared.repeatType {
+case .list:
+    MusicPlayer.shared.repeatType = .one
+
+case .one:
+    MusicPlayer.shared.repeatType = .none
+
+case .none:
+    MusicPlayer.shared.repeatType = .list
+}
 ```
 
 ### Change playback current time
