@@ -32,7 +32,7 @@ public final class MusicPlayer: ObservableObject {
     private static let backSameMusicThreshold: Float = 2.5
     
     /// Current time timer schedule time
-    private static let currentTimeTimerScheduleTime: Float = 0.4
+    private static let currentTimeTimerScheduleTime: Float = 0.5
     
     /// If true, the current Time exceeds the song playback time
     private var isSeekOver: Bool {
