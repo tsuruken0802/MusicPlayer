@@ -211,7 +211,7 @@ public extension MusicPlayer {
         switch repeatType {
         case .list:
             // restart
-            if isSafe {
+            if !isSafe {
                 nextIndex = 0
             }
             // reshuffle
