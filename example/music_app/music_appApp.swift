@@ -24,6 +24,21 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         MPMediaLibrary.requestAuthorization { _ in
         }
         UIApplication.shared.beginReceivingRemoteControlEvents()
+        setAudioSession()
         return true
+    }
+}
+
+private extension AppDelegate {
+    /// set audio session
+    func setAudioSession() {
+        let session = AVAudioSession.sharedInstance()
+        do {
+            try session.setCategory(.playback, mode: .default)
+            try session.setActive(true)
+        }
+        catch let e {
+            print(e.localizedDescription)
+        }
     }
 }
