@@ -327,18 +327,24 @@ public extension MusicPlayer {
     
     /// increment playback pitch
     func incrementPitch() {
+        pitch = incrementedPitch()
+    }
+    func incrementedPitch() -> Float {
         if pitch >= pitchOptions.maxValue {
-            return
+            return pitch
         }
-        pitch += pitchOptions.unit
+        return pitch + pitchOptions.unit
     }
     
     /// decrement playback pitch
     func decrementPitch() {
+        pitch = decrementedPitch()
+    }
+    func decrementedPitch() -> Float {
         if pitch <= pitchOptions.minValue {
-            return
+            return pitch
         }
-        pitch -= pitchOptions.unit
+        return pitch - pitchOptions.unit
     }
     
     /// reset playback pitch
@@ -348,18 +354,24 @@ public extension MusicPlayer {
     
     /// increment playback rate
     func incrementRate() {
+        rate = incrementedRate()
+    }
+    func incrementedRate() -> Float {
         if rate >= rateOptions.maxValue {
-            return
+            return rate
         }
-        rate += rateOptions.unit
+        return rate + rateOptions.unit
     }
     
     /// decrement playback rate
     func decrementRate() {
+        rate = decrementedRate()
+    }
+    func decrementedRate() -> Float {
         if rate <= rateOptions.minValue {
-            return
+            return rate
         }
-        rate -= rateOptions.unit
+        return rate - rateOptions.unit
     }
     
     /// reset playback rate
