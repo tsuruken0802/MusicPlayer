@@ -329,22 +329,24 @@ public extension MusicPlayer {
     func incrementPitch() {
         pitch = incrementedPitch()
     }
-    func incrementedPitch() -> Float {
-        if pitch >= pitchOptions.maxValue {
-            return pitch
+    func incrementedPitch(startPitch: Float? = nil) -> Float {
+        let startPitch = startPitch ?? pitch
+        if startPitch >= pitchOptions.maxValue {
+            return startPitch
         }
-        return pitch + pitchOptions.unit
+        return startPitch + pitchOptions.unit
     }
     
     /// decrement playback pitch
     func decrementPitch() {
         pitch = decrementedPitch()
     }
-    func decrementedPitch() -> Float {
-        if pitch <= pitchOptions.minValue {
-            return pitch
+    func decrementedPitch(startRate: Float? = nil) -> Float {
+        let startRate = startRate ?? rate
+        if startRate <= pitchOptions.minValue {
+            return startRate
         }
-        return pitch - pitchOptions.unit
+        return startRate - pitchOptions.unit
     }
     
     /// reset playback pitch
