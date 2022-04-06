@@ -11,7 +11,7 @@ import MediaPlayer
 struct SongListScreenView: View {
     @StateObject var viewModel: SongListViewModel
     
-    init(items: [MPMediaItem]) {
+    init(items: [MPSongItem]) {
         _viewModel = StateObject(wrappedValue: SongListViewModel(items: items))
     }
     

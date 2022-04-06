@@ -9,10 +9,11 @@ import Foundation
 import MediaPlayer
 
 class MediaCollectionListViewModel: ObservableObject {
-    @Published var mediaList: [MPMediaItem] = []
+    @Published var mediaList: [MPSongItem] = []
     
     init(artistId: MPMediaEntityPersistentID) {
-        self.mediaList = MPMediaService.getSongs(artistPersistentID: artistId)
+        let items = MPMediaService.getSongs(artistPersistentID: artistId)
+        self.mediaList = items.map ({ MPSongItem(item: $0) })
     }
 }
 

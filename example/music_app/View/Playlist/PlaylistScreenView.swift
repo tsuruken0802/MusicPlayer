@@ -21,7 +21,8 @@ struct PlaylistScreenView: View {
                 List {
                     ForEach(viewModel.playlists) { (playlist) in
                         Button(action: {
-                            songListNavi.destination = SongListScreenView(items: playlist.items)
+                            let songItems = playlist.items.map({ MPSongItem(item: $0) })
+                            songListNavi.destination = SongListScreenView(items: songItems)
                         }, label: {
                             HStack {
                                 if let image = playlist.representativeItem?.artwork?.image(at: CGSize(width: imageSize, height: imageSize)) {

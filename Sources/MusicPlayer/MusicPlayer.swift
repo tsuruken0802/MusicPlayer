@@ -41,11 +41,11 @@ public final class MusicPlayer: ObservableObject {
     
     /// item duration
     public var duration: TimeInterval? {
-        return currentItem?.playbackDuration
+        return currentItem?.duration
     }
     
     /// current playback item
-    public var currentItem: MPMediaItem? {
+    public var currentItem: MPSongItem? {
         if !items.indices.contains(currentIndex) {
             return nil
         }
@@ -56,13 +56,13 @@ public final class MusicPlayer: ObservableObject {
     @Published private(set) public var currentIndex: Int = 0
     
     /// playback items
-    @Published private(set) public var items: [MPMediaItem] = []
-    private var originalItems: [MPMediaItem] = []
+    @Published private(set) public var items: [MPSongItem] = []
+    private var originalItems: [MPSongItem] = []
     
     /// true is player is playing
     @Published private(set) public var isPlaying: Bool = false
     
-    /// current playback time (seconed)
+    /// current playback time (seconds)
     @Published public var currentTime: Float = 0
     
     /// Pitch
@@ -176,7 +176,7 @@ public extension MusicPlayer {
     /// - Parameters:
     ///   - items: playback items
     ///   - index: item index
-    func play(items: [MPMediaItem], index: Int) {
+    func play(items: [MPSongItem], index: Int) {
         if !itemsSafe(items: items, index: index) {
             return
         }
@@ -194,7 +194,7 @@ public extension MusicPlayer {
     /// Play by id
     /// - Parameter id: item id
     func play(id: MPMediaEntityPersistentID) {
-        guard let index = items.firstIndex(where: { $0.persistentID == id }) else { return }
+        guard let index = items.firstIndex(where: { $0.id == id }) else { return }
         if !itemsSafe(items: items, index: index) {
             return
         }
@@ -406,13 +406,13 @@ public extension MusicPlayer {
     ///   - fromOffsets: from item offsets
     ///   - toOffset: to item offset
     func moveItem(fromOffsets: IndexSet, toOffset: Int) {
-        guard let preId = currentItem?.persistentID else { return }
+        guard let preId = currentItem?.id else { return }
         let index = currentIndex+1
         let prefixItems = Array(items[0 ..< index])
         var suffixItems = Array(items[index ..< items.count])
         suffixItems.move(fromOffsets: IndexSet(fromOffsets), toOffset: toOffset)
         items = prefixItems + suffixItems
-        currentIndex = items.firstIndex(where: { $0.persistentID == preId })!
+        currentIndex = items.firstIndex(where: { $0.id == preId })!
     }
 }
 
@@ -442,7 +442,7 @@ private extension MusicPlayer {
     ///   - items: playback list
     ///   - index: index
     /// - Returns: return true if index is safe
-    func itemsSafe(items: [MPMediaItem]? = nil, index: Int) -> Bool {
+    func itemsSafe(items: [MPSongItem]? = nil, index: Int) -> Bool {
         let checkItems = items ?? self.items
         return checkItems.indices.contains(index)
     }
@@ -524,7 +524,7 @@ private extension MusicPlayer {
     func setScheduleFile() {
         guard let currentItem = currentItem else { return }
         do {
-            audioFile = try AVAudioFile(forReading: currentItem.assetURL!)
+            audioFile = try AVAudioFile(forReading: currentItem.item.assetURL!)
             audioEngine.connect(playerNode, to: pitchControl, format: nil)
             audioEngine.connect(pitchControl, to: audioEngine.mainMixerNode, format: nil)
             playerNode.scheduleFile(audioFile!, at: nil)
@@ -537,9 +537,9 @@ private extension MusicPlayer {
     /// shuffle items
     /// make currentItem the first element and shuffle the rest
     func shuffle() {
-        guard let currentItemId = currentItem?.persistentID else { return }
+        guard let currentItemId = currentItem?.id else { return }
         var shuffled = items.shuffled()
-        guard let currentItemIndex = shuffled.firstIndex(where: { $0.persistentID == currentItemId }) else { return }
+        guard let currentItemIndex = shuffled.firstIndex(where: { $0.id == currentItemId }) else { return }
         shuffled.move(fromOffsets: [currentItemIndex], toOffset: 0)
         items = shuffled
         currentIndex = 0
@@ -548,7 +548,7 @@ private extension MusicPlayer {
     
     /// set original sort
     func setOriginalSort() {
-        guard let originalIndex = originalItems.firstIndex(where: { $0.persistentID == currentItem?.persistentID }) else { return }
+        guard let originalIndex = originalItems.firstIndex(where: { $0.id == currentItem?.id }) else { return }
         items = originalItems
         currentIndex = originalIndex
         resetPlaybackTimeRange()
