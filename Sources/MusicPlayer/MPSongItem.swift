@@ -39,6 +39,10 @@ public class MPSongItem {
     
     public var artwork: MPMediaItemArtwork? { item.artwork }
     
+    public func image(size: CGFloat) -> UIImage? {
+        return item.artwork?.image(at: CGSize(width: size, height: size))
+    }
+    
     public init(item: MPMediaItem, effect: MPSongItemEffect? = nil, trimming: MPSongItemTrimming? = nil) {
         self.item = item
         self.effect = effect
