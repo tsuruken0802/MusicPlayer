@@ -34,7 +34,8 @@ iOS 13 or later.
 ### Play music
 
 ``` swift
-// songs are MPMediaItem's list
+// songs are MPSongItem's list
+// MPSongItem is song data that contains MPMediaItem, effect, triming, and so on.
 // index is the index of music playback
 MusicPlayer.shared.play(items: songs, index: index)
 ```
