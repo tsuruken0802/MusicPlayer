@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct AllSongListScreenView: View {
-    let songs = MPMediaService.getAllSongs().map({ MPSongItem(item: $0) })
+    let songs: [MPSongItem]
     
     var body: some View {
         VStack {
@@ -24,6 +24,6 @@ struct AllSongListScreenView: View {
 
 struct AllSongListScreenView_Previews: PreviewProvider {
     static var previews: some View {
-        AllSongListScreenView()
+        AllSongListScreenView(songs: [])
     }
 }

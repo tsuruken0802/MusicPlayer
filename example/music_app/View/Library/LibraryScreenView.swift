@@ -56,9 +56,27 @@ struct LibraryScreenView: View {
                         .frame(width: iconWrapSize)
                         
                         Button(action: {
-                            songsNavi.destination = AllSongListScreenView()
+                            let allSongs = MPMediaService.getAllSongs().map({ MPSongItem(item: $0) })
+                            songsNavi.destination = AllSongListScreenView(songs: allSongs)
                         }, label: {
                             NavigationLink("曲", destination: songsNavi.destination, isActive: $songsNavi.activeNavigation)
+                                .font(.title2)
+                        })
+                    }
+                    
+                    HStack {
+                        HStack {
+                            Image(systemName: "music.note")
+                        }
+                        .frame(width: iconWrapSize)
+                        
+                        Button(action: {
+                            let upRate = MusicPlayer.shared.incrementedRate(startRate: MPConstants.defaultRateValue)
+                            let upPitch = MusicPlayer.shared.incrementedPitch(startPitch: MPConstants.defaultPitchValue)
+                            let allSongs = MPMediaService.getAllSongs().map({ MPSongItem(item: $0, effect: .init(rate: upRate, pitch: upPitch)) })
+                            songsNavi.destination = AllSongListScreenView(songs: allSongs)
+                        }, label: {
+                            NavigationLink("曲(up rate)", destination: songsNavi.destination, isActive: $songsNavi.activeNavigation)
                                 .font(.title2)
                         })
                     }

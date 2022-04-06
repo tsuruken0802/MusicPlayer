@@ -160,6 +160,9 @@ public extension MusicPlayer {
         if isSeekOver || !isEnableAudio {
             return
         }
+        
+        setMusicEffect(effect: currentItem?.effect, trimming: currentItem?.trimming)
+        
         do {
             try audioEngine.start()
             playerNode.play()
@@ -418,6 +421,20 @@ public extension MusicPlayer {
 
 @available(iOS 13.0, *)
 private extension MusicPlayer {
+    /// set music effect
+    /// - Parameters:
+    ///   - effect: effect
+    ///   - trimming: trimming effect
+    func setMusicEffect(effect: MPSongItemEffect?, trimming: MPSongItemTrimming?) {
+        if let effect = effect {
+            rate = effect.rate
+            pitch = effect.pitch
+        }
+        if let trimming = trimming {
+            playbackTimeRange = trimming.trimming
+        }
+    }
+    
     /// update current playback time
     func updateCurrentTime() {
         if let nodeTime = playerNode.lastRenderTime,

@@ -14,7 +14,7 @@ public class MPSongItem {
     
     public let effect: MPSongItemEffect?
     
-    public let trimming: ClosedRange<Float>?
+    public let trimming: MPSongItemTrimming?
     
     public var duration: TimeInterval { item.playbackDuration }
     
@@ -24,7 +24,7 @@ public class MPSongItem {
     
     public var artwork: MPMediaItemArtwork? { item.artwork }
     
-    init(item: MPMediaItem, effect: MPSongItemEffect? = nil, trimming: ClosedRange<Float>? = nil) {
+    init(item: MPMediaItem, effect: MPSongItemEffect? = nil, trimming: MPSongItemTrimming? = nil) {
         self.item = item
         self.effect = effect
         self.trimming = trimming
@@ -40,5 +40,19 @@ public class MPSongItemEffect {
     init(rate: Float, pitch: Float) {
         self.rate = rate
         self.pitch = pitch
+    }
+}
+
+@available(iOS 13.0, *)
+public class MPSongItemTrimming {
+    public let from: Float
+    
+    public let to: Float
+    
+    public var trimming: ClosedRange<Float> { from ... to }
+    
+    init(from: Float, to: Float) {
+        self.from = from
+        self.to = to
     }
 }
