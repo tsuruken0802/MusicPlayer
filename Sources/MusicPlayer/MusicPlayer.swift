@@ -56,7 +56,11 @@ public final class MusicPlayer: ObservableObject {
     @Published private(set) public var currentIndex: Int = 0
     
     /// playback items
-    @Published private(set) public var items: [MPSongItem] = []
+    @Published private(set) public var itemList: MPSongItemList = .init()
+    private(set) public var items: [MPSongItem] {
+        get { return itemList.items }
+        set { itemList = .init(items: newValue) }
+    }
     private var originalItems: [MPSongItem] = []
     
     /// true is player is playing

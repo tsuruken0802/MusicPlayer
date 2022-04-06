@@ -9,6 +9,19 @@ import Foundation
 import MediaPlayer
 
 @available(iOS 13.0, *)
+public class MPSongItemList {
+    public let items: [MPSongItem]
+    
+    init(items: [MPSongItem]) {
+        self.items = items
+    }
+    
+    init() {
+        self.items = []
+    }
+}
+
+@available(iOS 13.0, *)
 public class MPSongItem {
     public let item: MPMediaItem
     
