@@ -35,6 +35,8 @@ public class MPSongItem {
     
     public var title: String? { item.title }
     
+    public var artist: String? { item.artist }
+    
     public var artwork: MPMediaItemArtwork? { item.artwork }
     
     init(item: MPMediaItem, effect: MPSongItemEffect? = nil, trimming: MPSongItemTrimming? = nil) {
