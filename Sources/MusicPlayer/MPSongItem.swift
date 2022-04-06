@@ -12,11 +12,11 @@ import MediaPlayer
 public class MPSongItemList {
     public let items: [MPSongItem]
     
-    init(items: [MPSongItem]) {
+    public init(items: [MPSongItem]) {
         self.items = items
     }
     
-    init() {
+    public init() {
         self.items = []
     }
 }
@@ -39,7 +39,7 @@ public class MPSongItem {
     
     public var artwork: MPMediaItemArtwork? { item.artwork }
     
-    init(item: MPMediaItem, effect: MPSongItemEffect? = nil, trimming: MPSongItemTrimming? = nil) {
+    public init(item: MPMediaItem, effect: MPSongItemEffect? = nil, trimming: MPSongItemTrimming? = nil) {
         self.item = item
         self.effect = effect
         self.trimming = trimming
@@ -52,7 +52,7 @@ public class MPSongItemEffect {
     
     public let pitch: Float
     
-    init(rate: Float, pitch: Float) {
+    public init(rate: Float, pitch: Float) {
         self.rate = rate
         self.pitch = pitch
     }
@@ -66,7 +66,7 @@ public class MPSongItemTrimming {
     
     public var trimming: ClosedRange<Float> { from ... to }
     
-    init(from: Float, to: Float) {
+    public init(from: Float, to: Float) {
         self.from = from
         self.to = to
     }
