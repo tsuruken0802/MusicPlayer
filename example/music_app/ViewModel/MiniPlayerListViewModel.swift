@@ -51,7 +51,7 @@ private extension MiniPlayerListViewModel {
         let items = self.musicPlayer.items[fromIndex ... toIndex]
         withAnimation {
             self.currentItems = items.map({ item in
-                return MiniPlayerListItem.init(id: item.id, image: item.image(size: 50), title: item.title!, artist: item.artist)
+                return MiniPlayerListItem.init(id: item.id, image: item.item.image(size: 50), title: item.title!, artist: item.item.artist)
             })
         }
     }

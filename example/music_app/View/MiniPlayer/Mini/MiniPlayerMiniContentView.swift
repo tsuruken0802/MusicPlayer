@@ -16,7 +16,7 @@ struct MiniPlayerMiniContentView: View {
     }
     
     private var artistName: String {
-        return musicPlayer.currentItem?.artist ?? ""
+        return musicPlayer.currentItem?.item.artist ?? ""
     }
     
     var body: some View {

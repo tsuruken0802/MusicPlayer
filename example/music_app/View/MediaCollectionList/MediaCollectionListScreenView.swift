@@ -35,7 +35,7 @@ struct MediaCollectionListScreenView: View {
     }
     
     @ViewBuilder
-    private func image(album: MPMediaItem) -> some View {
+    private func image(album: MPSongItem) -> some View {
         let itemHeight = itemWidth / 1.5
         if let image = album.artwork?.image(at: CGSize(width: itemWidth, height: itemHeight)) {
             Image(uiImage: image)
@@ -50,11 +50,11 @@ struct MediaCollectionListScreenView: View {
         }
     }
     
-    private func subTitle(media: MPMediaItem) -> String {
-        if let year = media.year, year != 0 {
+    private func subTitle(media: MPSongItem) -> String {
+        if let year = media.item.year, year != 0 {
             return String(year)
         }
-        else if let artist = media.artist {
+        else if let artist = media.item.artist {
             return artist
         }
         return ""

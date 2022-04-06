@@ -14,11 +14,11 @@ enum MediaListType {
 }
 
 struct MediaItemListView: View {
-    let items: [MPMediaItem]
+    let items: [MPSongItem]
     
     let listType: MediaListType
     
-    let onTap: (_ item: MPMediaItem, _ index: Int) -> Void
+    let onTap: (_ item: MPSongItem, _ index: Int) -> Void
     
     @ViewBuilder
     private func itemView(index: Int) -> some View {
@@ -28,7 +28,7 @@ struct MediaItemListView: View {
             }
         }
         else if listType == .artwork {
-            MediaThumbnailItemView(thumbnailImage: items[index].image(size: MediaThumbnailItemView.imageSize), title: items[index].title ?? "") {
+            MediaThumbnailItemView(thumbnailImage: items[index].item.image(size: MediaThumbnailItemView.imageSize), title: items[index].title ?? "") {
                 onTap(items[index], index)
             }
         }

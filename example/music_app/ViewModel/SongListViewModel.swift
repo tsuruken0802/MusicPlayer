@@ -6,12 +6,11 @@
 //
 
 import Foundation
-import MediaPlayer
 
 class SongListViewModel: ObservableObject {
-    @Published var items: [MPMediaItem]
+    @Published var items: [MPSongItem]
     
-    init(items: [MPMediaItem]) {
+    init(items: [MPSongItem]) {
         self.items = items
     }
 }

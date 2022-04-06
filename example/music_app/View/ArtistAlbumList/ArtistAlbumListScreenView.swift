@@ -81,7 +81,8 @@ struct ArtistAlbumListScreenView: View {
                             }
                         }
                         .onTapGesture {
-                            songListNavi.destination = SongListScreenView(items: MPMediaService.getSongs(albumPersistentID: album.albumPersistentID))
+                            let songItems = MPMediaService.getSongs(albumPersistentID: album.albumPersistentID).map({ MPSongItem(item: $0) })
+                            songListNavi.destination = SongListScreenView(items: songItems)
                         }
                     }
                 }
