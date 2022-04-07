@@ -50,6 +50,7 @@ public class MPSongItem {
     }
 }
 
+@available(iOS 13.0, *)
 extension MPSongItem: Identifiable {}
 
 @available(iOS 13.0, *)
