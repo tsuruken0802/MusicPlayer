@@ -25,9 +25,9 @@ public class MPSongItemList {
 public class MPSongItem {
     public let item: MPMediaItem
     
-    public let effect: MPSongItemEffect?
+    public var effect: MPSongItemEffect?
     
-    public let trimming: MPSongItemTrimming?
+    public var trimming: MPSongItemTrimming?
     
     public var duration: TimeInterval { item.playbackDuration }
     
@@ -67,14 +67,9 @@ public class MPSongItemEffect {
 
 @available(iOS 13.0, *)
 public class MPSongItemTrimming {
-    public let from: Float
+    public let trimming: ClosedRange<Float>
     
-    public let to: Float
-    
-    public var trimming: ClosedRange<Float> { from ... to }
-    
-    public init(from: Float, to: Float) {
-        self.from = from
-        self.to = to
+    public init(trimming: ClosedRange<Float>) {
+        self.trimming = trimming
     }
 }

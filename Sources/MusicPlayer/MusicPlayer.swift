@@ -421,6 +421,31 @@ public extension MusicPlayer {
         items = prefixItems + suffixItems
         currentIndex = items.firstIndex(where: { $0.id == preId })!
     }
+    
+    /// update song effect
+    /// - Parameters:
+    ///   - songId: song id
+    ///   - effect: effect
+    ///   - trimming: trimming
+    func updateSongEffect(songId: UInt64,
+                          effect: MPSongItemEffect?,
+                          trimming: ClosedRange<Float>?) {
+        guard let song = items.first(where: { $0.id == songId }) else { return }
+        let isCurrentItem = songId == currentItem?.id
+        if let effect = effect {
+            song.effect = .init(rate: effect.rate, pitch: effect.pitch)
+            if isCurrentItem {
+                rate = effect.rate
+                pitch = effect.pitch
+            }
+        }
+        if let trimming = trimming {
+            song.trimming = .init(trimming: trimming)
+            if isCurrentItem {
+                playbackTimeRange = trimming
+            }
+        }
+    }
 }
 
 @available(iOS 13.0, *)
