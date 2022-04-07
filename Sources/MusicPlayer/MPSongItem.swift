@@ -50,6 +50,8 @@ public class MPSongItem {
     }
 }
 
+extension MPSongItem: Identifiable {}
+
 @available(iOS 13.0, *)
 public class MPSongItemEffect {
     public let rate: Float
