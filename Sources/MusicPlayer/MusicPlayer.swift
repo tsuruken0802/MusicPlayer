@@ -465,8 +465,8 @@ public extension MusicPlayer {
     
     /// reset song effects
     func resetCurrentEffects() {
-        rate = rateOptions.defaultValue
-        pitch = pitchOptions.defaultValue
+        resetRate()
+        resetPitch()
         playbackTimeRange = nil
     }
 }
