@@ -165,8 +165,6 @@ public extension MusicPlayer {
             return
         }
         
-        setCurrentEffect(effect: currentItem?.effect, trimming: currentItem?.trimming)
-        
         do {
             try audioEngine.start()
             playerNode.play()
@@ -195,6 +193,7 @@ public extension MusicPlayer {
             shuffle()
         }
         setScheduleFile()
+        setCurrentEffect(effect: currentItem?.effect, trimming: currentItem?.trimming)
         play()
     }
     
@@ -205,6 +204,7 @@ public extension MusicPlayer {
         currentIndex = index
         resetPlaybackTime()
         setScheduleFile()
+        setCurrentEffect(effect: currentItem?.effect, trimming: currentItem?.trimming)
         play()
     }
     
@@ -236,6 +236,7 @@ public extension MusicPlayer {
         currentIndex = nextIndex
         resetPlaybackTime()
         setScheduleFile()
+        setCurrentEffect(effect: currentItem?.effect, trimming: currentItem?.trimming)
         play()
     }
     
@@ -254,6 +255,7 @@ public extension MusicPlayer {
         currentIndex = nextIndex
         resetPlaybackTime()
         setScheduleFile()
+        setCurrentEffect(effect: currentItem?.effect, trimming: currentItem?.trimming)
         play()
     }
     
