@@ -53,13 +53,16 @@ public final class MusicPlayer: ObservableObject {
     }
     
     /// index of current playing MPMediaItem
-    @Published private(set) public var currentIndex: Int = 0
+    private var currentIndex: Int {
+        get { itemList.currentIndex }
+        set { itemList.currentIndex = newValue }
+    }
     
     /// playback items
     @Published private(set) public var itemList: MPSongItemList = .init()
     private(set) public var items: [MPSongItem] {
         get { return itemList.items }
-        set { itemList = .init(items: newValue) }
+        set { itemList = .init(items: newValue, currentIndex: currentIndex) }
     }
     private var originalItems: [MPSongItem] = []
     
@@ -586,15 +589,13 @@ private extension MusicPlayer {
         var shuffled = items.shuffled()
         guard let currentItemIndex = shuffled.firstIndex(where: { $0.id == currentItemId }) else { return }
         shuffled.move(fromOffsets: [currentItemIndex], toOffset: 0)
-        currentIndex = 0
-        items = shuffled
+        itemList = .init(items: shuffled, currentIndex: 0)
     }
     
     /// set original sort
     func setOriginalSort() {
-        guard let originalIndex = originalItems.firstIndex(where: { $0.id == currentItem?.id }) else { return }
-        currentIndex = originalIndex
-        items = originalItems
+        guard let originalIndex = originalItems.firstIndex(where: { $0.id == currentItem?.id }) else { return }        
+        itemList = .init(items: originalItems, currentIndex: originalIndex)
     }
     
     /// reset playback time

@@ -19,9 +19,9 @@ class MiniPlayerListViewModel: ObservableObject {
     private static let maxListCount: Int = 20
     
     init() {
-        musicPlayer.$currentIndex.sink { [weak self] value in
+        musicPlayer.$itemList.sink { [weak self] value in
             guard let self = self else { return }
-            self.updateCurrentItems(currentItemIndex: value)
+            self.updateCurrentItems(currentItemIndex: value.currentIndex)
         }
         .store(in: &cancellables)
     }

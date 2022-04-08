@@ -12,8 +12,11 @@ import MediaPlayer
 public class MPSongItemList {
     public let items: [MPSongItem]
     
-    public init(items: [MPSongItem]) {
+    public var currentIndex: Int = 0
+    
+    public init(items: [MPSongItem], currentIndex: Int) {
         self.items = items
+        self.currentIndex = currentIndex
     }
     
     public init() {
