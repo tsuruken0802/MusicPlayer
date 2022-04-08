@@ -21,7 +21,7 @@ class MiniPlayerListViewModel: ObservableObject {
     init() {
         musicPlayer.$itemList.sink { [weak self] value in
             guard let self = self else { return }
-            self.updateCurrentItems(currentItemIndex: value.currentIndex)
+            self.updateCurrentItems(songs: value.items, currentItemIndex: value.currentIndex)
         }
         .store(in: &cancellables)
     }
@@ -40,17 +40,17 @@ extension MiniPlayerListViewModel {
 private extension MiniPlayerListViewModel {
     /// update current items
     /// - Parameter currentItemIndex: current item index
-    func updateCurrentItems(currentItemIndex: Int) {
+    func updateCurrentItems(songs: [MPSongItem], currentItemIndex: Int) {
         let fromIndex = currentItemIndex + 1
-        let toIndex = min(currentItemIndex+MiniPlayerListViewModel.maxListCount, self.musicPlayer.items.count-1)
-        let indices = self.musicPlayer.items.indices
+        let toIndex = min(currentItemIndex+MiniPlayerListViewModel.maxListCount, songs.count-1)
+        let indices = songs.indices
         if !indices.contains(fromIndex) || !indices.contains(toIndex) {
-            self.currentItems.removeAll()
+            currentItems.removeAll()
             return
         }
-        let items = self.musicPlayer.items[fromIndex ... toIndex]
+        let items = songs[fromIndex ... toIndex]
         withAnimation {
-            self.currentItems = items.map({ item in
+            currentItems = items.map({ item in
                 return MiniPlayerListItem.init(id: item.id, image: item.item.image(size: 50), title: item.title!, artist: item.item.artist)
             })
         }

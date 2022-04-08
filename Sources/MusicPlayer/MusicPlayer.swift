@@ -594,7 +594,7 @@ private extension MusicPlayer {
     
     /// set original sort
     func setOriginalSort() {
-        guard let originalIndex = originalItems.firstIndex(where: { $0.id == currentItem?.id }) else { return }        
+        guard let originalIndex = originalItems.firstIndex(where: { $0.id == currentItem?.id }) else { return }
         itemList = .init(items: originalItems, currentIndex: originalIndex)
     }
     
