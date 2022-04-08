@@ -165,7 +165,7 @@ public extension MusicPlayer {
             return
         }
         
-        setMusicEffect(effect: currentItem?.effect, trimming: currentItem?.trimming)
+        setCurrentEffect(effect: currentItem?.effect, trimming: currentItem?.trimming)
         
         do {
             try audioEngine.start()
@@ -447,11 +447,11 @@ public extension MusicPlayer {
         }
     }
     
-    /// set music effect
+    /// set current effect
     /// - Parameters:
     ///   - effect: effect
     ///   - trimming: trimming effect
-    func setMusicEffect(effect: MPSongItemEffect?, trimming: MPSongItemTrimming?) {
+    func setCurrentEffect(effect: MPSongItemEffect?, trimming: MPSongItemTrimming?) {
         if let effect = effect {
             rate = effect.rate
             pitch = effect.pitch
