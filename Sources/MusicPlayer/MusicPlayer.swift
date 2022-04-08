@@ -462,6 +462,13 @@ public extension MusicPlayer {
             playbackTimeRange = trimming.trimming
         }
     }
+    
+    /// reset song effects
+    func resetCurrentEffects() {
+        rate = rateOptions.defaultValue
+        pitch = pitchOptions.defaultValue
+        playbackTimeRange = nil
+    }
 }
 
 @available(iOS 13.0, *)
