@@ -9,7 +9,7 @@ import Foundation
 import MediaPlayer
 
 @available(iOS 13.0, *)
-public class MPSongItemList {
+public struct MPSongItemList {
     public let items: [MPSongItem]
     
     public var currentIndex: Int = 0
@@ -25,7 +25,7 @@ public class MPSongItemList {
 }
 
 @available(iOS 13.0, *)
-public class MPSongItem {
+public struct MPSongItem {
     public let item: MPMediaItem
     
     public var effect: MPSongItemEffect?
@@ -57,7 +57,7 @@ public class MPSongItem {
 extension MPSongItem: Identifiable {}
 
 @available(iOS 13.0, *)
-public class MPSongItemEffect {
+public struct MPSongItemEffect {
     public let rate: Float
     
     public let pitch: Float
@@ -69,7 +69,7 @@ public class MPSongItemEffect {
 }
 
 @available(iOS 13.0, *)
-public class MPSongItemTrimming {
+public struct MPSongItemTrimming {
     public let trimming: ClosedRange<Float>
     
     public init(trimming: ClosedRange<Float>) {

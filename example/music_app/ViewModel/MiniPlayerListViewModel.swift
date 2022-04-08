@@ -39,6 +39,7 @@ extension MiniPlayerListViewModel {
 
 private extension MiniPlayerListViewModel {
     /// update current items
+    /// - Parameter songs: songs
     /// - Parameter currentItemIndex: current item index
     func updateCurrentItems(songs: [MPSongItem], currentItemIndex: Int) {
         let fromIndex = currentItemIndex + 1
@@ -49,10 +50,8 @@ private extension MiniPlayerListViewModel {
             return
         }
         let items = songs[fromIndex ... toIndex]
-        withAnimation {
-            currentItems = items.map({ item in
-                return MiniPlayerListItem.init(id: item.id, image: item.item.image(size: 50), title: item.title!, artist: item.item.artist)
-            })
-        }
+        currentItems = items.map({ item in
+            return MiniPlayerListItem.init(id: item.id, image: item.item.image(size: 50), title: item.title!, artist: item.item.artist)
+        })
     }
 }
