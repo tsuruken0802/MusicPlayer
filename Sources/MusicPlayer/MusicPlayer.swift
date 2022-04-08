@@ -202,9 +202,6 @@ public extension MusicPlayer {
     /// - Parameter id: item id
     func play(id: MPMediaEntityPersistentID) {
         guard let index = items.firstIndex(where: { $0.id == id }) else { return }
-        if !itemsSafe(items: items, index: index) {
-            return
-        }
         currentIndex = index
         resetPlaybackTime()
         setScheduleFile()
