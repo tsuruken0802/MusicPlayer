@@ -469,6 +469,14 @@ public extension MusicPlayer {
         resetPitch()
         playbackTimeRange = nil
     }
+    
+    /// reset effects by song id
+    /// - Parameter songId: song id
+    func resetEffects(songId: UInt64) {
+        guard let index = items.firstIndex(where: { $0.id == songId }) else { return }
+        items[index].effect = .init(rate: rateOptions.defaultValue, pitch: pitchOptions.defaultValue)
+        items[index].trimming = nil
+    }
 }
 
 @available(iOS 13.0, *)
