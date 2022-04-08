@@ -446,10 +446,7 @@ public extension MusicPlayer {
             }
         }
     }
-}
-
-@available(iOS 13.0, *)
-private extension MusicPlayer {
+    
     /// set music effect
     /// - Parameters:
     ///   - effect: effect
@@ -463,7 +460,10 @@ private extension MusicPlayer {
             playbackTimeRange = trimming.trimming
         }
     }
-    
+}
+
+@available(iOS 13.0, *)
+private extension MusicPlayer {
     /// update current playback time
     func updateCurrentTime() {
         if let nodeTime = playerNode.lastRenderTime,
