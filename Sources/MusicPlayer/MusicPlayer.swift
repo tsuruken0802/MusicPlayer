@@ -586,28 +586,21 @@ private extension MusicPlayer {
         var shuffled = items.shuffled()
         guard let currentItemIndex = shuffled.firstIndex(where: { $0.id == currentItemId }) else { return }
         shuffled.move(fromOffsets: [currentItemIndex], toOffset: 0)
-        items = shuffled
         currentIndex = 0
-        resetPlaybackTimeRange()
+        items = shuffled
     }
     
     /// set original sort
     func setOriginalSort() {
         guard let originalIndex = originalItems.firstIndex(where: { $0.id == currentItem?.id }) else { return }
-        items = originalItems
         currentIndex = originalIndex
-        resetPlaybackTimeRange()
+        items = originalItems
     }
     
     /// reset playback time
     func resetPlaybackTime() {
         cachedSeekBarSeconds = 0
         currentTime = 0
-        resetPlaybackTimeRange()
-    }
-    
-    /// reset playback time range
-    func resetPlaybackTimeRange() {
         playbackTimeRange = 0.0...Float(duration ?? 0.0)
     }
 }
