@@ -8,7 +8,7 @@
 import Foundation
 
 @available(iOS 13.0, *)
-public enum MPRepeatType {
+public enum MPRepeatType: Int {
     case list
     
     case one
