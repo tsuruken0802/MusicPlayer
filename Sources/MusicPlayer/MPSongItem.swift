@@ -12,20 +12,21 @@ import MediaPlayer
 public struct MPSongItemList {
     public let items: [MPSongItem]
     
-    public var currentIndex: Int = 0
+    public var currentIndex: Int
     
-    public init(items: [MPSongItem], currentIndex: Int) {
+    public init(items: [MPSongItem], currentIndex: Int = 0) {
         self.items = items
         self.currentIndex = currentIndex
     }
     
     public init() {
         self.items = []
+        self.currentIndex = 0
     }
 }
 
 @available(iOS 13.0, *)
-public struct MPSongItem {
+public class MPSongItem {
     public let item: MPMediaItem
     
     public var effect: MPSongItemEffect?

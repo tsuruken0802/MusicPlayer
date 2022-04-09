@@ -433,20 +433,13 @@ public extension MusicPlayer {
     func updateSongEffect(songId: UInt64,
                           effect: MPSongItemEffect?,
                           trimming: ClosedRange<Float>?) {
-        guard let index = items.firstIndex(where: { $0.id == songId }) else { return }
+        updateSongEffect(songs: items, songId: songId, effect: effect, trimming: trimming)
+        updateSongEffect(songs: originalItems, songId: songId, effect: effect, trimming: trimming)
         let isCurrentItem = songId == currentItem?.id
-        if let effect = effect {
-            items[index].effect = .init(rate: effect.rate, pitch: effect.pitch)
-            if isCurrentItem {
-                rate = effect.rate
-                pitch = effect.pitch
-            }
-        }
-        if let trimming = trimming {
-            items[index].trimming = .init(trimming: trimming)
-            if isCurrentItem {
-                playbackTimeRange = trimming
-            }
+        if isCurrentItem {
+            rate = effect?.rate ?? rate
+            pitch = effect?.pitch ?? pitch
+            playbackTimeRange = trimming
         }
     }
     
@@ -482,6 +475,25 @@ public extension MusicPlayer {
 
 @available(iOS 13.0, *)
 private extension MusicPlayer {
+    /// update song effect
+    /// - Parameters:
+    ///   - songs: songs
+    ///   - songId: song id
+    ///   - effect: effect
+    ///   - trimming: trimming
+    func updateSongEffect(songs: [MPSongItem],
+                          songId: UInt64,
+                          effect: MPSongItemEffect?,
+                          trimming: ClosedRange<Float>?) {
+        guard let song = songs.first(where: { $0.id == songId }) else { return }
+        if let effect = effect {
+            song.effect = .init(rate: effect.rate, pitch: effect.pitch)
+        }
+        if let trimming = trimming {
+            song.trimming = .init(trimming: trimming)
+        }
+    }
+    
     /// update current playback time
     func updateCurrentTime() {
         if let nodeTime = playerNode.lastRenderTime,
