@@ -15,12 +15,20 @@ public final class MusicPlayer: ObservableObject {
     private let pitchControl: AVAudioUnitTimePitch = .init()
     private var audioFile: AVAudioFile?
     
+    private let mpController: MPMusicPlayerController = .init()
+    
     /// Cache of playback time when moving the seek bar
     private var cachedSeekBarSeconds: Float = 0
     
     /// return true if playable
     private var isEnableAudio: Bool {
-        return audioFile != nil
+        if isCloudItem {
+            // The song of CurrentItem is passed to the controller
+            return currentItem != nil
+        }
+        else {
+            return audioFile != nil
+        }
     }
     
     private var currentTimeTimer: Timer?
@@ -50,6 +58,12 @@ public final class MusicPlayer: ObservableObject {
             return nil
         }
         return items[currentIndex]
+    }
+    
+    /// is cloud item
+    /// Cloud item or Apple Music don't contain assetURL
+    public var isCloudItem: Bool {
+        return currentItem?.item.assetURL == nil
     }
     
     /// index of current playing MPMediaItem
@@ -168,15 +182,22 @@ public extension MusicPlayer {
             return
         }
         
-        do {
-            try audioEngine.start()
-            playerNode.play()
-            isPlaying = true
-            startCurrentTimeRedering()
-            setNowPlayingInfo()
+        if isCloudItem {
+            if let item = currentItem?.item {
+                mpController.play(item: item)
+            }
         }
-        catch let e {
-            print(e.localizedDescription)
+        else {
+            do {
+                try audioEngine.start()
+                playerNode.play()
+                isPlaying = true
+                startCurrentTimeRedering()
+                setNowPlayingInfo()
+            }
+            catch let e {
+                print(e.localizedDescription)
+            }
         }
     }
     
@@ -266,8 +287,14 @@ public extension MusicPlayer {
     /// Pause playback
     func pause() {
         updateCurrentTime()
-        audioEngine.pause()
-        playerNode.pause()
+        if isCloudItem {
+            mpController.pause()
+        }
+        else {
+            audioEngine.pause()
+            playerNode.pause()
+        }
+        
         isPlaying = false
         setNowPlayingInfo()
         stopCurrentTimeRendering()
@@ -282,6 +309,10 @@ public extension MusicPlayer {
     /// change current playback position
     /// - Parameter withPlay: true if playback is performed after the position is changed
     func setSeek(withPlay: Bool? = nil) {
+        if isCloudItem {
+            mpController.seek(seconds: TimeInterval(currentTime))
+            return
+        }
         // range外の再生時間でseekしようとした場合はrange内に収めてから行うようにする
         if let playbackTimeRange = self.playbackTimeRange {
             if !playbackTimeRange.contains(currentTime) {
@@ -508,8 +539,13 @@ private extension MusicPlayer {
     
     /// stop playback
     func stop() {
-        audioEngine.stop()
-        playerNode.stop()
+        if isCloudItem {
+            mpController.stop()
+        }
+        else {
+            audioEngine.stop()
+            playerNode.stop()
+        }
         isPlaying = false
     }
     
@@ -598,9 +634,10 @@ private extension MusicPlayer {
     
     /// set Schedule File
     func setScheduleFile() {
-        guard let currentItem = currentItem else { return }
+        if isCloudItem { return }
+        guard let assetURL = currentItem?.item.assetURL else { return }
         do {
-            audioFile = try AVAudioFile(forReading: currentItem.item.assetURL!)
+            audioFile = try AVAudioFile(forReading: assetURL)
             audioEngine.connect(playerNode, to: pitchControl, format: nil)
             audioEngine.connect(pitchControl, to: audioEngine.mainMixerNode, format: nil)
             playerNode.scheduleFile(audioFile!, at: nil)
