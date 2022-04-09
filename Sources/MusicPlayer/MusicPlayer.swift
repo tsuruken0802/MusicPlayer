@@ -260,11 +260,7 @@ public extension MusicPlayer {
         }
         
         // change player
-        let preIsRemote = isCurrentRemoteItem
-        let nextIsRemote = items[nextIndex].item.isRemoteItem
-        if preIsRemote != nextIsRemote {
-            stop()
-        }
+        stopIfNeedChangePlayer(nextIndex: nextIndex)
         
         // play process
         currentIndex = nextIndex
@@ -286,6 +282,10 @@ public extension MusicPlayer {
         if !itemsSafe(index: nextIndex) {
             return
         }
+        
+        // change player
+        stopIfNeedChangePlayer(nextIndex: nextIndex)
+        
         currentIndex = nextIndex
         resetPlaybackTime()
         setScheduleFile()
@@ -515,6 +515,18 @@ public extension MusicPlayer {
 
 @available(iOS 13.0, *)
 private extension MusicPlayer {
+    
+    /// stop if need change player
+    /// - Parameter nextIndex: next item index
+    func stopIfNeedChangePlayer(nextIndex: Int) {
+        if !itemsSafe(index: nextIndex) { return }
+        let preIsRemote = isCurrentRemoteItem
+        let nextIsRemote = items[nextIndex].item.isRemoteItem
+        if preIsRemote != nextIsRemote {
+            stop()
+        }
+    }
+    
     /// update song effect
     /// - Parameters:
     ///   - songs: songs
