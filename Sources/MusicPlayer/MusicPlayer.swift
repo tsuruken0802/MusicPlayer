@@ -220,10 +220,11 @@ public extension MusicPlayer {
             // restart
             if !isSafe {
                 nextIndex = 0
-            }
-            // reshuffle
-            if isShuffle {
-                items = originalItems.shuffled()
+                
+                // reshuffle
+                if isShuffle {
+                    items = originalItems.shuffled()
+                }
             }
         case .one:
             if !isSafe {
