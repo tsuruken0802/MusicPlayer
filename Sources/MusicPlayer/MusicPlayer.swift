@@ -246,7 +246,7 @@ public extension MusicPlayer {
     /// Play previous item
     func back() {
         // 数秒しか経ってないなら同じ曲を0秒から再生する
-        if currentTime >= MusicPlayer.backSameMusicThreshold {
+        if currentTime >= MusicPlayer.backSameMusicThreshold + minPlaybackTime {
             setSeek(seconds: minPlaybackTime)
             return
         }
