@@ -22,7 +22,7 @@ public final class MusicPlayer: ObservableObject {
     
     /// return true if playable
     private var isEnableAudio: Bool {
-        if isCloudItem {
+        if isCurrentRemoteItem {
             // The song of CurrentItem is passed to the controller
             return currentItem != nil
         }
@@ -62,8 +62,8 @@ public final class MusicPlayer: ObservableObject {
     
     /// is cloud item
     /// Cloud item or Apple Music don't contain assetURL
-    public var isCloudItem: Bool {
-        return currentItem?.item.assetURL == nil
+    public var isCurrentRemoteItem: Bool {
+        return currentItem?.item.isRemoteItem == true
     }
     
     /// index of current playing MPMediaItem
@@ -182,7 +182,7 @@ public extension MusicPlayer {
             return
         }
         
-        if isCloudItem {
+        if isCurrentRemoteItem {
             if let item = currentItem?.item {
                 mpController.play(item: item)
             }
@@ -258,6 +258,15 @@ public extension MusicPlayer {
                 return
             }
         }
+        
+        // change player
+        let preIsRemote = isCurrentRemoteItem
+        let nextIsRemote = items[nextIndex].item.isRemoteItem
+        if preIsRemote != nextIsRemote {
+            stop()
+        }
+        
+        // play process
         currentIndex = nextIndex
         resetPlaybackTime()
         setScheduleFile()
@@ -287,7 +296,7 @@ public extension MusicPlayer {
     /// Pause playback
     func pause() {
         updateCurrentTime()
-        if isCloudItem {
+        if isCurrentRemoteItem {
             mpController.pause()
         }
         else {
@@ -309,7 +318,7 @@ public extension MusicPlayer {
     /// change current playback position
     /// - Parameter withPlay: true if playback is performed after the position is changed
     func setSeek(withPlay: Bool? = nil) {
-        if isCloudItem {
+        if isCurrentRemoteItem {
             mpController.seek(seconds: TimeInterval(currentTime))
             return
         }
@@ -539,7 +548,7 @@ private extension MusicPlayer {
     
     /// stop playback
     func stop() {
-        if isCloudItem {
+        if isCurrentRemoteItem {
             mpController.stop()
         }
         else {
@@ -634,7 +643,7 @@ private extension MusicPlayer {
     
     /// set Schedule File
     func setScheduleFile() {
-        if isCloudItem { return }
+        if isCurrentRemoteItem { return }
         guard let assetURL = currentItem?.item.assetURL else { return }
         do {
             audioFile = try AVAudioFile(forReading: assetURL)
@@ -735,5 +744,11 @@ private extension MusicPlayer {
         default:
             break
         }
+    }
+}
+
+private extension MPMediaItem {
+    var isRemoteItem: Bool {
+        return assetURL == nil
     }
 }
