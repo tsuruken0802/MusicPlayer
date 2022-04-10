@@ -506,6 +506,9 @@ public extension MusicPlayer {
 
 @available(iOS 13.0, *)
 private extension MusicPlayer {
+    /// get enable music index
+    /// - Parameter forward: if true, search forward
+    /// - Returns: enable music index
     func enableMusicIndex(forward: Bool) -> Int? {
         let from = forward ? currentIndex : 0
         let to = forward ? items.count-1 : currentIndex
