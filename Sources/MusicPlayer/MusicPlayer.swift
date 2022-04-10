@@ -9,6 +9,8 @@ public final class MusicPlayer: ObservableObject {
     /// instance
     public static let shared: MusicPlayer = .init()
     
+    private var backgroundMode: Bool = false
+    
     /// Engine and Nodes
     private let audioEngine: AVAudioEngine = .init()
     private let playerNode: AVAudioPlayerNode = .init()
@@ -218,7 +220,8 @@ public extension MusicPlayer {
     }
     
     /// Play next item
-    func next() {
+    /// forwardEnableSong: if true, advance index to valid song
+    func next(forwardEnableSong: Bool = false) {
         var nextIndex = currentIndex + 1
         let isSafe = itemsSafe(index: nextIndex)
         switch repeatType {
@@ -246,8 +249,13 @@ public extension MusicPlayer {
         currentIndex = nextIndex
         resetPlaybackTime()
         if !setScheduleFile() {
-            stop()
-            return
+            if !forwardEnableSong { return }
+            guard let enableMusicIndex = enableMusicIndex(forward: true) else {
+                stop()
+                return
+            }
+            currentIndex = enableMusicIndex
+            _ = setScheduleFile()
         }
         setCurrentEffect(effect: currentItem?.effect, trimming: currentItem?.trimming)
         play()
@@ -268,8 +276,12 @@ public extension MusicPlayer {
         currentIndex = nextIndex
         resetPlaybackTime()
         if !setScheduleFile() {
-            stop()
-            return
+            guard let enableMusicIndex = enableMusicIndex(forward: false) else {
+                stop()
+                return
+            }
+            currentIndex = enableMusicIndex
+            _ = setScheduleFile()
         }
         setCurrentEffect(effect: currentItem?.effect, trimming: currentItem?.trimming)
         play()
@@ -487,6 +499,20 @@ public extension MusicPlayer {
 
 @available(iOS 13.0, *)
 private extension MusicPlayer {
+    func enableMusicIndex(forward: Bool) -> Int? {
+        let from = forward ? currentIndex : 0
+        let to = forward ? items.count-1 : currentIndex
+        let array = items[from...to]
+        var newIndex: Int?
+        if forward {
+            newIndex = array.firstIndex(where: { $0.item.assetURL != nil })
+        }
+        else {
+            newIndex = array.lastIndex(where: { $0.item.assetURL != nil })
+        }
+        return newIndex
+    }
+    
     /// update song effect
     /// - Parameters:
     ///   - songs: songs
@@ -659,7 +685,7 @@ private extension MusicPlayer {
                 setSeek(seconds: 0)
             }
             else {
-                next()
+                next(forwardEnableSong: true)
             }
             return
         }
