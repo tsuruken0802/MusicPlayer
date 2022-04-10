@@ -249,7 +249,10 @@ public extension MusicPlayer {
         currentIndex = nextIndex
         resetPlaybackTime()
         if !setScheduleFile() {
-            if !forwardEnableSong { return }
+            if !forwardEnableSong {
+                stop()
+                return
+            }
             guard let enableMusicIndex = enableMusicIndex(forward: true) else {
                 stop()
                 return
@@ -262,7 +265,7 @@ public extension MusicPlayer {
     }
     
     /// Play previous item
-    func back() {
+    func back(backEnableSong: Bool = false) {
         // 数秒しか経ってないなら同じ曲を0秒から再生する
         if currentTime >= MusicPlayer.backSameMusicThreshold + minPlaybackTime {
             setSeek(seconds: minPlaybackTime)
@@ -276,6 +279,10 @@ public extension MusicPlayer {
         currentIndex = nextIndex
         resetPlaybackTime()
         if !setScheduleFile() {
+            if !backEnableSong {
+                stop()
+                return
+            }
             guard let enableMusicIndex = enableMusicIndex(forward: false) else {
                 stop()
                 return
@@ -563,8 +570,22 @@ private extension MusicPlayer {
     
     /// set notification
     func setNotification() {
-        NotificationCenter.default.addObserver(self, selector: #selector(onInterruption(_:)), name: AVAudioSession.interruptionNotification, object: AVAudioSession.sharedInstance())
-        NotificationCenter.default.addObserver(self, selector: #selector(onAudioSessionRouteChanged(_:)), name: AVAudioSession.routeChangeNotification, object: nil)
+        NotificationCenter.default.addObserver(self,
+                                               selector: #selector(onInterruption(_:)),
+                                               name: AVAudioSession.interruptionNotification,
+                                               object: AVAudioSession.sharedInstance())
+        NotificationCenter.default.addObserver(self,
+                                               selector: #selector(onAudioSessionRouteChanged(_:)),
+                                               name: AVAudioSession.routeChangeNotification,
+                                               object: nil)
+        NotificationCenter.default.addObserver(self,
+                                               selector: #selector(didEnterBackground),
+                                               name: UIApplication.didEnterBackgroundNotification,
+                                               object: nil)
+        NotificationCenter.default.addObserver(self,
+                                               selector: #selector(didEnterForeground),
+                                               name: UIApplication.didBecomeActiveNotification,
+                                               object: nil)
     }
     
     /// set RemoteCommand
@@ -583,12 +604,12 @@ private extension MusicPlayer {
         }
         commandCenter.previousTrackCommand.isEnabled = true
         commandCenter.previousTrackCommand.addTarget { [unowned self] event in
-            back()
+            back(backEnableSong: self.backgroundMode)
             return .success
         }
         commandCenter.nextTrackCommand.isEnabled = true
         commandCenter.nextTrackCommand.addTarget { [unowned self] event in
-            next()
+            next(forwardEnableSong: self.backgroundMode)
             return .success
         }
 
@@ -739,5 +760,13 @@ private extension MusicPlayer {
         default:
             break
         }
+    }
+    
+    @objc func didEnterBackground() {
+        backgroundMode = true
+    }
+    
+    @objc func didEnterForeground() {
+        backgroundMode = false
     }
 }
