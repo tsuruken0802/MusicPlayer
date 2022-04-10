@@ -195,7 +195,10 @@ public extension MusicPlayer {
         if isShuffle {
             shuffle()
         }
-        setScheduleFile()
+        if !setScheduleFile() {
+            stop()
+            return
+        }
         setCurrentEffect(effect: currentItem?.effect, trimming: currentItem?.trimming)
         play()
     }
@@ -206,7 +209,10 @@ public extension MusicPlayer {
         guard let index = items.firstIndex(where: { $0.id == id }) else { return }
         currentIndex = index
         resetPlaybackTime()
-        setScheduleFile()
+        if !setScheduleFile() {
+            stop()
+            return
+        }
         setCurrentEffect(effect: currentItem?.effect, trimming: currentItem?.trimming)
         play()
     }
@@ -239,7 +245,10 @@ public extension MusicPlayer {
         }
         currentIndex = nextIndex
         resetPlaybackTime()
-        setScheduleFile()
+        if !setScheduleFile() {
+            stop()
+            return
+        }
         setCurrentEffect(effect: currentItem?.effect, trimming: currentItem?.trimming)
         play()
     }
@@ -258,7 +267,10 @@ public extension MusicPlayer {
         }
         currentIndex = nextIndex
         resetPlaybackTime()
-        setScheduleFile()
+        if !setScheduleFile() {
+            stop()
+            return
+        }
         setCurrentEffect(effect: currentItem?.effect, trimming: currentItem?.trimming)
         play()
     }
@@ -597,16 +609,19 @@ private extension MusicPlayer {
     }
     
     /// set Schedule File
-    func setScheduleFile() {
-        guard let currentItem = currentItem else { return }
+    func setScheduleFile() -> Bool {
+        audioFile = nil
+        guard let assetURL = currentItem?.item.assetURL else { return false }
         do {
-            audioFile = try AVAudioFile(forReading: currentItem.item.assetURL!)
+            audioFile = try AVAudioFile(forReading: assetURL)
             audioEngine.connect(playerNode, to: pitchControl, format: nil)
             audioEngine.connect(pitchControl, to: audioEngine.mainMixerNode, format: nil)
             playerNode.scheduleFile(audioFile!, at: nil)
+            return true
         }
         catch let e {
             print(e.localizedDescription)
+            return false
         }
     }
     
