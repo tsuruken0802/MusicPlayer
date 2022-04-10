@@ -182,6 +182,10 @@ public extension MusicPlayer {
         if isSeekOver || !isEnableAudio {
             return
         }
+        
+        startCurrentTimeRedering()
+        setNowPlayingInfo()
+        
         if isCurrentRemoteItem {
             if let item = currentItem?.item {
                 mpController.play(item: item)
@@ -192,8 +196,6 @@ public extension MusicPlayer {
             do {
                 try audioEngine.start()
                 playerNode.play()
-                startCurrentTimeRedering()
-                setNowPlayingInfo()
                 isPlaying = true
             }
             catch let e {
@@ -555,6 +557,11 @@ private extension MusicPlayer {
     
     /// update current playback time
     func updateCurrentTime() {
+        if isCurrentRemoteItem {
+            currentTime = Float(mpController.currentTime)
+            return
+        }
+        
         if let nodeTime = playerNode.lastRenderTime,
            let playerTime = playerNode.playerTime(forNodeTime: nodeTime) {
             let sampleRate = playerTime.sampleRate

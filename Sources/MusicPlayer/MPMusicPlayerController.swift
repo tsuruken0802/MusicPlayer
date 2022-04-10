@@ -9,16 +9,23 @@ import Combine
 import MediaPlayer
 
 class MPMusicPlayerController: ObservableObject {
-    @Published var currentItem: MPMediaItem?
+    
+    private let musicPlayer: MPMusicPlayerApplicationController = .applicationQueuePlayer
+    
+    private var currentItem: MPMediaItem?
     
     /// item duration
     public var duration: TimeInterval? {
         return currentItem?.playbackDuration
     }
     
-    let musicPlayer = MPMusicPlayerApplicationController.applicationQueuePlayer
-    
-    public func play(item: MPMediaItem) {
+    public var currentTime: TimeInterval {
+        return musicPlayer.currentPlaybackTime
+    }
+}
+
+extension MPMusicPlayerController {
+    func play(item: MPMediaItem) {
         currentItem = item
         
         musicPlayer.setQueue(with: .init(items: [item]))
@@ -26,15 +33,15 @@ class MPMusicPlayerController: ObservableObject {
         musicPlayer.play()
     }
     
-    public func pause() {
+    func pause() {
         musicPlayer.pause()
     }
     
-    public func stop() {
+    func stop() {
         musicPlayer.stop()
     }
     
-    public func seek(seconds: TimeInterval) {
+    func seek(seconds: TimeInterval) {
         musicPlayer.currentPlaybackTime = seconds
     }
 }
