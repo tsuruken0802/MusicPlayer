@@ -16,6 +16,7 @@ public final class MusicPlayer: ObservableObject {
     private var audioFile: AVAudioFile?
     
     private let mpController: MPMusicPlayerController = .init()
+    private var mpControllerInterruptionFlag: Bool = false
     
     /// Cache of playback time when moving the seek bar
     private var cachedSeekBarSeconds: Float = 0
@@ -181,19 +182,19 @@ public extension MusicPlayer {
         if isSeekOver || !isEnableAudio {
             return
         }
-        
         if isCurrentRemoteItem {
             if let item = currentItem?.item {
                 mpController.play(item: item)
+                isPlaying = true
             }
         }
         else {
             do {
                 try audioEngine.start()
                 playerNode.play()
-                isPlaying = true
                 startCurrentTimeRedering()
                 setNowPlayingInfo()
+                isPlaying = true
             }
             catch let e {
                 print(e.localizedDescription)
@@ -442,7 +443,10 @@ public extension MusicPlayer {
         let rate = currentRate ?? rate
         let valueRate = rate / MPConstants.defaultRateValue
         let value = MusicPlayer.currentTimeTimerScheduleTime / valueRate
-        currentTimeTimer = Timer.scheduledTimer(timeInterval: TimeInterval(value), target: self, selector: #selector(self.onUpdateCurrentTime), userInfo: nil, repeats: true)
+        currentTimeTimer = Timer.scheduledTimer(timeInterval: TimeInterval(value),
+                                                target: self,
+                                                selector: #selector(self.onUpdateCurrentTime),
+                                                userInfo: nil, repeats: true)
     }
     
     /// stop timer
@@ -488,6 +492,7 @@ public extension MusicPlayer {
     ///   - effect: effect
     ///   - trimming: trimming effect
     func setCurrentEffect(effect: MPSongItemEffect?, trimming: MPSongItemTrimming?) {
+        if isCurrentRemoteItem { return }
         if let effect = effect {
             rate = effect.rate
             pitch = effect.pitch
@@ -515,7 +520,6 @@ public extension MusicPlayer {
 
 @available(iOS 13.0, *)
 private extension MusicPlayer {
-    
     /// stop if need change player
     /// - Parameter nextIndex: next item index
     func stopIfNeedChangePlayer(nextIndex: Int) {
@@ -524,6 +528,9 @@ private extension MusicPlayer {
         let nextIsRemote = items[nextIndex].item.isRemoteItem
         if preIsRemote != nextIsRemote {
             stop()
+        }
+        if !preIsRemote && nextIsRemote {
+            mpControllerInterruptionFlag = true
         }
     }
     
@@ -582,8 +589,14 @@ private extension MusicPlayer {
     
     /// set notification
     func setNotification() {
-        NotificationCenter.default.addObserver(self, selector: #selector(onInterruption(_:)), name: AVAudioSession.interruptionNotification, object: AVAudioSession.sharedInstance())
-        NotificationCenter.default.addObserver(self, selector: #selector(onAudioSessionRouteChanged(_:)), name: AVAudioSession.routeChangeNotification, object: nil)
+        NotificationCenter.default.addObserver(self,
+                                               selector: #selector(onInterruption(_:)),
+                                               name: AVAudioSession.interruptionNotification,
+                                               object: AVAudioSession.sharedInstance())
+        NotificationCenter.default.addObserver(self,
+                                               selector: #selector(onAudioSessionRouteChanged(_:)),
+                                               name: AVAudioSession.routeChangeNotification,
+                                               object: nil)
     }
     
     /// set RemoteCommand
@@ -717,10 +730,16 @@ private extension MusicPlayer {
         }
         switch type {
         case .began:
+            // MPControllerでの通知の場合は無視する
+            if mpControllerInterruptionFlag {
+                mpControllerInterruptionFlag = false
+                return
+            }
+            
             if isPlaying {
                 pause()
             }
-            break
+            
         case .ended:
             guard let optionsValue =
                 userInfo[AVAudioSessionInterruptionOptionKey] as? UInt else {
