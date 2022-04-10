@@ -48,10 +48,7 @@ public final class MusicPlayer: ObservableObject {
     
     /// current playback item
     public var currentItem: MPSongItem? {
-        if !items.indices.contains(currentIndex) {
-            return nil
-        }
-        return items[currentIndex]
+        return itemList.currentItem
     }
     
     /// index of current playing MPMediaItem
@@ -512,6 +509,7 @@ private extension MusicPlayer {
     func enableMusicIndex(forward: Bool) -> Int? {
         let from = forward ? currentIndex : 0
         let to = forward ? items.count-1 : currentIndex
+        if !items.indices.contains(from) || !items.indices.contains(to) { return nil }
         let array = items[from...to]
         var newIndex: Int?
         if forward {

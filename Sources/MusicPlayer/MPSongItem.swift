@@ -14,6 +14,13 @@ public struct MPSongItemList {
     
     public var currentIndex: Int
     
+    public var currentItem: MPSongItem? {
+        if !items.indices.contains(currentIndex) {
+            return nil
+        }
+        return items[currentIndex]
+    }
+    
     public init(items: [MPSongItem], currentIndex: Int = 0) {
         self.items = items
         self.currentIndex = currentIndex
