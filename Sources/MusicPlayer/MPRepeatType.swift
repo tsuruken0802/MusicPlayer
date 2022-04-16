@@ -9,9 +9,9 @@ import Foundation
 
 @available(iOS 13.0, *)
 public enum MPRepeatType: Int {
-    case list
+    case list = 0
     
-    case one
+    case one = 1
     
-    case none
+    case none = 2
 }

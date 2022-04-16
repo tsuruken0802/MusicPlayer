@@ -9,13 +9,13 @@ import Foundation
 
 @available(iOS 13.0, *)
 public enum MPRemoteCommandType: Int {
-    case nextTrack
+    case nextTrack = 0
     
-    case previousTrack
+    case previousTrack = 1
     
-    case skipForward
+    case skipForward = 2
     
-    case skipBackward
+    case skipBackward = 3
     
     var isSkipType: Bool {
         return self == .skipForward || self == .skipBackward
