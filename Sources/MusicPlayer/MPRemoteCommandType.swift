@@ -17,7 +17,7 @@ public enum MPRemoteCommandType: Int {
     
     case skipBackward = 3
     
-    var isSkipType: Bool {
+    public var isSkipType: Bool {
         return self == .skipForward || self == .skipBackward
     }
 }
