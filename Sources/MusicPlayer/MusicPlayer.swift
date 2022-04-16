@@ -114,7 +114,7 @@ public final class MusicPlayer: ObservableObject {
         setNotification()
         audioEngine.attach(playerNode)
         audioEngine.attach(pitchControl)
-        setRemoteCommand()
+        initRemoteCommand()
         
         $pitch.sink { [weak self] value in
             guard let self = self else { return }
@@ -158,20 +158,19 @@ public final class MusicPlayer: ObservableObject {
         
         $rightRemoteCommand.sink { [weak self] value in
             guard let self = self else { return }
-            self.setRemoteCommand(rightCommand: value)
+            self.setLeftAndRightRemoteCommandValue(rightCommand: value)
         }
         .store(in: &cancellables)
         
         $leftRemoteCommand.sink { [weak self] value in
             guard let self = self else { return }
-            self.setRemoteCommand(leftCommand: value)
+            self.setLeftAndRightRemoteCommandValue(leftCommand: value)
         }
         .store(in: &cancellables)
         
         $remoteSkipSeconds.sink { [weak self] value in
             guard let self = self else { return }
-            if !self.leftRemoteCommand.isSkipType && !self.rightRemoteCommand.isSkipType { return }
-            self.setRemoteCommand(skipSeconds: value)
+            self.setLeftAndRightRemoteCommandValue(skipSeconds: value)
         }
         .store(in: &cancellables)
     }
@@ -615,15 +614,36 @@ private extension MusicPlayer {
                                                object: nil)
     }
     
-    /// set RemoteCommand
-    func setRemoteCommand(leftCommand: MPRemoteCommandType? = nil,
-                          rightCommand: MPRemoteCommandType? = nil,
-                          skipSeconds: Int? = nil) {
+    /// set left and right remote command
+    /// if command type is skip, set skip seconds
+    /// - Parameters:
+    ///   - leftCommand: left command
+    ///   - rightCommand: right command
+    ///   - skipSeconds: skip seconds
+    func setLeftAndRightRemoteCommandValue(leftCommand: MPRemoteCommandType? = nil,
+                                           rightCommand: MPRemoteCommandType? = nil,
+                                           skipSeconds: Int? = nil) {
         let commandCenter = MPRemoteCommandCenter.shared()
         let leftCommand: MPRemoteCommandType = leftCommand ?? self.leftRemoteCommand
         let rightCommand: MPRemoteCommandType = rightCommand ?? self.rightRemoteCommand
         let skipSeconds: Int = skipSeconds ?? self.remoteSkipSeconds
-        print("remote command設定するぞ")
+        commandCenter.previousTrackCommand.isEnabled = !leftCommand.isSkipType
+        commandCenter.nextTrackCommand.isEnabled = !rightCommand.isSkipType
+        
+        commandCenter.skipForwardCommand.isEnabled = rightCommand.isSkipType
+        commandCenter.skipForwardCommand.preferredIntervals = [NSNumber(integerLiteral: skipSeconds)]
+        
+        commandCenter.skipBackwardCommand.isEnabled = leftCommand.isSkipType
+        commandCenter.skipBackwardCommand.preferredIntervals = [NSNumber(integerLiteral: skipSeconds)]
+    }
+    
+    /// set RemoteCommand
+    /// call only once
+    func initRemoteCommand() {
+        let commandCenter = MPRemoteCommandCenter.shared()
+        let leftCommand: MPRemoteCommandType = self.leftRemoteCommand
+        let rightCommand: MPRemoteCommandType = self.rightRemoteCommand
+        let skipSeconds: Int = self.remoteSkipSeconds
         
         commandCenter.playCommand.removeTarget(self)
         commandCenter.playCommand.isEnabled = true
@@ -642,7 +662,6 @@ private extension MusicPlayer {
         commandCenter.previousTrackCommand.removeTarget(self)
         commandCenter.previousTrackCommand.isEnabled = !leftCommand.isSkipType
         commandCenter.previousTrackCommand.addTarget { [unowned self] event in
-            print("前の曲")
             back(backEnableSong: self.backgroundMode)
             return .success
         }
@@ -650,7 +669,6 @@ private extension MusicPlayer {
         commandCenter.nextTrackCommand.removeTarget(self)
         commandCenter.nextTrackCommand.isEnabled = !rightCommand.isSkipType
         commandCenter.nextTrackCommand.addTarget { [unowned self] event in
-            print("次の曲")
             next(forwardEnableSong: self.backgroundMode)
             return .success
         }
@@ -659,8 +677,7 @@ private extension MusicPlayer {
         commandCenter.skipForwardCommand.isEnabled = rightCommand.isSkipType
         commandCenter.skipForwardCommand.preferredIntervals = [NSNumber(integerLiteral: skipSeconds)]
         commandCenter.skipForwardCommand.addTarget { [unowned self] event in
-            print("秒数進め")
-            setSeek(seconds: Float(remoteSkipSeconds))
+            setSeek(addingSeconds: Float(remoteSkipSeconds))
             return .success
         }
         
@@ -668,8 +685,7 @@ private extension MusicPlayer {
         commandCenter.skipBackwardCommand.isEnabled = leftCommand.isSkipType
         commandCenter.skipBackwardCommand.preferredIntervals = [NSNumber(integerLiteral: skipSeconds)]
         commandCenter.skipBackwardCommand.addTarget { [unowned self] event in
-            print("秒数戻れ")
-            setSeek(seconds: Float(-remoteSkipSeconds))
+            setSeek(addingSeconds: Float(-remoteSkipSeconds))
             return .success
         }
 
