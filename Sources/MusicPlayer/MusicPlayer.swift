@@ -103,6 +103,13 @@ public final class MusicPlayer: ObservableObject {
     /// repeat
     @Published public var repeatType: MPRepeatType = .none
     
+    /// remote command
+    @Published public var rightRemoteCommand: MPRemoteCommandType = .nextTrack
+    @Published public var leftRemoteCommand: MPRemoteCommandType = .previousTrack
+    
+    /// skip seconds on remote command
+    @Published public var remoteSkipSeconds: Int = 5
+    
     private init() {
         setNotification()
         audioEngine.attach(playerNode)
@@ -603,14 +610,26 @@ private extension MusicPlayer {
             pause()
             return .success
         }
-        commandCenter.previousTrackCommand.isEnabled = true
+        commandCenter.previousTrackCommand.isEnabled = !leftRemoteCommand.isSkipType
         commandCenter.previousTrackCommand.addTarget { [unowned self] event in
             back(backEnableSong: self.backgroundMode)
             return .success
         }
-        commandCenter.nextTrackCommand.isEnabled = true
+        commandCenter.nextTrackCommand.isEnabled = !rightRemoteCommand.isSkipType
         commandCenter.nextTrackCommand.addTarget { [unowned self] event in
             next(forwardEnableSong: self.backgroundMode)
+            return .success
+        }
+        commandCenter.skipForwardCommand.isEnabled = rightRemoteCommand.isSkipType
+        commandCenter.skipForwardCommand.preferredIntervals = [NSNumber(integerLiteral: remoteSkipSeconds)]
+        commandCenter.skipForwardCommand.addTarget { [unowned self] event in
+            setSeek(seconds: Float(remoteSkipSeconds))
+            return .success
+        }
+        commandCenter.skipBackwardCommand.isEnabled = leftRemoteCommand.isSkipType
+        commandCenter.skipBackwardCommand.preferredIntervals = [NSNumber(integerLiteral: remoteSkipSeconds)]
+        commandCenter.skipBackwardCommand.addTarget { [unowned self] event in
+            setSeek(seconds: Float(-remoteSkipSeconds))
             return .success
         }
 
@@ -642,13 +661,14 @@ private extension MusicPlayer {
         }
         
         nowPlayingInfo[MPNowPlayingInfoPropertyElapsedPlaybackTime] = currentTime
-        
-        if isPlaying {
-            nowPlayingInfo[MPNowPlayingInfoPropertyPlaybackRate] = rate
-        }
-        else {
-            nowPlayingInfo[MPNowPlayingInfoPropertyPlaybackRate] = 0.0
-        }
+        nowPlayingInfo[MPNowPlayingInfoPropertyPlaybackProgress] = 5
+//
+//        if isPlaying {
+//            nowPlayingInfo[MPNowPlayingInfoPropertyPlaybackRate] = rate
+//        }
+//        else {
+//            nowPlayingInfo[MPNowPlayingInfoPropertyPlaybackRate] = 0.0
+//        }
         
         nowPlayingInfo[MPMediaItemPropertyPlaybackDuration] = duration
         
