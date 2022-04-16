@@ -155,6 +155,25 @@ public final class MusicPlayer: ObservableObject {
             }
         }
         .store(in: &cancellables)
+        
+        $rightRemoteCommand.sink { [weak self] value in
+            guard let self = self else { return }
+            self.setRemoteCommand(rightCommand: value)
+        }
+        .store(in: &cancellables)
+        
+        $leftRemoteCommand.sink { [weak self] value in
+            guard let self = self else { return }
+            self.setRemoteCommand(leftCommand: value)
+        }
+        .store(in: &cancellables)
+        
+        $remoteSkipSeconds.sink { [weak self] value in
+            guard let self = self else { return }
+            if !self.leftRemoteCommand.isSkipType && !self.rightRemoteCommand.isSkipType { return }
+            self.setRemoteCommand(skipSeconds: value)
+        }
+        .store(in: &cancellables)
     }
     
     deinit {
@@ -597,42 +616,64 @@ private extension MusicPlayer {
     }
     
     /// set RemoteCommand
-    func setRemoteCommand() {
+    func setRemoteCommand(leftCommand: MPRemoteCommandType? = nil,
+                          rightCommand: MPRemoteCommandType? = nil,
+                          skipSeconds: Int? = nil) {
         let commandCenter = MPRemoteCommandCenter.shared()
+        let leftCommand: MPRemoteCommandType = leftCommand ?? self.leftRemoteCommand
+        let rightCommand: MPRemoteCommandType = rightCommand ?? self.rightRemoteCommand
+        let skipSeconds: Int = skipSeconds ?? self.remoteSkipSeconds
+        print("remote command設定するぞ")
         
+        commandCenter.playCommand.removeTarget(self)
         commandCenter.playCommand.isEnabled = true
         commandCenter.playCommand.addTarget { [unowned self] event in
             play()
             return .success
         }
+        
+        commandCenter.pauseCommand.removeTarget(self)
         commandCenter.pauseCommand.isEnabled = true
         commandCenter.pauseCommand.addTarget { [unowned self] event in
             pause()
             return .success
         }
-        commandCenter.previousTrackCommand.isEnabled = !leftRemoteCommand.isSkipType
+        
+        commandCenter.previousTrackCommand.removeTarget(self)
+        commandCenter.previousTrackCommand.isEnabled = !leftCommand.isSkipType
         commandCenter.previousTrackCommand.addTarget { [unowned self] event in
+            print("前の曲")
             back(backEnableSong: self.backgroundMode)
             return .success
         }
-        commandCenter.nextTrackCommand.isEnabled = !rightRemoteCommand.isSkipType
+        
+        commandCenter.nextTrackCommand.removeTarget(self)
+        commandCenter.nextTrackCommand.isEnabled = !rightCommand.isSkipType
         commandCenter.nextTrackCommand.addTarget { [unowned self] event in
+            print("次の曲")
             next(forwardEnableSong: self.backgroundMode)
             return .success
         }
-        commandCenter.skipForwardCommand.isEnabled = rightRemoteCommand.isSkipType
-        commandCenter.skipForwardCommand.preferredIntervals = [NSNumber(integerLiteral: remoteSkipSeconds)]
+        
+        commandCenter.skipForwardCommand.removeTarget(self)
+        commandCenter.skipForwardCommand.isEnabled = rightCommand.isSkipType
+        commandCenter.skipForwardCommand.preferredIntervals = [NSNumber(integerLiteral: skipSeconds)]
         commandCenter.skipForwardCommand.addTarget { [unowned self] event in
+            print("秒数進め")
             setSeek(seconds: Float(remoteSkipSeconds))
             return .success
         }
-        commandCenter.skipBackwardCommand.isEnabled = leftRemoteCommand.isSkipType
-        commandCenter.skipBackwardCommand.preferredIntervals = [NSNumber(integerLiteral: remoteSkipSeconds)]
+        
+        commandCenter.skipBackwardCommand.removeTarget(self)
+        commandCenter.skipBackwardCommand.isEnabled = leftCommand.isSkipType
+        commandCenter.skipBackwardCommand.preferredIntervals = [NSNumber(integerLiteral: skipSeconds)]
         commandCenter.skipBackwardCommand.addTarget { [unowned self] event in
+            print("秒数戻れ")
             setSeek(seconds: Float(-remoteSkipSeconds))
             return .success
         }
 
+        commandCenter.changePlaybackPositionCommand.removeTarget(self)
         commandCenter.changePlaybackPositionCommand.isEnabled = true
         commandCenter.changePlaybackPositionCommand.addTarget { [unowned self] event in
             guard let positionCommandEvent = event as? MPChangePlaybackPositionCommandEvent else { return .commandFailed }
@@ -661,14 +702,13 @@ private extension MusicPlayer {
         }
         
         nowPlayingInfo[MPNowPlayingInfoPropertyElapsedPlaybackTime] = currentTime
-        nowPlayingInfo[MPNowPlayingInfoPropertyPlaybackProgress] = 5
-//
-//        if isPlaying {
-//            nowPlayingInfo[MPNowPlayingInfoPropertyPlaybackRate] = rate
-//        }
-//        else {
-//            nowPlayingInfo[MPNowPlayingInfoPropertyPlaybackRate] = 0.0
-//        }
+
+        if isPlaying {
+            nowPlayingInfo[MPNowPlayingInfoPropertyPlaybackRate] = rate
+        }
+        else {
+            nowPlayingInfo[MPNowPlayingInfoPropertyPlaybackRate] = 0.0
+        }
         
         nowPlayingInfo[MPMediaItemPropertyPlaybackDuration] = duration
         

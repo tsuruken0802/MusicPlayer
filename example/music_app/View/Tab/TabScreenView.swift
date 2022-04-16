@@ -19,6 +19,11 @@ struct TabScreenView: View {
                     .tabItem {
                         Image(systemName: "music.note")
                     }
+                
+                PlayerSettingScreenView()
+                    .tabItem {
+                        Image(systemName: "person")
+                    }
             }
             .accentColor(Color.blue)
             
