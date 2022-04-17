@@ -34,7 +34,15 @@ public final class MusicPlayer: ObservableObject {
     private static let backSameMusicThreshold: Float = 2.5
     
     /// Current time timer schedule time
-    private static let currentTimeTimerScheduleTime: Float = 0.1
+    /// The smaller the value, the narrower the interval between the calculation of the current playback time.
+    /// Do not set too small a number from a performance standpoint.
+    /// Set a value greater than 0.
+    var currentTimeTimerScheduleTime: Float = 0.5 {
+        didSet {
+            stopCurrentTimeRendering()
+            startCurrentTimeRedering()
+        }
+    }
     
     /// If true, the current Time exceeds the song playback time
     private var isSeekOver: Bool {
@@ -454,7 +462,7 @@ public extension MusicPlayer {
         }
         let rate = currentRate ?? rate
         let valueRate = rate / MPConstants.defaultRateValue
-        let value = MusicPlayer.currentTimeTimerScheduleTime / valueRate
+        let value = currentTimeTimerScheduleTime / valueRate
         currentTimeTimer = Timer.scheduledTimer(timeInterval: TimeInterval(value), target: self, selector: #selector(self.onUpdateCurrentTime), userInfo: nil, repeats: true)
     }
     
