@@ -33,15 +33,10 @@ public final class MusicPlayer: ObservableObject {
     /// value is seconds
     private static let backSameMusicThreshold: Float = 2.5
     
-    /// Current time timer schedule time
-    /// The smaller the value, the narrower the interval between the calculation of the current playback time.
-    /// Do not set too small a number from a performance standpoint.
-    /// Set a value greater than 0.
-    var currentTimeTimerScheduleTime: Float = 0.5 {
-        didSet {
-            stopCurrentTimeRendering()
-            startCurrentTimeRedering()
-        }
+    /// index of current playing MPMediaItem
+    private var currentIndex: Int {
+        get { itemList.currentIndex }
+        set { itemList.currentIndex = newValue }
     }
     
     /// If true, the current Time exceeds the song playback time
@@ -59,10 +54,15 @@ public final class MusicPlayer: ObservableObject {
         return itemList.currentItem
     }
     
-    /// index of current playing MPMediaItem
-    private var currentIndex: Int {
-        get { itemList.currentIndex }
-        set { itemList.currentIndex = newValue }
+    /// Current time timer schedule time
+    /// The smaller the value, the narrower the interval between the calculation of the current playback time.
+    /// Do not set too small a number from a performance standpoint.
+    /// Set a value greater than 0.
+    public var currentTimeTimerScheduleTime: Float = 0.5 {
+        didSet {
+            stopCurrentTimeRendering()
+            startCurrentTimeRedering()
+        }
     }
     
     /// playback items
