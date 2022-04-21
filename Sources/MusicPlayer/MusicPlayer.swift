@@ -93,16 +93,36 @@ public final class MusicPlayer: ObservableObject {
                                                                       unit: MPConstants.defaultRateUnit,
                                                                       defaultValue: MPConstants.defaultRateValue)
     
-    /// trimming(seconds)
-    @Published public var playbackTimeRange: ClosedRange<Float>?
+    /// trimming(seconds) and divisions
+    @Published public var playbackTimeRange: ClosedRange<Float>? {
+        didSet {
+            division.clear()
+        }
+    }
+    @Published public var division: MPDivision = .init() {
+        didSet {
+            playbackTimeRange = nil
+        }
+    }
     private var minPlaybackTime: Float {
-        return playbackTimeRange?.lowerBound ?? 0.0
+        if let playbackTimeRange = playbackTimeRange {
+            return playbackTimeRange.lowerBound
+        }
+        else if let from = division.from(currentTime: currentTime) {
+            return from
+        }
+        return 0.0
     }
     private var maxPlaybackTime: Float {
         if let max = playbackTimeRange?.upperBound {
             return max
         }
-        return Float(duration ?? 0.0)
+        
+        let duration = Float(duration ?? 0)
+        if let max = division.to(currentTime: currentTime, duration: duration) {
+            return max
+        }
+        return duration
     }
     
     /// shuffle

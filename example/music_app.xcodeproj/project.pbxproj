@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		032184A62811CA5600BBEE41 /* MPDivision.swift in Sources */ = {isa = PBXBuildFile; fileRef = 032184A52811CA5600BBEE41 /* MPDivision.swift */; };
 		0323B6F6277722F6001240C4 /* NoImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0323B6F5277722F6001240C4 /* NoImageView.swift */; };
 		0328229D27C7ABE7002BC9FD /* PlaybackTimeConverter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0328229C27C7ABE7002BC9FD /* PlaybackTimeConverter.swift */; };
 		0328229F27C7AE7C002BC9FD /* PlaybackTimeConverterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0328229E27C7AE7C002BC9FD /* PlaybackTimeConverterTests.swift */; };
@@ -90,6 +91,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		032184A52811CA5600BBEE41 /* MPDivision.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MPDivision.swift; sourceTree = "<group>"; };
 		0323B6F5277722F6001240C4 /* NoImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoImageView.swift; sourceTree = "<group>"; };
 		0328229C27C7ABE7002BC9FD /* PlaybackTimeConverter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaybackTimeConverter.swift; sourceTree = "<group>"; };
 		0328229E27C7AE7C002BC9FD /* PlaybackTimeConverterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaybackTimeConverterTests.swift; sourceTree = "<group>"; };
@@ -341,6 +343,7 @@
 				03EC28FB27F751A800F01F80 /* MPRepeatType.swift */,
 				03C503EE27FD8BAB0087F9D9 /* MPSongItem.swift */,
 				03BA5391280A90FC00BB25B1 /* MPRemoteCommandType.swift */,
+				032184A52811CA5600BBEE41 /* MPDivision.swift */,
 			);
 			name = MusicPlayer;
 			path = ../Sources/MusicPlayer;
@@ -630,6 +633,7 @@
 				03E6653F27E9A72C00CB76F8 /* MiniPlayerExpandedSongNameView.swift in Sources */,
 				036532AE27DDBA2B0077C967 /* MPConstants.swift in Sources */,
 				033FB2D127CBC6B500146123 /* MusicOptionButton.swift in Sources */,
+				032184A62811CA5600BBEE41 /* MPDivision.swift in Sources */,
 				03EC28FC27F751A800F01F80 /* MPRepeatType.swift in Sources */,
 				03E6653B27E8D25100CB76F8 /* MiniPlayerListViewModel.swift in Sources */,
 				0353AB8D2775D307004DD139 /* PlaylistScreenViewModel.swift in Sources */,

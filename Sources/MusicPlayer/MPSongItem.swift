@@ -40,6 +40,8 @@ public class MPSongItem {
     
     public var trimming: MPSongItemTrimming?
     
+    public var divisions: MPDivision?
+    
     public var duration: TimeInterval { item.playbackDuration }
     
     public var id: MPMediaEntityPersistentID { item.persistentID }
@@ -54,10 +56,14 @@ public class MPSongItem {
         return item.artwork?.image(at: CGSize(width: size, height: size))
     }
     
-    public init(item: MPMediaItem, effect: MPSongItemEffect? = nil, trimming: MPSongItemTrimming? = nil) {
+    public init(item: MPMediaItem,
+                effect: MPSongItemEffect? = nil,
+                trimming: MPSongItemTrimming? = nil,
+                divisions: MPDivision? = nil) {
         self.item = item
         self.effect = effect
         self.trimming = trimming
+        self.divisions = divisions
     }
 }
 
