@@ -21,16 +21,12 @@ public extension MPDivision {
     func from(currentTime: Float) -> Float? {
         if values.isEmpty { return nil }
         
-        var from: Float = currentTime
+        var from: Float = 0.0
         for i in 0 ..< values.count {
-            if from < values[i] {
+            if currentTime < values[i] {
                 break
             }
             from = values[i]
-        }
-        // Returns 0 if the current time is the minimum
-        if from == currentTime {
-            return 0.0
         }
         return from
     }

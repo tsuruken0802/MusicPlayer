@@ -66,6 +66,10 @@ struct MusicPlayerDivisionItemView: View {
             
             ForEach(divisions, id: \.self) { division in
                 close(rate: division, width: geometry.size.width)
+                    .onTapGesture {
+                        guard let index = divisions.firstIndex(where: { $0 == division }) else { return }
+                        MusicPlayer.shared.division.remove(index: index)
+                    }
             }
             .padding(.top, MusicPlayerDivisionItemView.barHeight + MusicPlayerDivisionItemView.verticalSpace)
         }
