@@ -9,7 +9,7 @@ import Foundation
 
 @available(iOS 13.0, *)
 public struct MPDivision {
-    private(set) var values: [Float] = []
+    private(set) public var values: [Float] = []
     
     public var isEmpty: Bool {
         return values.isEmpty
