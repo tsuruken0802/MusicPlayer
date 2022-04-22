@@ -14,6 +14,10 @@ public struct MPDivision {
     public var isEmpty: Bool {
         return values.isEmpty
     }
+    
+    public init(values: [Float] = []) {
+        self.values = values
+    }
 }
 
 @available(iOS 13.0, *)
