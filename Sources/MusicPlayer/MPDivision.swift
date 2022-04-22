@@ -16,7 +16,9 @@ public struct MPDivision {
     }
     
     public init(values: [Float] = []) {
-        self.values = values
+        self.values = values.sorted(by: {value1, value2 in
+            return value1 < value2
+        })
     }
 }
 
