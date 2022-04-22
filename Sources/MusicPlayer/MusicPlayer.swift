@@ -561,16 +561,21 @@ public extension MusicPlayer {
     ///   - songId: song id
     ///   - effect: effect
     ///   - trimming: trimming
+    ///   - divisions: divisions
     func updateSongEffect(songId: UInt64,
                           effect: MPSongItemEffect?,
-                          trimming: ClosedRange<Float>?) {
-        updateSongEffect(songs: items, songId: songId, effect: effect, trimming: trimming)
-        updateSongEffect(songs: originalItems, songId: songId, effect: effect, trimming: trimming)
+                          trimming: ClosedRange<Float>?,
+                          divisions: [Float]?) {
+        updateSongEffect(songs: items, songId: songId, effect: effect, trimming: trimming, divisions: divisions)
+        updateSongEffect(songs: originalItems, songId: songId, effect: effect, trimming: trimming, divisions: divisions)
         let isCurrentItem = songId == currentItem?.id
         if isCurrentItem {
             rate = effect?.rate ?? rate
             pitch = effect?.pitch ?? pitch
             playbackTimeRange = trimming
+            if let divisions = divisions {
+                division = .init(values: divisions)
+            }
         }
     }
     
@@ -578,6 +583,7 @@ public extension MusicPlayer {
     /// - Parameters:
     ///   - effect: effect
     ///   - trimming: trimming effect
+    ///   - divisions: divisions
     func setCurrentEffect(effect: MPSongItemEffect?,
                           trimming: MPSongItemTrimming?,
                           division: MPDivision?) {
@@ -635,16 +641,21 @@ private extension MusicPlayer {
     ///   - songId: song id
     ///   - effect: effect
     ///   - trimming: trimming
+    ///   - divisions: divisions
     func updateSongEffect(songs: [MPSongItem],
                           songId: UInt64,
                           effect: MPSongItemEffect?,
-                          trimming: ClosedRange<Float>?) {
+                          trimming: ClosedRange<Float>?,
+                          divisions: [Float]?) {
         guard let song = songs.first(where: { $0.id == songId }) else { return }
         if let effect = effect {
             song.effect = .init(rate: effect.rate, pitch: effect.pitch)
         }
         if let trimming = trimming {
             song.trimming = .init(trimming: trimming)
+        }
+        if let divisions = divisions {
+            song.division = .init(values: divisions)
         }
     }
     
