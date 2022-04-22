@@ -104,6 +104,7 @@ public final class MusicPlayer: ObservableObject {
             }
         }
     }
+    
     @Published public var division: MPDivision = .init() {
         didSet {
             if !division.isEmpty {
@@ -111,6 +112,17 @@ public final class MusicPlayer: ObservableObject {
             }
         }
     }
+    
+    public var trimmingType: MPTrimmingType {
+        if playbackTimeRange != nil {
+            return .trimming
+        }
+        else if !division.isEmpty {
+            return .division
+        }
+        return .none
+    }
+    
     private var minPlaybackTime: Float {
         if let playbackTimeRange = playbackTimeRange {
             return playbackTimeRange.lowerBound
@@ -120,11 +132,21 @@ public final class MusicPlayer: ObservableObject {
         }
         return 0.0
     }
+    
+    private var minThresholdTime: Float {
+        if let playbackTimeRange = playbackTimeRange {
+            return playbackTimeRange.lowerBound + MusicPlayer.backSameMusicThreshold
+        }
+        else if let from = division.from(currentTime: currentTime, threshold: MusicPlayer.backSameMusicThreshold) {
+            return from
+        }
+        return 0.0
+    }
+    
     private var maxPlaybackTime: Float {
         if let max = playbackTimeRange?.upperBound {
             return max
         }
-        
         let duration = fDuration
         if let max = division.to(currentTime: currentTime, duration: duration) {
             return max
@@ -331,12 +353,17 @@ public extension MusicPlayer {
     
     /// Play previous item
     func back(backEnableSong: Bool = false) {
-        // 数秒しか経ってないなら同じ曲を0秒から再生する
-        if currentTime >= MusicPlayer.backSameMusicThreshold + minPlaybackTime {
-            setSeek(seconds: minPlaybackTime)
+        let minThresholdTime = minThresholdTime
+        if minThresholdTime <= currentTime {
+            if trimmingType == .trimming {
+                setSeek(seconds: minPlaybackTime)
+            }
+            else {
+                setSeek(seconds: minThresholdTime)
+            }
             return
         }
-        
+
         let nextIndex = currentIndex - 1
         if !itemsSafe(index: nextIndex) {
             return

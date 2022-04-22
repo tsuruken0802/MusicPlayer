@@ -11,6 +11,7 @@
 		032184A828124FB000BBEE41 /* MusicPlayerDivisionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 032184A728124FB000BBEE41 /* MusicPlayerDivisionView.swift */; };
 		032184AA28124FCE00BBEE41 /* MusicSecondsTexts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 032184A928124FCE00BBEE41 /* MusicSecondsTexts.swift */; };
 		032184AC28124FDE00BBEE41 /* MusicPlayerDivisionItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 032184AB28124FDE00BBEE41 /* MusicPlayerDivisionItemView.swift */; };
+		032184AE2812C2B700BBEE41 /* MPTrimmingType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 032184AD2812C2B700BBEE41 /* MPTrimmingType.swift */; };
 		0323B6F6277722F6001240C4 /* NoImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0323B6F5277722F6001240C4 /* NoImageView.swift */; };
 		0328229D27C7ABE7002BC9FD /* PlaybackTimeConverter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0328229C27C7ABE7002BC9FD /* PlaybackTimeConverter.swift */; };
 		0328229F27C7AE7C002BC9FD /* PlaybackTimeConverterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0328229E27C7AE7C002BC9FD /* PlaybackTimeConverterTests.swift */; };
@@ -98,6 +99,7 @@
 		032184A728124FB000BBEE41 /* MusicPlayerDivisionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MusicPlayerDivisionView.swift; sourceTree = "<group>"; };
 		032184A928124FCE00BBEE41 /* MusicSecondsTexts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MusicSecondsTexts.swift; sourceTree = "<group>"; };
 		032184AB28124FDE00BBEE41 /* MusicPlayerDivisionItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MusicPlayerDivisionItemView.swift; sourceTree = "<group>"; };
+		032184AD2812C2B700BBEE41 /* MPTrimmingType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MPTrimmingType.swift; sourceTree = "<group>"; };
 		0323B6F5277722F6001240C4 /* NoImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoImageView.swift; sourceTree = "<group>"; };
 		0328229C27C7ABE7002BC9FD /* PlaybackTimeConverter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaybackTimeConverter.swift; sourceTree = "<group>"; };
 		0328229E27C7AE7C002BC9FD /* PlaybackTimeConverterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaybackTimeConverterTests.swift; sourceTree = "<group>"; };
@@ -350,6 +352,7 @@
 				03C503EE27FD8BAB0087F9D9 /* MPSongItem.swift */,
 				03BA5391280A90FC00BB25B1 /* MPRemoteCommandType.swift */,
 				032184A52811CA5600BBEE41 /* MPDivision.swift */,
+				032184AD2812C2B700BBEE41 /* MPTrimmingType.swift */,
 			);
 			name = MusicPlayer;
 			path = ../Sources/MusicPlayer;
@@ -636,6 +639,7 @@
 				03E6654127E9A77800CB76F8 /* MiniPlayerMiniContentView.swift in Sources */,
 				03CCD5B727E715E30084E2E2 /* MusicOptionTrimmingSliderViewModel.swift in Sources */,
 				0353AB902775D329004DD139 /* MPMediaItem+Extension.swift in Sources */,
+				032184AE2812C2B700BBEE41 /* MPTrimmingType.swift in Sources */,
 				03E6653827E8BCD200CB76F8 /* MiniPlayerListView.swift in Sources */,
 				0357066E27D4BFEE00A16545 /* MediaCollectionListScreenView.swift in Sources */,
 				0353AB802775D123004DD139 /* TabScreenView.swift in Sources */,

@@ -18,12 +18,13 @@ public struct MPDivision {
 
 @available(iOS 13.0, *)
 public extension MPDivision {
-    func from(currentTime: Float) -> Float? {
+    func from(currentTime: Float, threshold: Float? = nil) -> Float? {
         if values.isEmpty { return nil }
         
         var from: Float = 0.0
+        let totalTime = currentTime - (threshold ?? 0.0)
         for i in 0 ..< values.count {
-            if currentTime < values[i] {
+            if totalTime < values[i] {
                 break
             }
             from = values[i]
