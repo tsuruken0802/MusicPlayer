@@ -12,26 +12,28 @@ struct MusicPlaybackSliderView: View {
     
     var showTrimmingPosition: Bool?
     
-    let duration: TimeInterval?
+    var duration: Float {
+        return musicPlayer.fDuration
+    }
+    
+    private var trimmingPositions: [Float] {
+        if let playbackTimeRange = musicPlayer.playbackTimeRange {
+            if duration <= 0.0 { return [] }
+            return [playbackTimeRange.lowerBound / duration, playbackTimeRange.upperBound / duration]
+        }
+        return musicPlayer.division.values
+    }
+    
+    private var trimmingPositionRates: [Float] {
+        let positions = trimmingPositions
+        return positions.compactMap { value in
+            if duration <= 0.0 { return nil }
+            return value / Float(duration)
+        }
+    }
     
     init(showTrimmingPosition: Bool? = nil, duration: TimeInterval? = nil) {
         self.showTrimmingPosition = showTrimmingPosition
-        self.duration = duration
-    }
-    
-    private var trimmingLowerRate: Float? {
-        guard let lower = musicPlayer.playbackTimeRange?.lowerBound else { return nil }
-        guard let duration = duration else { return nil }
-        if lower <= 0.0 { return nil }
-        return lower / Float(duration)
-    }
-    
-    private var trimmingUpperRate: Float? {
-        guard let upper = musicPlayer.playbackTimeRange?.upperBound else { return nil }
-        guard let duration = duration else { return nil }
-        let fDuration = Float(duration)
-        if upper >= fDuration { return nil }
-        return upper / fDuration
     }
     
     var body: some View {
@@ -47,11 +49,12 @@ struct MusicPlaybackSliderView: View {
                     }
                 }
                 
-                if trimmingLowerRate != nil || trimmingUpperRate != nil {
+                let positions = trimmingPositionRates
+                if !positions.isEmpty {
                     if showTrimmingPosition == true {
                         // Sliderと幅を揃えたいがSliderの内部で
                         // 微量のPaddingを含んでいるため微調整する
-                        MiniPlayerTrimmingPositionView(lowerRate: trimmingLowerRate, upperRate: trimmingUpperRate)
+                        MiniPlayerTrimmingPositionView(positions: positions)
                             .padding(.horizontal, 1)
                             .padding(.vertical, 10)
                     }

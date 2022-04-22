@@ -47,6 +47,9 @@ public extension MPDivision {
 @available(iOS 13.0, *)
 public extension MPDivision {
     mutating func add(seconds: Float) {
+        if values.contains(seconds) {
+            return
+        }
         values.append(seconds)
         values.sort { value1, value2 in
             return value1 < value2
@@ -54,6 +57,7 @@ public extension MPDivision {
     }
     
     mutating func remove(index: Int) {
+        if !values.indices.contains(index) { return }
         values.remove(at: index)
     }
     

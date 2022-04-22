@@ -8,9 +8,7 @@
 import SwiftUI
 
 struct MiniPlayerTrimmingPositionView: View {
-    let lowerRate: Float?
-    
-    let upperRate: Float?
+    let positions: [Float]
     
     private let rectangleWidth: CGFloat = 4
     
@@ -18,13 +16,14 @@ struct MiniPlayerTrimmingPositionView: View {
     
     private let sliderCircleSize: CGFloat = 28
     
-    private func rectangle(rate: Float, width: CGFloat) -> some View {
+    private func rectangle(rate: Float, width: CGFloat) -> some View {      let fRate = CGFloat(rate)
+        let x = width * fRate
         return Rectangle()
             .frame(width: rectangleWidth,
                    height: barHeight)
             .foregroundColor(.green)
             .contentShape(Rectangle())
-            .position(x: (width - sliderCircleSize) * CGFloat(rate), y: barHeight / 2)
+            .position(x: x, y: barHeight/2)
     }
     
     var body: some View {
@@ -34,12 +33,8 @@ struct MiniPlayerTrimmingPositionView: View {
                 .frame(height: barHeight)
                 .overlay(
                     ZStack {
-                        if let lowerRate = lowerRate {
-                            rectangle(rate: lowerRate, width: geometry.size.width)
-                        }
-                        
-                        if let upperRate = upperRate {
-                            rectangle(rate: upperRate, width: geometry.size.width)
+                        ForEach(positions, id: \.self) { position in
+                            rectangle(rate: position, width: geometry.size.width)
                         }
                     }
                 )
@@ -50,6 +45,6 @@ struct MiniPlayerTrimmingPositionView: View {
 
 struct MusicTrimmingPositionView_Previews: PreviewProvider {
     static var previews: some View {
-        MiniPlayerTrimmingPositionView(lowerRate: 0.2, upperRate: 0.8)
+        MiniPlayerTrimmingPositionView(positions: [0.2, 0.8])
     }
 }
