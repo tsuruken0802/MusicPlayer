@@ -101,16 +101,19 @@ struct MusicOptionsView: View {
                      }
                      .pickerStyle(SegmentedPickerStyle())
                     
-                    if viewModel.selectedTrimmingIndex == 0 {
-                        if let duration = musicPlayer.duration {
-                            MusicPlayerDivisionView(duration: duration, divisions: [0.1, 0.4, 1])
+                    Group {
+                        if viewModel.selectedTrimmingIndex == 0 {
+                            if let duration = musicPlayer.duration {
+                                MusicPlayerDivisionView(duration: duration, divisions: [0.1, 0.4, 1])
+                            }
+                        }
+                        else {
+                            MusicOptionTrimmingSliderView()
+
+                            MusicPlaybackSliderView(duration: musicPlayer.duration)
                         }
                     }
-                    else {
-                        MusicOptionTrimmingSliderView()
-
-                        MusicPlaybackSliderView(duration: musicPlayer.duration)
-                    }
+                    .topSpace()
                 }
                 .largeTopSpace()
                 
