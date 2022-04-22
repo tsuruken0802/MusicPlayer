@@ -280,7 +280,9 @@ public extension MusicPlayer {
             stop()
             return
         }
-        setCurrentEffect(effect: currentItem?.effect, trimming: currentItem?.trimming)
+        setCurrentEffect(effect: currentItem?.effect,
+                         trimming: currentItem?.trimming,
+                         division: currentItem?.division)
         play()
     }
     
@@ -294,7 +296,9 @@ public extension MusicPlayer {
             stop()
             return
         }
-        setCurrentEffect(effect: currentItem?.effect, trimming: currentItem?.trimming)
+        setCurrentEffect(effect: currentItem?.effect,
+                         trimming: currentItem?.trimming,
+                         division: currentItem?.division)
         play()
     }
     
@@ -347,7 +351,9 @@ public extension MusicPlayer {
             currentIndex = enableMusicIndex
             _ = setScheduleFile()
         }
-        setCurrentEffect(effect: currentItem?.effect, trimming: currentItem?.trimming)
+        setCurrentEffect(effect: currentItem?.effect,
+                         trimming: currentItem?.trimming,
+                         division: currentItem?.division)
         play()
     }
     
@@ -382,7 +388,9 @@ public extension MusicPlayer {
             currentIndex = enableMusicIndex
             _ = setScheduleFile()
         }
-        setCurrentEffect(effect: currentItem?.effect, trimming: currentItem?.trimming)
+        setCurrentEffect(effect: currentItem?.effect,
+                         trimming: currentItem?.trimming,
+                         division: currentItem?.division)
         play()
     }
     
@@ -570,13 +578,18 @@ public extension MusicPlayer {
     /// - Parameters:
     ///   - effect: effect
     ///   - trimming: trimming effect
-    func setCurrentEffect(effect: MPSongItemEffect?, trimming: MPSongItemTrimming?) {
+    func setCurrentEffect(effect: MPSongItemEffect?,
+                          trimming: MPSongItemTrimming?,
+                          division: MPDivision?) {
         if let effect = effect {
             rate = effect.rate
             pitch = effect.pitch
         }
         if let trimming = trimming {
             playbackTimeRange = trimming.trimming
+        }
+        if let division = division {
+            self.division = division
         }
     }
     

@@ -40,7 +40,7 @@ public class MPSongItem {
     
     public var trimming: MPSongItemTrimming?
     
-    public var divisions: MPDivision?
+    public var division: MPDivision?
     
     public var duration: TimeInterval { item.playbackDuration }
     
@@ -63,7 +63,7 @@ public class MPSongItem {
         self.item = item
         self.effect = effect
         self.trimming = trimming
-        self.divisions = divisions
+        self.division = divisions
     }
 }
 
