@@ -8,8 +8,12 @@
 import Foundation
 
 @available(iOS 13.0, *)
-public class MPDivision {
-    private var values: [Float] = []
+public struct MPDivision {
+    private(set) var values: [Float] = []
+    
+    public var isEmpty: Bool {
+        return values.isEmpty
+    }
 }
 
 @available(iOS 13.0, *)
@@ -46,18 +50,18 @@ public extension MPDivision {
 
 @available(iOS 13.0, *)
 public extension MPDivision {
-    func add(seconds: Float) {
+    mutating func add(seconds: Float) {
         values.append(seconds)
         values.sort { value1, value2 in
             return value1 < value2
         }
     }
     
-    func remove(index: Int) {
+    mutating func remove(index: Int) {
         values.remove(at: index)
     }
     
-    func clear() {
+    mutating func clear() {
         values.removeAll()
     }
 }

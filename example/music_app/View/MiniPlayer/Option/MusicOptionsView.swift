@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct MusicOptionsView: View {    
+struct MusicOptionsView: View {
     @ObservedObject private var musicPlayer = MusicPlayer.shared
     
     @StateObject private var viewModel: MusicOptionsViewModel = .init()
@@ -18,6 +18,13 @@ struct MusicOptionsView: View {
     
     private var rateString: String {
         return viewModel.displayRate(value: musicPlayer.rate, defaultValue: musicPlayer.rateOptions.defaultValue)
+    }
+    
+    private var divisions: [Float] {
+        let source = musicPlayer.division
+        let duration = musicPlayer.fDuration
+        if duration <= 0 { return [] }
+        return source.values.map({ $0 / duration })
     }
     
     var body: some View {
@@ -104,7 +111,7 @@ struct MusicOptionsView: View {
                     Group {
                         if viewModel.selectedTrimmingIndex == 0 {
                             if let duration = musicPlayer.duration {
-                                MusicPlayerDivisionView(duration: duration, divisions: [0.1, 0.4, 1])
+                                MusicPlayerDivisionView(duration: duration, divisions: divisions)
                             }
                         }
                         else {

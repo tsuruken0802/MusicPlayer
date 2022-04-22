@@ -99,12 +99,16 @@ public final class MusicPlayer: ObservableObject {
     /// trimming(seconds) and divisions
     @Published public var playbackTimeRange: ClosedRange<Float>? {
         didSet {
-            division.clear()
+            if playbackTimeRange != nil {
+                division.clear()
+            }
         }
     }
     @Published public var division: MPDivision = .init() {
         didSet {
-            playbackTimeRange = nil
+            if !division.isEmpty {
+                playbackTimeRange = nil
+            }
         }
     }
     private var minPlaybackTime: Float {

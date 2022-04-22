@@ -47,6 +47,10 @@ struct MusicPlayerDivisionView: View {
         GeometryReader { geometry in
             VStack(alignment: .leading, spacing: 0) {
                 circle(width: geometry.size.width)
+                    .onTapGesture {
+                        musicPlayer.division.add(seconds: musicPlayer.currentTime)
+                    }
+                
                 Spacer(minLength: verticalSpacing)
                 
                 MusicPlaybackSliderView(duration: duration)
