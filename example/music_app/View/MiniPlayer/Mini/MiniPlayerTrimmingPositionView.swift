@@ -16,7 +16,8 @@ struct MiniPlayerTrimmingPositionView: View {
     
     private let sliderCircleSize: CGFloat = 28
     
-    private func rectangle(rate: Float, width: CGFloat) -> some View {      let fRate = CGFloat(rate)
+    private func rectangle(rate: Float, width: CGFloat) -> some View {
+        let fRate = CGFloat(rate)
         let x = width * fRate
         return Rectangle()
             .frame(width: rectangleWidth,

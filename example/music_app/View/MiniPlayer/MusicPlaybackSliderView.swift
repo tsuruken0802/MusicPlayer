@@ -16,19 +16,30 @@ struct MusicPlaybackSliderView: View {
         return musicPlayer.fDuration
     }
     
-    private var trimmingPositions: [Float] {
-        if let playbackTimeRange = musicPlayer.playbackTimeRange {
-            if duration <= 0.0 { return [] }
-            return [playbackTimeRange.lowerBound / duration, playbackTimeRange.upperBound / duration]
-        }
-        return musicPlayer.division.values
+    private var trimmingPositionRates: [Float] {
+        guard let playback = musicPlayer.playbackTimeRange else { return [] }
+        if duration <= 0.0 { return [] }
+        if playback.lowerBound <= 0.0 { return [] }
+        if playback.upperBound >= duration { return [] }
+        let minRate = playback.lowerBound / duration
+        let maxRate = playback.upperBound / duration
+        return [minRate, maxRate]
     }
     
-    private var trimmingPositionRates: [Float] {
-        let positions = trimmingPositions
+    private var trimmingDivisionRates: [Float] {
+        let positions = musicPlayer.division.values
         return positions.compactMap { value in
             if duration <= 0.0 { return nil }
-            return value / Float(duration)
+            return value / duration
+        }
+    }
+    
+    private var positions: [Float] {
+        if musicPlayer.playbackTimeRange != nil {
+            return trimmingPositionRates
+        }
+        else {
+            return trimmingDivisionRates
         }
     }
     
@@ -49,7 +60,7 @@ struct MusicPlaybackSliderView: View {
                     }
                 }
                 
-                let positions = trimmingPositionRates
+                let positions = positions
                 if !positions.isEmpty {
                     if showTrimmingPosition == true {
                         // Sliderと幅を揃えたいがSliderの内部で
