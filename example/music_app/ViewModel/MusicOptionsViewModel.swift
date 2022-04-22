@@ -11,6 +11,12 @@ class MusicOptionsViewModel: ObservableObject {
     let pitchPlusMark: String = "#"
     let pitchMinusMark: String = "♭"
     
+    @Published var selectedTrimmingIndex = 0
+    let trimmingPickerTexts: [String] = [
+        "分割",
+        "トリミング"
+    ]
+    
     /// Pitchの表示用の文字列を取得する
     /// - Parameter value: Pitchの値
     /// - Parameter unit: スライダー一個分の値

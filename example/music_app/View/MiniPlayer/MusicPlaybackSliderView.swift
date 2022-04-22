@@ -12,9 +12,11 @@ struct MusicPlaybackSliderView: View {
     
     var showTrimmingPosition: Bool?
     
-    private var duration: TimeInterval? {
-        guard let duration = musicPlayer.duration else { return nil }
-        return duration > 0.0 ? duration : nil
+    let duration: TimeInterval?
+    
+    init(showTrimmingPosition: Bool? = nil, duration: TimeInterval? = nil) {
+        self.showTrimmingPosition = showTrimmingPosition
+        self.duration = duration
     }
     
     private var trimmingLowerRate: Float? {
@@ -55,11 +57,7 @@ struct MusicPlaybackSliderView: View {
                     }
                 }
                 
-                HStack {
-                    Text(PlayBackTimeConverter.toString(seconds: musicPlayer.currentTime))
-                    Spacer()
-                    Text(PlayBackTimeConverter.toString(seconds: Float(duration)))
-                }
+                MusicSecondsTexts(from: musicPlayer.currentTime, to: Float(duration), showDecimalSeconds: false)
             }
         }
     }
@@ -67,6 +65,6 @@ struct MusicPlaybackSliderView: View {
 
 struct MusicPlaybackSliderView_Previews: PreviewProvider {
     static var previews: some View {
-        MusicPlaybackSliderView()
+        MusicPlaybackSliderView(duration: 300)
     }
 }

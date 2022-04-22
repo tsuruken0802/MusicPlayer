@@ -24,11 +24,7 @@ struct MusicOptionTrimmingSliderView: View {
                     }
                 }
                 
-                HStack {
-                    Text(PlayBackTimeConverter.toString(seconds: Float(viewModel.currentValue.lowerBound)))
-                    Spacer()
-                    Text(PlayBackTimeConverter.toString(seconds: Float(viewModel.currentValue.upperBound)))
-                }
+                MusicSecondsTexts(from: Float(viewModel.currentValue.lowerBound), to: Float(viewModel.currentValue.upperBound), showDecimalSeconds: false)
             }
         }
     }

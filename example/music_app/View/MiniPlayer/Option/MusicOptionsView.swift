@@ -93,9 +93,24 @@ struct MusicOptionsView: View {
                         .font(.title2)
                         .topSpace()
                     
-                    MusicOptionTrimmingSliderView()
+                    Picker("", selection: $viewModel.selectedTrimmingIndex) {
+                        ForEach(viewModel.trimmingPickerTexts.indices, id: \.self) { index in
+                            Text(viewModel.trimmingPickerTexts[index])
+                                 .tag(index)
+                         }
+                     }
+                     .pickerStyle(SegmentedPickerStyle())
+                    
+                    if viewModel.selectedTrimmingIndex == 0 {
+                        if let duration = musicPlayer.duration {
+                            MusicPlayerDivisionView(duration: duration, divisions: [0.1, 0.4, 1])
+                        }
+                    }
+                    else {
+                        MusicOptionTrimmingSliderView()
 
-                    MusicPlaybackSliderView()
+                        MusicPlaybackSliderView(duration: musicPlayer.duration)
+                    }
                 }
                 .largeTopSpace()
                 

@@ -48,6 +48,9 @@ public final class MusicPlayer: ObservableObject {
     public var duration: TimeInterval? {
         return currentItem?.duration
     }
+    public var fDuration: Float {
+        return Float(duration ?? 0.0)
+    }
     
     /// current playback item
     public var currentItem: MPSongItem? {
@@ -118,7 +121,7 @@ public final class MusicPlayer: ObservableObject {
             return max
         }
         
-        let duration = Float(duration ?? 0)
+        let duration = fDuration
         if let max = division.to(currentTime: currentTime, duration: duration) {
             return max
         }
@@ -272,6 +275,14 @@ public extension MusicPlayer {
     /// Play next item
     /// forwardEnableSong: if true, advance index to valid song
     func next(forwardEnableSong: Bool = false) {
+        // if there is a Division, move to that number of seconds
+        if let nextDivision = division.to(currentTime: currentTime, duration: fDuration) {
+            if nextDivision < fDuration {
+                setSeek(seconds: nextDivision)
+                return
+            }
+        }
+        
         var nextIndex = currentIndex + 1
         let isSafe = itemsSafe(index: nextIndex)
         switch repeatType {
@@ -601,7 +612,7 @@ private extension MusicPlayer {
             // シークバーを動かした後は内部的にsampleTimeが0にリセットされるため
             // 前回の再生時間を足す
             let newCurrentTime = Float(playerTime.sampleTime) / Float(sampleRate) + cachedSeekBarSeconds
-            currentTime = min(newCurrentTime, Float(duration!))
+            currentTime = min(newCurrentTime, fDuration)
         }
     }
     
@@ -797,7 +808,7 @@ private extension MusicPlayer {
     func resetPlaybackTime() {
         cachedSeekBarSeconds = 0
         currentTime = 0
-        playbackTimeRange = 0.0...Float(duration ?? 0.0)
+        playbackTimeRange = 0.0...fDuration
     }
 }
 
