@@ -64,7 +64,7 @@ public final class MusicPlayer: ObservableObject {
     public var currentTimeTimerScheduleTime: Float = 0.5 {
         didSet {
             stopCurrentTimeRendering()
-            startCurrentTimeRedering()
+            startCurrentTimeRendering()
         }
     }
     
@@ -182,7 +182,7 @@ public final class MusicPlayer: ObservableObject {
         $rate.sink { [weak self] value in
             guard let self = self else { return }
             self.pitchControl.rate = MusicPlayerSerivce.enableRateValue(value: value)
-            self.startCurrentTimeRedering(currentRate: value)
+            self.startCurrentTimeRendering(currentRate: value)
         }
         .store(in: &cancellables)
         
@@ -253,7 +253,7 @@ public extension MusicPlayer {
             try audioEngine.start()
             playerNode.play()
             isPlaying = true
-            startCurrentTimeRedering()
+            startCurrentTimeRendering()
             setNowPlayingInfo()
         }
         catch let e {
@@ -526,7 +526,7 @@ public extension MusicPlayer {
     
     /// set timer
     /// currentRate: current playback rate
-    func startCurrentTimeRedering(currentRate: Float? = nil) {
+    func startCurrentTimeRendering(currentRate: Float? = nil) {
         if currentTimeTimer?.isValid == true {
             stopCurrentTimeRendering()
         }

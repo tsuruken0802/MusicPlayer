@@ -55,7 +55,7 @@ struct MusicPlaybackSliderView: View {
                         musicPlayer.stopCurrentTimeRendering()
                     }
                     else {
-                        musicPlayer.startCurrentTimeRedering()
+                        musicPlayer.startCurrentTimeRendering()
                         musicPlayer.setSeek()
                     }
                 }
