@@ -16,9 +16,10 @@ public struct MPDivision {
     }
     
     public init(values: [Float] = []) {
-        self.values = values.sorted(by: {value1, value2 in
+        let sorted = values.sorted(by: {value1, value2 in
             return value1 < value2
         })
+        self.values = Array(Set(sorted))
     }
 }
 
