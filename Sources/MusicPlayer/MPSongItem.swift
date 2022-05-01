@@ -8,7 +8,6 @@
 import Foundation
 import MediaPlayer
 
-@available(iOS 13.0, *)
 public struct MPSongItemList {
     public let items: [MPSongItem]
     
@@ -32,7 +31,6 @@ public struct MPSongItemList {
     }
 }
 
-@available(iOS 13.0, *)
 public class MPSongItem {
     public let item: MPMediaItem
     
@@ -67,10 +65,8 @@ public class MPSongItem {
     }
 }
 
-@available(iOS 13.0, *)
 extension MPSongItem: Identifiable {}
 
-@available(iOS 13.0, *)
 public struct MPSongItemEffect {
     public let rate: Float
     
@@ -82,7 +78,6 @@ public struct MPSongItemEffect {
     }
 }
 
-@available(iOS 13.0, *)
 public struct MPSongItemTrimming {
     public let trimming: ClosedRange<Float>
     

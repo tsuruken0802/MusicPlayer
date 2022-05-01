@@ -7,7 +7,6 @@
 
 import Foundation
 
-@available(iOS 13.0, *)
 public struct MPDivision {
     private(set) public var values: [Float] = []
     
@@ -23,7 +22,6 @@ public struct MPDivision {
     }
 }
 
-@available(iOS 13.0, *)
 public extension MPDivision {
     func from(currentTime: Float, threshold: Float? = nil) -> Float? {
         if values.isEmpty { return nil }
@@ -51,8 +49,6 @@ public extension MPDivision {
     }
 }
 
-
-@available(iOS 13.0, *)
 public extension MPDivision {
     mutating func add(seconds: Float) {
         if values.contains(seconds) {

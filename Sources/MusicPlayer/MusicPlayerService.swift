@@ -7,7 +7,6 @@
 
 import Foundation
 
-@available(iOS 13.0, *)
 class MusicPlayerSerivce {
     /// 有効なPitchの値を取得する
     /// - Parameter value: Pitchの値

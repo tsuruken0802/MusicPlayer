@@ -42,7 +42,6 @@
 		0357066B27D4A83F00A16545 /* AllSongListScreenView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0357066A27D4A83F00A16545 /* AllSongListScreenView.swift */; };
 		0357066E27D4BFEE00A16545 /* MediaCollectionListScreenView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0357066D27D4BFEE00A16545 /* MediaCollectionListScreenView.swift */; };
 		0357067027D4C0A900A16545 /* MediaCollectionListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0357066F27D4C0A900A16545 /* MediaCollectionListViewModel.swift */; };
-		035A887B27EC2EA0003E63AF /* RangeSlider in Frameworks */ = {isa = PBXBuildFile; productRef = 035A887A27EC2EA0003E63AF /* RangeSlider */; };
 		036532AD27DDBA2B0077C967 /* MusicPlayerService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 036532A927DDBA2B0077C967 /* MusicPlayerService.swift */; };
 		036532AE27DDBA2B0077C967 /* MPConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 036532AA27DDBA2B0077C967 /* MPConstants.swift */; };
 		036532AF27DDBA2B0077C967 /* MusicPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 036532AB27DDBA2B0077C967 /* MusicPlayer.swift */; };
@@ -172,7 +171,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				035A887B27EC2EA0003E63AF /* RangeSlider in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -487,7 +485,6 @@
 			);
 			name = music_app;
 			packageProductDependencies = (
-				035A887A27EC2EA0003E63AF /* RangeSlider */,
 			);
 			productName = music_app;
 			productReference = 0353AB502775CF95004DD139 /* music_app.app */;
@@ -562,7 +559,6 @@
 			);
 			mainGroup = 0353AB472775CF95004DD139;
 			packageReferences = (
-				035A887927EC2EA0003E63AF /* XCRemoteSwiftPackageReference "RangeSlider" */,
 			);
 			productRefGroup = 0353AB512775CF95004DD139 /* Products */;
 			projectDirPath = "";
@@ -1022,25 +1018,6 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
-
-/* Begin XCRemoteSwiftPackageReference section */
-		035A887927EC2EA0003E63AF /* XCRemoteSwiftPackageReference "RangeSlider" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/TsurumotoKentarou/RangeSlider";
-			requirement = {
-				branch = main;
-				kind = branch;
-			};
-		};
-/* End XCRemoteSwiftPackageReference section */
-
-/* Begin XCSwiftPackageProductDependency section */
-		035A887A27EC2EA0003E63AF /* RangeSlider */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 035A887927EC2EA0003E63AF /* XCRemoteSwiftPackageReference "RangeSlider" */;
-			productName = RangeSlider;
-		};
-/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 0353AB482775CF95004DD139 /* Project object */;
 }

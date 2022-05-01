@@ -7,7 +7,6 @@
 
 import Foundation
 
-@available(iOS 13.0, *)
 public class MPConstants {
     /// Pitch
     public static let defaultPitchValue: Float = 0.0

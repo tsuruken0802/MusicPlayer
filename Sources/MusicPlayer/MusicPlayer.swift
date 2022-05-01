@@ -4,7 +4,6 @@ import AVFAudio
 import MediaPlayer
 import SwiftUI
 
-@available(iOS 13.0, *)
 public final class MusicPlayer: ObservableObject {
     /// instance
     public static let shared: MusicPlayer = .init()
@@ -241,7 +240,6 @@ public final class MusicPlayer: ObservableObject {
     }
 }
 
-@available(iOS 13.0, *)
 public extension MusicPlayer {
     /// Play current item
     func play() {
@@ -615,7 +613,6 @@ public extension MusicPlayer {
     }
 }
 
-@available(iOS 13.0, *)
 private extension MusicPlayer {
     /// get enable music index
     /// - Parameter forward: if true, search forward
@@ -867,7 +864,6 @@ private extension MusicPlayer {
     }
 }
 
-@available(iOS 13.0, *)
 private extension MusicPlayer {
     
     /// current time timer handler
