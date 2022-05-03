@@ -15,10 +15,12 @@ public struct MPDivision {
     }
     
     public init(values: [Float] = []) {
-        let sorted = values.sorted(by: {value1, value2 in
+        // remove duplicated
+        let setArray = Array(Set(values))
+        let sorted = setArray.sorted(by: {value1, value2 in
             return value1 < value2
         })
-        self.values = Array(Set(sorted))
+        self.values = sorted
     }
 }
 
