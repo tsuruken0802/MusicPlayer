@@ -412,16 +412,7 @@ public extension MusicPlayer {
     /// - Parameter withPlay: true if playback is performed after the position is changed
     func setSeek(withPlay: Bool? = nil) {
         // range外の再生時間でseekしようとした場合はrange内に収めてから行うようにする
-        if let playbackTimeRange = self.playbackTimeRange {
-            if !playbackTimeRange.contains(currentTime) {
-                print(currentTime)
-                currentTime = min(max(minPlaybackTime, currentTime), maxPlaybackTime)
-                print(currentTime)
-            }
-        }
-        if currentTime < 0 {
-            print("ああ")
-        }
+        currentTime = min(max(minPlaybackTime, currentTime), maxPlaybackTime)
         let time = TimeInterval(currentTime)
         let isPlay = withPlay ?? isPlaying
         guard let duration = duration else { return }
