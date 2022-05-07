@@ -424,8 +424,9 @@ public extension MusicPlayer {
         if time > duration { return }
         
         let sampleRate = audioFile.processingFormat.sampleRate
-        let startFrame = AVAudioFramePosition(sampleRate * time)
-        if (startFrame < 0) { return }
+        var startFrame = AVAudioFramePosition(sampleRate * time)
+        // 0秒より前にseekしようとしたら0秒にする
+        if (startFrame < 0) { startFrame = 0 }
         
         var length = duration - time
         if length <= 0 { length = 0 }
