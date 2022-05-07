@@ -414,8 +414,13 @@ public extension MusicPlayer {
         // range外の再生時間でseekしようとした場合はrange内に収めてから行うようにする
         if let playbackTimeRange = self.playbackTimeRange {
             if !playbackTimeRange.contains(currentTime) {
+                print(currentTime)
                 currentTime = min(max(minPlaybackTime, currentTime), maxPlaybackTime)
+                print(currentTime)
             }
+        }
+        if currentTime < 0 {
+            print("ああ")
         }
         let time = TimeInterval(currentTime)
         let isPlay = withPlay ?? isPlaying
