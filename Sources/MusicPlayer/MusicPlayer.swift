@@ -356,6 +356,7 @@ public extension MusicPlayer {
     }
     
     /// Play previous item
+    /// backEnableSong: Whether to return to the previous song when the previous song cannot be played
     func back(backEnableSong: Bool = false) {
         let minThresholdTime = minThresholdTime
         if minThresholdTime <= currentTime {
@@ -435,12 +436,10 @@ public extension MusicPlayer {
     
         playerNode.scheduleSegment(audioFile, startingFrame: startFrame, frameCount: frameCount, at: nil)
     
+        setNowPlayingInfo()
+        
         if isPlay {
             play()
-        }
-        else {
-            // 再生しない場合はnowPlayingInfoの値を更新しておく
-            setNowPlayingInfo()
         }
     }
     
