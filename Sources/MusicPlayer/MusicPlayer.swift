@@ -174,13 +174,13 @@ public final class MusicPlayer: ObservableObject {
         
         $pitch.sink { [weak self] value in
             guard let self = self else { return }
-            self.pitchControl.pitch = MusicPlayerSerivce.enablePitchValue(value: value)
+            self.pitchControl.pitch = MusicPlayerService.enablePitchValue(value: value)
         }
         .store(in: &cancellables)
         
         $rate.sink { [weak self] value in
             guard let self = self else { return }
-            self.pitchControl.rate = MusicPlayerSerivce.enableRateValue(value: value)
+            self.pitchControl.rate = MusicPlayerService.enableRateValue(value: value)
             self.startCurrentTimeRendering(currentRate: value)
         }
         .store(in: &cancellables)
@@ -599,6 +599,7 @@ public extension MusicPlayer {
         resetRate()
         resetPitch()
         playbackTimeRange = nil
+        division.clear()
     }
     
     /// reset effects by song id

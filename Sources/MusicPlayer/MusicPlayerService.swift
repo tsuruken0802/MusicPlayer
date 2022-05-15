@@ -7,7 +7,7 @@
 
 import Foundation
 
-class MusicPlayerSerivce {
+class MusicPlayerService {
     /// 有効なPitchの値を取得する
     /// - Parameter value: Pitchの値
     /// - Returns: 有効値に変換された値
