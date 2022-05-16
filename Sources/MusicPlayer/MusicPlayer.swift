@@ -104,7 +104,7 @@ public final class MusicPlayer: ObservableObject {
         }
     }
     
-    @Published public var division: MPDivision = .init(loopDivision: false) {
+    @Published public var division: MPDivision = .init(currentTime: 0.0, loopDivision: false) {
         didSet {
             if division.isEmpty == false {
                 playbackTimeRange = nil
@@ -575,8 +575,7 @@ public extension MusicPlayer {
             pitch = effect?.pitch ?? pitch
             playbackTimeRange = trimming
             if let divisions = divisions {
-                division = .init(values: divisions)
-                division.setCurrentIndex(currentTime: currentTime)
+                division = .init(values: divisions, currentTime: currentTime)
             }
         }
     }
@@ -673,7 +672,8 @@ private extension MusicPlayer {
             song.trimming = .init(trimming: trimming)
         }
         if let divisions = divisions {
-            song.division = .init(values: divisions)
+            let currentTime = songId == currentItem?.id ? currentTime : 0.0
+            song.division = .init(values: divisions, currentTime: currentTime)
         }
     }
     
@@ -901,7 +901,7 @@ private extension MusicPlayer {
                         setSeek(seconds: back)
                     }
                 }
-                else {
+                else if trimmingType != .division {
                     next(forwardEnableSong: true)
                 }
             }
