@@ -364,12 +364,10 @@ public extension MusicPlayer {
     /// backEnableSong: Whether to return to the previous song when the previous song cannot be played
     func back(backEnableSong: Bool = false) {
         if !division.isEmpty {
-            // 戻る時間をthreshold時間込みで取得する
-            if let backThresholdTime = division.backTime(currentTime: currentTime, threshold: MusicPlayer.backSameMusicThreshold) {
+            // 戻る時間を取得する
+            if let backTime = division.backTime(currentTime: currentTime, threshold: MusicPlayer.backSameMusicThreshold) {
                 // 戻れるかどうか
-                if backThresholdTime <= currentTime {
-                    // threshold時間を除く
-                    let backTime = backThresholdTime - MusicPlayer.backSameMusicThreshold
+                if backTime <= currentTime {
                     // 戻る
                     setSeek(seconds: backTime)
                     division.setCurrentIndex(currentTime: backTime)
