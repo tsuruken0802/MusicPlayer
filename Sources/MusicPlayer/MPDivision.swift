@@ -16,19 +16,6 @@ public struct MPDivision {
     
     private var currentIndex: Int = 0
     
-    public func fromValue(duration: Float) -> Float {
-        let fullDivisions = fullDivisions + [duration]
-        if !fullDivisions.indices.contains(currentIndex) { return 0.0 }
-        return fullDivisions[currentIndex]
-    }
-    
-    public func toValue(duration: Float) -> Float {
-        let fullDivisions = fullDivisions + [duration]
-        let index = currentIndex + 1
-        if !fullDivisions.indices.contains(index) { return fullDivisions.last! }
-        return fullDivisions[index]
-    }
-    
     public var isEmpty: Bool {
         return values.isEmpty
     }
@@ -44,10 +31,43 @@ public struct MPDivision {
 }
 
 public extension MPDivision {
+    // 現在の区間のfromの秒数を取得する
+    func fromValue(duration: Float) -> Float {
+        let fullDivisions = fullDivisions + [duration]
+        if !fullDivisions.indices.contains(currentIndex) { return 0.0 }
+        return fullDivisions[currentIndex]
+    }
+    
+    // 現在の区間のtoの秒数を取得する
+    func toValue(duration: Float) -> Float {
+        let fullDivisions = fullDivisions + [duration]
+        let index = currentIndex + 1
+        if !fullDivisions.indices.contains(index) { return fullDivisions.last! }
+        return fullDivisions[index]
+    }
+    
+    // 一番近い戻り時間を取得する
+    func backTime(currentTime: Float, threshold: Float? = nil) -> Float? {
+        if values.isEmpty { return nil }
+        
+        var from: Float = 0.0
+        let totalTime = currentTime - (threshold ?? 0.0)
+        for i in 0 ..< values.count {
+            if totalTime < values[i] {
+                break
+            }
+            from = values[i]
+        }
+        return from
+    }
+}
+
+public extension MPDivision {
     mutating func setCurrentIndex(currentTime: Float) {
+        let time = max(currentTime, 0.0)
         let fullDivisions = fullDivisions
         for i in 0 ..< fullDivisions.count {
-            if currentTime < fullDivisions[i] {
+            if time < fullDivisions[i] {
                 currentIndex = i - 1
                 return
             }
