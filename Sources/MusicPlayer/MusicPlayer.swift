@@ -889,23 +889,22 @@ private extension MusicPlayer {
     /// current time timer handler
     @objc private func onUpdateCurrentTime() {
         if isSeekOver {
-            if repeatType == .one {
-                setSeek(seconds: 0)
-            }
-            else {
+            if trimmingType == .division {
                 // divisionのloop
-                if trimmingType == .division && division.loopDivision {
+                if division.loopDivision {
                     // divisionの境界線の前まで移動した状態でbackTimeを取得する
                     // MusicPlayer.backSameMusicThresholdでなくてもいい
                     if let back = division.backTime(currentTime: currentTime, threshold: MusicPlayer.backSameMusicThreshold) {
                         setSeek(seconds: back)
                     }
                 }
-                else if trimmingType != .division {
-                    next(forwardEnableSong: true)
-                }
             }
-            return
+            else if repeatType == .one {
+                setSeek(seconds: 0)
+            }
+            else {
+                next(forwardEnableSong: true)
+            }
         }
         updateCurrentTime()
     }
