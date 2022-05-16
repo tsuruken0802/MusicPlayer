@@ -10,17 +10,40 @@ import Foundation
 public struct MPDivision {
     private(set) public var values: [Float] = []
     
+    private var fullDivisions: [Float] {
+        return [0.0] + values + [duration]
+    }
+    
+    private var currentIndex: Int = 0
+    
+    private let duration: Float
+    
+    public var fromValue: Float {
+        let fullDivisions = fullDivisions
+        if !fullDivisions.indices.contains(currentIndex) { return 0.0 }
+        return fullDivisions[currentIndex]
+    }
+    
+    public var toValue: Float {
+        let fullDivisions = fullDivisions
+        let index = currentIndex + 1
+        if !fullDivisions.indices.contains(index) { return 0.0 }
+        return fullDivisions[index]
+    }
+    
     public var isEmpty: Bool {
         return values.isEmpty
     }
     
-    public init(values: [Float] = []) {
+    public init(values: [Float] = [], duration: Float) {
         // remove duplicated
         let setArray = Array(Set(values))
         let sorted = setArray.sorted(by: {value1, value2 in
             return value1 < value2
         })
         self.values = sorted
+        
+        self.duration = duration
     }
 }
 

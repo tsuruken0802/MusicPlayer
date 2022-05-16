@@ -48,7 +48,7 @@ struct MusicPlayerDivisionView: View {
             VStack(alignment: .leading, spacing: 0) {
                 circle(width: geometry.size.width)
                     .onTapGesture {
-                        musicPlayer.division.add(seconds: musicPlayer.currentTime)
+                        musicPlayer.division?.add(seconds: musicPlayer.currentTime)
                     }
                 
                 Spacer(minLength: verticalSpacing)

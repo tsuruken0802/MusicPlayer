@@ -27,7 +27,7 @@ struct MusicPlaybackSliderView: View {
     }
     
     private var trimmingDivisionRates: [Float] {
-        let positions = musicPlayer.division.values
+        let positions = musicPlayer.division?.values ?? []
         return positions.compactMap { value in
             if duration <= 0.0 { return nil }
             return value / duration

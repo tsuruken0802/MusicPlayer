@@ -21,7 +21,7 @@ struct MusicOptionsView: View {
     }
     
     private var divisions: [Float] {
-        let source = musicPlayer.division
+        guard let source = musicPlayer.division else { return [] }
         let duration = musicPlayer.fDuration
         if duration <= 0 { return [] }
         return source.values.map({ $0 / duration })

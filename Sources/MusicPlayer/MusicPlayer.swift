@@ -6,7 +6,7 @@ import SwiftUI
 
 public final class MusicPlayer: ObservableObject {
     /// instance
-    public static let shared: MusicPlayer = .init()
+    public static var shared: MusicPlayer = .init()
     
     private var backgroundMode: Bool = false
     
@@ -99,14 +99,14 @@ public final class MusicPlayer: ObservableObject {
     @Published public var playbackTimeRange: ClosedRange<Float>? {
         didSet {
             if playbackTimeRange != nil {
-                division.clear()
+                division?.clear()
             }
         }
     }
     
-    @Published public var division: MPDivision = .init() {
+    @Published public var division: MPDivision? {
         didSet {
-            if !division.isEmpty {
+            if division?.isEmpty == false {
                 playbackTimeRange = nil
             }
         }
@@ -116,7 +116,7 @@ public final class MusicPlayer: ObservableObject {
         if playbackTimeRange != nil {
             return .trimming
         }
-        else if !division.isEmpty {
+        else if division != nil {
             return .division
         }
         return .none
@@ -126,7 +126,7 @@ public final class MusicPlayer: ObservableObject {
         if let playbackTimeRange = playbackTimeRange {
             return playbackTimeRange.lowerBound
         }
-        else if let from = division.from(currentTime: currentTime) {
+        else if let from = division?.fromValue {
             return from
         }
         return 0.0
@@ -136,8 +136,8 @@ public final class MusicPlayer: ObservableObject {
         if let playbackTimeRange = playbackTimeRange {
             return playbackTimeRange.lowerBound + MusicPlayer.backSameMusicThreshold
         }
-        else if let from = division.from(currentTime: currentTime, threshold: MusicPlayer.backSameMusicThreshold) {
-            return from
+        else if let from = division?.fromValue {
+            return from +  MusicPlayer.backSameMusicThreshold
         }
         return 0.0
     }
@@ -147,7 +147,7 @@ public final class MusicPlayer: ObservableObject {
             return max
         }
         let duration = fDuration
-        if let max = division.to(currentTime: currentTime, duration: duration) {
+        if let max = division?.toValue {
             return max
         }
         return duration
@@ -304,7 +304,7 @@ public extension MusicPlayer {
     /// forwardEnableSong: if true, advance index to valid song
     func next(forwardEnableSong: Bool = false) {
         // if there is a Division, move to that number of seconds
-        if let nextDivision = division.to(currentTime: currentTime, duration: fDuration) {
+        if let nextDivision = division?.toValue {
             if nextDivision < fDuration {
                 setSeek(seconds: nextDivision)
                 return
@@ -569,7 +569,7 @@ public extension MusicPlayer {
             pitch = effect?.pitch ?? pitch
             playbackTimeRange = trimming
             if let divisions = divisions {
-                division = .init(values: divisions)
+                division = .init(values: divisions, duration: fDuration)
             }
         }
     }
@@ -599,7 +599,7 @@ public extension MusicPlayer {
         resetRate()
         resetPitch()
         playbackTimeRange = nil
-        division.clear()
+        division?.clear()
     }
     
     /// reset effects by song id
@@ -650,7 +650,7 @@ private extension MusicPlayer {
             song.trimming = .init(trimming: trimming)
         }
         if let divisions = divisions {
-            song.division = .init(values: divisions)
+            song.division = .init(values: divisions, duration: Float(song.duration))
         }
     }
     
