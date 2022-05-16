@@ -122,25 +122,38 @@ public final class MusicPlayer: ObservableObject {
         return .none
     }
     
+    // 再生できる最小の秒数
     private var minPlaybackTime: Float {
         if let playbackTimeRange = playbackTimeRange {
             return playbackTimeRange.lowerBound
         }
         return division.fromValue(duration: fDuration)
     }
-    
-    private var minThresholdTime: Float {
-        if let playbackTimeRange = playbackTimeRange {
-            return playbackTimeRange.lowerBound + MusicPlayer.backSameMusicThreshold
+    // seekできる最小の秒数
+    private var minSeekTime: Float {
+        if let min = playbackTimeRange {
+            return min.lowerBound
         }
-        return division.fromValue(duration: fDuration) +  MusicPlayer.backSameMusicThreshold
+        return 0.0
+    }
+    // 閾値を含んだ再生できる最小の秒数
+    private var minThresholdPlaybackTime: Float {
+        return minPlaybackTime +  MusicPlayer.backSameMusicThreshold
     }
     
+    // 再生できる最大の秒数
     private var maxPlaybackTime: Float {
         if let max = playbackTimeRange?.upperBound {
             return max
         }
         return division.toValue(duration: fDuration)
+    }
+    // seekできる最大の秒数
+    private var maxSeekTime: Float {
+        if let max = playbackTimeRange?.upperBound {
+            return max
+        }
+        return fDuration
     }
     
     /// shuffle
@@ -178,14 +191,14 @@ public final class MusicPlayer: ObservableObject {
         $playbackTimeRange.sink { [weak self] value in
             guard let self = self else { return }
             guard let value = value else { return }
-            let minPlaybackTime = value.lowerBound
-            let maxPlaybackTime = value.upperBound
-            if self.currentTime < minPlaybackTime {
-                self.currentTime = minPlaybackTime
+            let min = value.lowerBound
+            let max = value.upperBound
+            if self.currentTime < min {
+                self.currentTime = min
                 self.setSeek()
             }
-            else if self.currentTime > maxPlaybackTime {
-                self.currentTime = maxPlaybackTime
+            else if self.currentTime > max {
+                self.currentTime = max
                 self.setSeek()
             }
         }
@@ -350,7 +363,7 @@ public extension MusicPlayer {
     /// Play previous item
     /// backEnableSong: Whether to return to the previous song when the previous song cannot be played
     func back(backEnableSong: Bool = false) {
-        let minThresholdTime = minThresholdTime
+        let minThresholdTime = minThresholdPlaybackTime
         if minThresholdTime <= currentTime {
             if trimmingType == .trimming {
                 setSeek(seconds: minPlaybackTime)
@@ -399,7 +412,7 @@ public extension MusicPlayer {
     /// - Parameter withPlay: true if playback is performed after the position is changed
     func setSeek(withPlay: Bool? = nil) {
         // range外の再生時間でseekしようとした場合はrange内に収めてから行うようにする
-        currentTime = min(max(minPlaybackTime, currentTime), maxPlaybackTime)
+        currentTime = min(max(minSeekTime, currentTime), maxSeekTime)
         let time = TimeInterval(currentTime)
         let isPlay = withPlay ?? isPlaying
         guard let duration = duration else { return }
@@ -423,6 +436,11 @@ public extension MusicPlayer {
         playerNode.scheduleSegment(audioFile, startingFrame: startFrame, frameCount: frameCount, at: nil)
     
         setNowPlayingInfo()
+        
+        // divisionタイプならseekした時間でindexを更新しておく
+        if trimmingType == .division {
+            division.setCurrentIndex(currentTime: currentTime)
+        }
         
         if isPlay {
             play()
@@ -594,6 +612,16 @@ public extension MusicPlayer {
         guard let index = items.firstIndex(where: { $0.id == songId }) else { return }
         items[index].effect = .init(rate: rateOptions.defaultValue, pitch: pitchOptions.defaultValue)
         items[index].trimming = nil
+    }
+    
+    func addDivision(seconds: Float) {
+        division.add(seconds: seconds)
+        division.setCurrentIndex(currentTime: currentTime)
+    }
+    
+    func removeDivision(index: Int) {
+        division.remove(index: index)
+        division.setCurrentIndex(currentTime: currentTime)
     }
 }
 
