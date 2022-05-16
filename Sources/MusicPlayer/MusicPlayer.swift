@@ -576,6 +576,7 @@ public extension MusicPlayer {
             playbackTimeRange = trimming
             if let divisions = divisions {
                 division = .init(values: divisions)
+                division.setCurrentIndex(currentTime: currentTime)
             }
         }
     }
@@ -597,6 +598,7 @@ public extension MusicPlayer {
         }
         if let division = division {
             self.division = division
+            self.division.setCurrentIndex(currentTime: currentTime)
         }
     }
     
@@ -614,13 +616,18 @@ public extension MusicPlayer {
         guard let index = items.firstIndex(where: { $0.id == songId }) else { return }
         items[index].effect = .init(rate: rateOptions.defaultValue, pitch: pitchOptions.defaultValue)
         items[index].trimming = nil
+        items[index].division = nil
     }
     
+    /// add division
+    /// - Parameter seconds: division seconds
     func addDivision(seconds: Float) {
         division.add(seconds: seconds)
         division.setCurrentIndex(currentTime: currentTime)
     }
     
+    /// remove division
+    /// - Parameter index: remove index
     func removeDivision(index: Int) {
         division.remove(index: index)
         division.setCurrentIndex(currentTime: currentTime)

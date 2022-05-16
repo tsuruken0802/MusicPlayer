@@ -67,6 +67,7 @@ public extension MPDivision {
 }
 
 public extension MPDivision {
+    // 現在の区間のindexを設定する
     mutating func setCurrentIndex(currentTime: Float) {
         let time = max(currentTime, 0.0)
         let fullDivisions = fullDivisions
@@ -79,6 +80,7 @@ public extension MPDivision {
         currentIndex = fullDivisions.count - 1
     }
     
+    // add division
     mutating func add(seconds: Float) {
         // 0秒以下は無効
         if seconds < 0 { return }
@@ -91,11 +93,13 @@ public extension MPDivision {
         }
     }
     
+    // remove division
     mutating func remove(index: Int) {
         if !values.indices.contains(index) { return }
         values.remove(at: index)
     }
     
+    // clear divisions
     mutating func clear() {
         values.removeAll()
     }
