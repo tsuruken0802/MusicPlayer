@@ -395,12 +395,6 @@ public extension MusicPlayer {
         stopCurrentTimeRendering()
     }
     
-    /// set playback volume
-    /// - Parameter value: volume
-    func setVolume(value: Float) {
-        playerNode.volume = value
-    }
-    
     /// change current playback position
     /// - Parameter withPlay: true if playback is performed after the position is changed
     func setSeek(withPlay: Bool? = nil) {
