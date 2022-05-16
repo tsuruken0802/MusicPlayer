@@ -11,23 +11,21 @@ public struct MPDivision {
     private(set) public var values: [Float] = []
     
     private var fullDivisions: [Float] {
-        return [0.0] + values + [duration]
+        return [0.0] + values
     }
     
     private var currentIndex: Int = 0
     
-    private let duration: Float
-    
-    public var fromValue: Float {
-        let fullDivisions = fullDivisions
+    public func fromValue(duration: Float) -> Float {
+        let fullDivisions = fullDivisions + [duration]
         if !fullDivisions.indices.contains(currentIndex) { return 0.0 }
         return fullDivisions[currentIndex]
     }
     
-    public var toValue: Float {
-        let fullDivisions = fullDivisions
+    public func toValue(duration: Float) -> Float {
+        let fullDivisions = fullDivisions + [duration]
         let index = currentIndex + 1
-        if !fullDivisions.indices.contains(index) { return 0.0 }
+        if !fullDivisions.indices.contains(index) { return fullDivisions.last! }
         return fullDivisions[index]
     }
     
@@ -35,50 +33,34 @@ public struct MPDivision {
         return values.isEmpty
     }
     
-    public init(values: [Float] = [], duration: Float) {
+    public init(values: [Float] = []) {
         // remove duplicated
         let setArray = Array(Set(values))
         let sorted = setArray.sorted(by: {value1, value2 in
             return value1 < value2
         })
         self.values = sorted
-        
-        self.duration = duration
     }
 }
 
 public extension MPDivision {
-    func from(currentTime: Float, threshold: Float? = nil) -> Float? {
-        if values.isEmpty { return nil }
-        
-        var from: Float = 0.0
-        let totalTime = currentTime - (threshold ?? 0.0)
-        for i in 0 ..< values.count {
-            if totalTime < values[i] {
-                break
+    mutating func setCurrentIndex(currentTime: Float) {
+        let fullDivisions = fullDivisions
+        for i in 0 ..< fullDivisions.count {
+            if currentTime < fullDivisions[i] {
+                currentIndex = i - 1
+                return
             }
-            from = values[i]
         }
-        return from
+        currentIndex = fullDivisions.count - 1
     }
     
-    func to(currentTime: Float, duration: Float) -> Float? {
-        if values.isEmpty { return nil }
-        
-        for i in 0 ..< values.count {
-            if currentTime < values[i] {
-                return values[i]
-            }
-        }
-        return duration
-    }
-}
-
-public extension MPDivision {
     mutating func add(seconds: Float) {
-        if values.contains(seconds) {
-            return
-        }
+        // 0秒以下は無効
+        if seconds < 0 { return }
+        // すでにあるなら追加しない
+        if values.contains(seconds) { return }
+        
         values.append(seconds)
         values.sort { value1, value2 in
             return value1 < value2

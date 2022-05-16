@@ -99,14 +99,14 @@ public final class MusicPlayer: ObservableObject {
     @Published public var playbackTimeRange: ClosedRange<Float>? {
         didSet {
             if playbackTimeRange != nil {
-                division?.clear()
+                division.clear()
             }
         }
     }
     
-    @Published public var division: MPDivision? {
+    @Published public var division: MPDivision = .init() {
         didSet {
-            if division?.isEmpty == false {
+            if division.isEmpty == false {
                 playbackTimeRange = nil
             }
         }
@@ -116,7 +116,7 @@ public final class MusicPlayer: ObservableObject {
         if playbackTimeRange != nil {
             return .trimming
         }
-        else if division != nil {
+        else if !division.isEmpty {
             return .division
         }
         return .none
@@ -126,31 +126,21 @@ public final class MusicPlayer: ObservableObject {
         if let playbackTimeRange = playbackTimeRange {
             return playbackTimeRange.lowerBound
         }
-        else if let from = division?.fromValue {
-            return from
-        }
-        return 0.0
+        return division.fromValue(duration: fDuration)
     }
     
     private var minThresholdTime: Float {
         if let playbackTimeRange = playbackTimeRange {
             return playbackTimeRange.lowerBound + MusicPlayer.backSameMusicThreshold
         }
-        else if let from = division?.fromValue {
-            return from +  MusicPlayer.backSameMusicThreshold
-        }
-        return 0.0
+        return division.fromValue(duration: fDuration) +  MusicPlayer.backSameMusicThreshold
     }
     
     private var maxPlaybackTime: Float {
         if let max = playbackTimeRange?.upperBound {
             return max
         }
-        let duration = fDuration
-        if let max = division?.toValue {
-            return max
-        }
-        return duration
+        return division.toValue(duration: fDuration)
     }
     
     /// shuffle
@@ -304,9 +294,11 @@ public extension MusicPlayer {
     /// forwardEnableSong: if true, advance index to valid song
     func next(forwardEnableSong: Bool = false) {
         // if there is a Division, move to that number of seconds
-        if let nextDivision = division?.toValue {
+        if !division.isEmpty {
+            let nextDivision = division.toValue(duration: fDuration)
             if nextDivision < fDuration {
                 setSeek(seconds: nextDivision)
+                division.setCurrentIndex(currentTime: currentTime)
                 return
             }
         }
@@ -569,7 +561,7 @@ public extension MusicPlayer {
             pitch = effect?.pitch ?? pitch
             playbackTimeRange = trimming
             if let divisions = divisions {
-                division = .init(values: divisions, duration: fDuration)
+                division = .init(values: divisions)
             }
         }
     }
@@ -599,7 +591,7 @@ public extension MusicPlayer {
         resetRate()
         resetPitch()
         playbackTimeRange = nil
-        division?.clear()
+        division.clear()
     }
     
     /// reset effects by song id
@@ -650,7 +642,7 @@ private extension MusicPlayer {
             song.trimming = .init(trimming: trimming)
         }
         if let divisions = divisions {
-            song.division = .init(values: divisions, duration: Float(song.duration))
+            song.division = .init(values: divisions)
         }
     }
     
@@ -863,7 +855,6 @@ private extension MusicPlayer {
 }
 
 private extension MusicPlayer {
-    
     /// current time timer handler
     @objc private func onUpdateCurrentTime() {
         if isSeekOver {

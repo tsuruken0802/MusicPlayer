@@ -8,6 +8,7 @@
 import Foundation
 import MediaPlayer
 
+// struct OK?
 public struct MPSongItemList {
     public let items: [MPSongItem]
     
