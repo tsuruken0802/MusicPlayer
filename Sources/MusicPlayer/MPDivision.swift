@@ -10,6 +10,8 @@ import Foundation
 public struct MPDivision {
     private(set) public var values: [Float] = []
     
+    let loopDivision: Bool
+    
     private var fullDivisions: [Float] {
         return [0.0] + values
     }
@@ -20,13 +22,15 @@ public struct MPDivision {
         return values.isEmpty
     }
     
-    public init(values: [Float] = []) {
+    public init(values: [Float] = [], loopDivision: Bool = false) {
         // remove duplicated
         let setArray = Array(Set(values))
         let sorted = setArray.sorted(by: {value1, value2 in
             return value1 < value2
         })
         self.values = sorted
+        
+        self.loopDivision = loopDivision
     }
 }
 

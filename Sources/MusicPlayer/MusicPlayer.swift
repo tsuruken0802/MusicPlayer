@@ -104,7 +104,7 @@ public final class MusicPlayer: ObservableObject {
         }
     }
     
-    @Published public var division: MPDivision = .init() {
+    @Published public var division: MPDivision = .init(loopDivision: false) {
         didSet {
             if division.isEmpty == false {
                 playbackTimeRange = nil
@@ -886,7 +886,17 @@ private extension MusicPlayer {
                 setSeek(seconds: 0)
             }
             else {
-                next(forwardEnableSong: true)
+                // divisionのloop
+                if trimmingType == .division && division.loopDivision {
+                    // divisionの境界線の前まで移動した状態でbackTimeを取得する
+                    // MusicPlayer.backSameMusicThresholdでなくてもいい
+                    if let back = division.backTime(currentTime: currentTime, threshold: MusicPlayer.backSameMusicThreshold) {
+                        setSeek(seconds: back)
+                    }
+                }
+                else {
+                    next(forwardEnableSong: true)
+                }
             }
             return
         }
