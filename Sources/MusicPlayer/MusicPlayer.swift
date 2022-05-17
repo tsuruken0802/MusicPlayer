@@ -898,6 +898,10 @@ private extension MusicPlayer {
                         setSeek(seconds: back)
                     }
                 }
+                else {
+                    // divisionを越えたら区間のindexを更新する
+                    division.setCurrentIndex(currentTime: currentTime)
+                }
             }
             else if repeatType == .one {
                 setSeek(seconds: 0)
