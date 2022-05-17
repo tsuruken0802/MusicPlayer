@@ -10,7 +10,7 @@ import Foundation
 public struct MPDivision {
     private(set) public var values: [Float] = []
     
-    var loopDivision: Bool
+    public var loopDivision: Bool
     
     private var fullDivisions: [Float] {
         return [0.0] + values
