@@ -375,6 +375,12 @@ public extension MusicPlayer {
                 }
             }
         }
+        else {
+            if currentTime >= minThresholdPlaybackTime {
+                setSeek(seconds: minPlaybackTime)
+                return
+            }
+        }
 
         let nextIndex = currentIndex - 1
         if !itemsSafe(index: nextIndex) {
