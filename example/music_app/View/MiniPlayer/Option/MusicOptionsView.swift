@@ -112,6 +112,10 @@ struct MusicOptionsView: View {
                         if viewModel.selectedTrimmingIndex == 0 {
                             if let duration = musicPlayer.duration {
                                 MusicPlayerDivisionView(duration: duration, divisions: divisions)
+                                
+                                Toggle(isOn: $viewModel.isLoopDivision) {
+                                    Text("区間内ループ")
+                                }
                             }
                         }
                         else {

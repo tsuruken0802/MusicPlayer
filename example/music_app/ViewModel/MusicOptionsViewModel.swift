@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import Combine
 
 class MusicOptionsViewModel: ObservableObject {
     let pitchPlusMark: String = "#"
@@ -16,6 +17,18 @@ class MusicOptionsViewModel: ObservableObject {
         "分割",
         "トリミング"
     ]
+    
+    @Published var isLoopDivision: Bool
+    
+    private var cancellables: [AnyCancellable] = []
+    
+    init() {
+        isLoopDivision = MusicPlayer.shared.division.loopDivision
+        
+        $isLoopDivision.sink { value in
+            MusicPlayer.shared.division.loopDivision = value
+        }.store(in: &cancellables)
+    }
     
     /// Pitchの表示用の文字列を取得する
     /// - Parameter value: Pitchの値
