@@ -570,9 +570,9 @@ public extension MusicPlayer {
     ///   - trimming: trimming
     ///   - divisions: divisions
     func updateSongEffect(songId: UInt64,
-                          effect: MPSongItemEffect?,
-                          trimming: ClosedRange<Float>?,
-                          divisions: [Float]?,
+                          effect: MPSongItemEffect? = nil,
+                          trimming: ClosedRange<Float>? = nil,
+                          divisions: [Float]? = nil,
                           isLoopDivision: Bool? = nil) {
         updateSongEffect(songs: items, songId: songId, effect: effect, trimming: trimming, divisions: divisions)
         updateSongEffect(songs: originalItems, songId: songId, effect: effect, trimming: trimming, divisions: divisions)
