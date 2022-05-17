@@ -572,7 +572,8 @@ public extension MusicPlayer {
     func updateSongEffect(songId: UInt64,
                           effect: MPSongItemEffect?,
                           trimming: ClosedRange<Float>?,
-                          divisions: [Float]?) {
+                          divisions: [Float]?,
+                          isLoopDivision: Bool? = nil) {
         updateSongEffect(songs: items, songId: songId, effect: effect, trimming: trimming, divisions: divisions)
         updateSongEffect(songs: originalItems, songId: songId, effect: effect, trimming: trimming, divisions: divisions)
         let isCurrentItem = songId == currentItem?.id
@@ -581,7 +582,7 @@ public extension MusicPlayer {
             pitch = effect?.pitch ?? pitch
             playbackTimeRange = trimming
             if let divisions = divisions {
-                division = .init(values: divisions, currentTime: currentTime)
+                division = .init(values: divisions, currentTime: currentTime, loopDivision: isLoopDivision)
             }
         }
     }

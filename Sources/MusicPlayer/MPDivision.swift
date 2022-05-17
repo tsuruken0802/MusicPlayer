@@ -22,14 +22,14 @@ public struct MPDivision {
         return values.isEmpty
     }
     
-    public init(values: [Float] = [], currentTime: Float, loopDivision: Bool = false) {
+    public init(values: [Float] = [], currentTime: Float, loopDivision: Bool? = nil) {
         // remove duplicated
         let setArray = Array(Set(values))
         let sorted = setArray.sorted(by: {value1, value2 in
             return value1 < value2
         })
         self.values = sorted
-        self.loopDivision = loopDivision
+        self.loopDivision = loopDivision ?? false
         setCurrentIndex(currentTime: currentTime)
     }
 }
