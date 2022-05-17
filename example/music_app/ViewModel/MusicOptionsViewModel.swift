@@ -30,6 +30,12 @@ class MusicOptionsViewModel: ObservableObject {
         }.store(in: &cancellables)
     }
     
+    deinit {
+        cancellables.forEach { cancel in
+            cancel.cancel()
+        }
+    }
+    
     /// Pitchの表示用の文字列を取得する
     /// - Parameter value: Pitchの値
     /// - Parameter unit: スライダー一個分の値

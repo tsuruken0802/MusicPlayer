@@ -897,7 +897,7 @@ private extension MusicPlayer {
     @objc private func onUpdateCurrentTime() {
         if isSeekOver {
             if trimmingType == .division {
-                // divisionのloop
+                // ループする場合
                 if division.loopDivision {
                     // divisionの境界線の前まで移動した状態でbackTimeを取得する
                     // MusicPlayer.backSameMusicThresholdでなくてもいい
@@ -906,15 +906,28 @@ private extension MusicPlayer {
                     }
                 }
                 else {
-                    // divisionを越えたら区間のindexを更新する
-                    division.setCurrentIndex(currentTime: currentTime)
+                    // 最後まで到達した
+                    if currentTime >= maxSeekTime {
+                        if repeatType == .one {
+                            setSeek(seconds: 0)
+                        }
+                        else {
+                            next(forwardEnableSong: true)
+                        }
+                    }
+                    else {
+                        // divisionを越えたら区間のindexを更新する
+                        division.setCurrentIndex(currentTime: currentTime)
+                    }
                 }
             }
-            else if repeatType == .one {
-                setSeek(seconds: 0)
-            }
             else {
-                next(forwardEnableSong: true)
+                if repeatType == .one {
+                    setSeek(seconds: 0)
+                }
+                else {
+                    next(forwardEnableSong: true)
+                }
             }
         }
         updateCurrentTime()
