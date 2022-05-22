@@ -30,7 +30,7 @@ public final class MusicPlayer: ObservableObject {
     
     /// Threshold value whether return to the previous song
     /// value is seconds
-    private static let backSameMusicThreshold: Float = 2.5
+    private static let backSameMusicThreshold: Float = 2.0
     
     /// index of current playing MPMediaItem
     private var currentIndex: Int {
