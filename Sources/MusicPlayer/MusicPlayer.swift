@@ -428,20 +428,20 @@ public extension MusicPlayer {
         if time > duration { return }
         
         let sampleRate = audioFile.processingFormat.sampleRate
-        var startFrame = AVAudioFramePosition(sampleRate * time)
+        var startSampleTime = AVAudioFramePosition(sampleRate * time)
         // 0秒より前にseekしようとしたら0秒にする
-        if (startFrame < 0) { startFrame = 0 }
+        if (startSampleTime < 0) { startSampleTime = 0 }
         
         var length = duration - time
         if length <= 0 { length = 0 }
-        var frameCount = AVAudioFrameCount(length * Double(sampleRate))
-        if frameCount <= 0 { frameCount = 1 }   // 0だとクラッシュするので極小値で対応
+        var remainSampleTime = AVAudioFrameCount(length * Double(sampleRate))
+        if remainSampleTime <= 0 { remainSampleTime = 1 }   // 0だとクラッシュするので極小値で対応
         
         cachedSeekBarSeconds = Float(time)
         
         stop()
         
-        playerNode.scheduleSegment(audioFile, startingFrame: startFrame, frameCount: frameCount, at: nil)
+        playerNode.scheduleSegment(audioFile, startingFrame: startSampleTime, frameCount: remainSampleTime, at: nil)
         
         setNowPlayingInfo()
         
