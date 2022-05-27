@@ -381,7 +381,7 @@ public extension MusicPlayer {
                 return
             }
         }
-
+        
         let nextIndex = currentIndex - 1
         if !itemsSafe(index: nextIndex) {
             return
@@ -436,13 +436,13 @@ public extension MusicPlayer {
         if length <= 0 { length = 0 }
         var frameCount = AVAudioFrameCount(length * Double(sampleRate))
         if frameCount <= 0 { frameCount = 1 }   // 0だとクラッシュするので極小値で対応
-
+        
         cachedSeekBarSeconds = Float(time)
         
         stop()
-    
+        
         playerNode.scheduleSegment(audioFile, startingFrame: startFrame, frameCount: frameCount, at: nil)
-    
+        
         setNowPlayingInfo()
         
         // divisionタイプならseekした時間でindexを更新しておく
@@ -686,14 +686,19 @@ private extension MusicPlayer {
     
     /// update current playback time
     func updateCurrentTime() {
-        if let nodeTime = playerNode.lastRenderTime,
-           let playerTime = playerNode.playerTime(forNodeTime: nodeTime) {
-            let sampleRate = playerTime.sampleRate
-            // シークバーを動かした後は内部的にsampleTimeが0にリセットされるため
-            // 前回の再生時間を足す
-            let newCurrentTime = Float(playerTime.sampleTime) / Float(sampleRate) + cachedSeekBarSeconds
-            currentTime = min(newCurrentTime, fDuration)
-        }
+        // 最後にサンプリングしたデータを取得する
+        guard let nodeTime = playerNode.lastRenderTime else { return }
+        // playerNodeの時間軸に変換する
+        guard let playerTime = playerNode.playerTime(forNodeTime: nodeTime) else { return }
+        // サンプルレートとサンプルタイム取得
+        let sampleRate = playerTime.sampleRate
+        let sampleTime = playerTime.sampleTime
+        // 秒数を取得する
+        let time = Double(sampleTime) / sampleRate
+        // シークバーを動かした後は内部的にsampleTimeが0にリセットされるため
+        // 前回の再生時間を足す
+        let newCurrentTime = Float(time) + cachedSeekBarSeconds
+        currentTime = min(newCurrentTime, fDuration)
     }
     
     /// stop playback
@@ -807,7 +812,7 @@ private extension MusicPlayer {
             setSeek(addingSeconds: Float(-remoteSkipSeconds))
             return .success
         }
-
+        
         commandCenter.changePlaybackPositionCommand.removeTarget(self)
         commandCenter.changePlaybackPositionCommand.isEnabled = true
         commandCenter.changePlaybackPositionCommand.addTarget { [unowned self] event in
@@ -837,7 +842,7 @@ private extension MusicPlayer {
         }
         
         nowPlayingInfo[MPNowPlayingInfoPropertyElapsedPlaybackTime] = currentTime
-
+        
         if isPlaying {
             nowPlayingInfo[MPNowPlayingInfoPropertyPlaybackRate] = rate
         }
@@ -935,10 +940,10 @@ private extension MusicPlayer {
     
     @objc func onInterruption(_ notification: Notification) {
         guard let userInfo = notification.userInfo,
-            let typeValue = userInfo[AVAudioSessionInterruptionTypeKey] as? UInt,
-            let type = AVAudioSession.InterruptionType(rawValue: typeValue) else {
-                return
-        }
+              let typeValue = userInfo[AVAudioSessionInterruptionTypeKey] as? UInt,
+              let type = AVAudioSession.InterruptionType(rawValue: typeValue) else {
+                  return
+              }
         switch type {
         case .began:
             if isPlaying {
@@ -947,9 +952,9 @@ private extension MusicPlayer {
             break
         case .ended:
             guard let optionsValue =
-                userInfo[AVAudioSessionInterruptionOptionKey] as? UInt else {
-                    return
-            }
+                    userInfo[AVAudioSessionInterruptionOptionKey] as? UInt else {
+                        return
+                    }
             let options = AVAudioSession.InterruptionOptions(rawValue: optionsValue)
             if options.contains(.shouldResume) {
                 DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) { [weak self] in
@@ -963,11 +968,11 @@ private extension MusicPlayer {
     
     @objc func onAudioSessionRouteChanged(_ notification: Notification) {
         guard let userInfo = notification.userInfo,
-            let reasonValue = userInfo[AVAudioSessionRouteChangeReasonKey] as? UInt,
-            let reason = AVAudioSession.RouteChangeReason(rawValue:reasonValue) else {
-                return
-        }
-
+              let reasonValue = userInfo[AVAudioSessionRouteChangeReasonKey] as? UInt,
+              let reason = AVAudioSession.RouteChangeReason(rawValue:reasonValue) else {
+                  return
+              }
+        
         switch reason {
         case .newDeviceAvailable:
             if !isPlaying {
