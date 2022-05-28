@@ -765,10 +765,6 @@ private extension MusicPlayer {
     /// call only once
     func initRemoteCommand() {
         let commandCenter = MPRemoteCommandCenter.shared()
-        let leftCommand: MPRemoteCommandType = self.leftRemoteCommand
-        let rightCommand: MPRemoteCommandType = self.rightRemoteCommand
-        let skipSeconds: Int = self.remoteSkipSeconds
-        
         commandCenter.playCommand.removeTarget(self)
         commandCenter.playCommand.isEnabled = true
         commandCenter.playCommand.addTarget { [unowned self] event in
@@ -784,30 +780,30 @@ private extension MusicPlayer {
         }
         
         commandCenter.previousTrackCommand.removeTarget(self)
-        commandCenter.previousTrackCommand.isEnabled = !leftCommand.isSkipType
+        commandCenter.previousTrackCommand.isEnabled = !leftRemoteCommand.isSkipType
         commandCenter.previousTrackCommand.addTarget { [unowned self] event in
             back(backEnableSong: self.backgroundMode)
             return .success
         }
         
         commandCenter.nextTrackCommand.removeTarget(self)
-        commandCenter.nextTrackCommand.isEnabled = !rightCommand.isSkipType
+        commandCenter.nextTrackCommand.isEnabled = !rightRemoteCommand.isSkipType
         commandCenter.nextTrackCommand.addTarget { [unowned self] event in
             next(forwardEnableSong: self.backgroundMode)
             return .success
         }
         
         commandCenter.skipForwardCommand.removeTarget(self)
-        commandCenter.skipForwardCommand.isEnabled = rightCommand.isSkipType
-        commandCenter.skipForwardCommand.preferredIntervals = [NSNumber(integerLiteral: skipSeconds)]
+        commandCenter.skipForwardCommand.isEnabled = rightRemoteCommand.isSkipType
+        commandCenter.skipForwardCommand.preferredIntervals = [NSNumber(integerLiteral: remoteSkipSeconds)]
         commandCenter.skipForwardCommand.addTarget { [unowned self] event in
             setSeek(addingSeconds: Float(remoteSkipSeconds))
             return .success
         }
         
         commandCenter.skipBackwardCommand.removeTarget(self)
-        commandCenter.skipBackwardCommand.isEnabled = leftCommand.isSkipType
-        commandCenter.skipBackwardCommand.preferredIntervals = [NSNumber(integerLiteral: skipSeconds)]
+        commandCenter.skipBackwardCommand.isEnabled = leftRemoteCommand.isSkipType
+        commandCenter.skipBackwardCommand.preferredIntervals = [NSNumber(integerLiteral: remoteSkipSeconds)]
         commandCenter.skipBackwardCommand.addTarget { [unowned self] event in
             setSeek(addingSeconds: Float(-remoteSkipSeconds))
             return .success
@@ -825,7 +821,7 @@ private extension MusicPlayer {
     
     /// set nowPlayingInfo
     func setNowPlayingInfo() {
-        let center =  MPNowPlayingInfoCenter.default()
+        let center = MPNowPlayingInfoCenter.default()
         var nowPlayingInfo = center.nowPlayingInfo ?? [String : Any]()
         
         nowPlayingInfo[MPMediaItemPropertyTitle] = currentItem?.title
