@@ -60,7 +60,7 @@ public final class MusicPlayer: ObservableObject {
     /// The smaller the value, the narrower the interval between the calculation of the current playback time.
     /// Do not set too small a number from a performance standpoint.
     /// Set a value greater than 0.
-    public var currentTimeTimerScheduleTime: Float = 0.5 {
+    public var currentTimeTimerScheduleTime: Float = 0.25 {
         didSet {
             stopCurrentTimeRendering()
             startCurrentTimeRendering()
