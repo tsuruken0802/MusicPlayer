@@ -947,10 +947,7 @@ private extension MusicPlayer {
             }
             break
         case .ended:
-            guard let optionsValue =
-                    userInfo[AVAudioSessionInterruptionOptionKey] as? UInt else {
-                        return
-                    }
+            guard let optionsValue = userInfo[AVAudioSessionInterruptionOptionKey] as? UInt else { return }
             let options = AVAudioSession.InterruptionOptions(rawValue: optionsValue)
             if options.contains(.shouldResume) {
                 DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) { [weak self] in
