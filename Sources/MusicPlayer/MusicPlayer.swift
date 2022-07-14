@@ -8,8 +8,6 @@ public final class MusicPlayer: ObservableObject {
     /// instance
     public static var shared: MusicPlayer = .init()
     
-    private var backgroundMode: Bool = false
-    
     /// Engine and Nodes
     private let audioEngine: AVAudioEngine = .init()
     private let playerNode: AVAudioPlayerNode = .init()
@@ -728,14 +726,6 @@ private extension MusicPlayer {
                                                selector: #selector(onAudioSessionRouteChanged(_:)),
                                                name: AVAudioSession.routeChangeNotification,
                                                object: nil)
-        NotificationCenter.default.addObserver(self,
-                                               selector: #selector(didEnterBackground),
-                                               name: UIApplication.didEnterBackgroundNotification,
-                                               object: nil)
-        NotificationCenter.default.addObserver(self,
-                                               selector: #selector(didEnterForeground),
-                                               name: UIApplication.didBecomeActiveNotification,
-                                               object: nil)
     }
     
     /// set left and right remote command
@@ -782,14 +772,14 @@ private extension MusicPlayer {
         commandCenter.previousTrackCommand.removeTarget(self)
         commandCenter.previousTrackCommand.isEnabled = !leftRemoteCommand.isSkipType
         commandCenter.previousTrackCommand.addTarget { [unowned self] event in
-            back(backEnableSong: self.backgroundMode)
+            back(backEnableSong: true)
             return .success
         }
         
         commandCenter.nextTrackCommand.removeTarget(self)
         commandCenter.nextTrackCommand.isEnabled = !rightRemoteCommand.isSkipType
         commandCenter.nextTrackCommand.addTarget { [unowned self] event in
-            next(forwardEnableSong: self.backgroundMode)
+            next(forwardEnableSong: true)
             return .success
         }
         
@@ -976,13 +966,5 @@ private extension MusicPlayer {
         default:
             break
         }
-    }
-    
-    @objc func didEnterBackground() {
-        backgroundMode = true
-    }
-    
-    @objc func didEnterForeground() {
-        backgroundMode = false
     }
 }
