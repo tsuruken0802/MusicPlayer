@@ -968,9 +968,7 @@ private extension MusicPlayer {
         
         switch reason {
         case .newDeviceAvailable:
-            if !isPlaying {
-                play()
-            }
+            break
         case .oldDeviceUnavailable:
             if isPlaying {
                 pause()
