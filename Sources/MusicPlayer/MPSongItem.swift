@@ -45,7 +45,7 @@ public class MPSongItem {
     
     public var id: MPMediaEntityPersistentID { item.persistentID }
     
-    public var title: String? { item.title }
+    public var title: String?
     
     public var artist: String? { item.artist }
     
@@ -58,11 +58,19 @@ public class MPSongItem {
     public init(item: MPMediaItem,
                 effect: MPSongItemEffect? = nil,
                 trimming: MPSongItemTrimming? = nil,
-                divisions: MPDivision? = nil) {
+                divisions: MPDivision? = nil,
+                title: String?) {
         self.item = item
         self.effect = effect
         self.trimming = trimming
         self.division = divisions
+        self.title = title
+    }
+}
+
+public extension MPSongItem {
+    var displayTitle: String? {
+        return title ?? item.title
     }
 }
 
