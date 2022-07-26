@@ -47,6 +47,8 @@ public class MPSongItem {
     
     public var title: String?
     
+    public var lyrics: String?
+    
     public var artist: String? { item.artist }
     
     public var artwork: MPMediaItemArtwork? { item.artwork }
@@ -59,12 +61,14 @@ public class MPSongItem {
                 effect: MPSongItemEffect? = nil,
                 trimming: MPSongItemTrimming? = nil,
                 divisions: MPDivision? = nil,
-                title: String?) {
+                title: String? = nil,
+                lyrics: String? = nil) {
         self.item = item
         self.effect = effect
         self.trimming = trimming
         self.division = divisions
         self.title = title
+        self.lyrics = lyrics
     }
 }
 
