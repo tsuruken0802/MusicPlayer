@@ -567,13 +567,29 @@ public extension MusicPlayer {
     ///   - effect: effect
     ///   - trimming: trimming
     ///   - divisions: divisions
+    ///   - title: title
+    ///   - lyrics: lyrics
     func updateSongEffect(songId: UInt64,
                           effect: MPSongItemEffect? = nil,
                           trimming: ClosedRange<Float>? = nil,
                           divisions: [Float]? = nil,
-                          isLoopDivision: Bool? = nil) {
-        updateSongEffect(songs: items, songId: songId, effect: effect, trimming: trimming, divisions: divisions)
-        updateSongEffect(songs: originalItems, songId: songId, effect: effect, trimming: trimming, divisions: divisions)
+                          isLoopDivision: Bool? = nil,
+                          title: String? = nil,
+                          lyrics: String? = nil) {
+        updateSongEffect(songs: items,
+                         songId: songId,
+                         effect: effect,
+                         trimming: trimming,
+                         divisions: divisions,
+                         title: title,
+                         lyrics: lyrics)
+        updateSongEffect(songs: originalItems,
+                         songId: songId,
+                         effect: effect,
+                         trimming: trimming,
+                         divisions: divisions,
+                         title: title,
+                         lyrics: lyrics)
         let isCurrentItem = songId == currentItem?.id
         if isCurrentItem {
             rate = effect?.rate ?? rate
@@ -664,11 +680,15 @@ private extension MusicPlayer {
     ///   - effect: effect
     ///   - trimming: trimming
     ///   - divisions: divisions
+    ///   - title: title
+    ///   - lyrics: lyrics
     func updateSongEffect(songs: [MPSongItem],
                           songId: UInt64,
                           effect: MPSongItemEffect?,
                           trimming: ClosedRange<Float>?,
-                          divisions: [Float]?) {
+                          divisions: [Float]?,
+                          title: String? = nil,
+                          lyrics: String? = nil) {
         guard let song = songs.first(where: { $0.id == songId }) else { return }
         if let effect = effect {
             song.effect = .init(rate: effect.rate, pitch: effect.pitch)
@@ -679,6 +699,12 @@ private extension MusicPlayer {
         if let divisions = divisions {
             let currentTime = songId == currentItem?.id ? currentTime : 0.0
             song.division = .init(values: divisions, currentTime: currentTime)
+        }
+        if let title = title {
+            song.title = title
+        }
+        if let lyrics = lyrics {
+            song.lyrics = lyrics
         }
     }
     
