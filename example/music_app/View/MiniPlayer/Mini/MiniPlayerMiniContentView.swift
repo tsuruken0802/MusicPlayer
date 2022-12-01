@@ -12,7 +12,7 @@ struct MiniPlayerMiniContentView: View {
     @StateObject private var musicPlayer = MusicPlayer.shared
     
     private var songName: String {
-        return musicPlayer.currentItem?.title ?? "再生停止中"
+        return musicPlayer.currentItem?.displayTitle ?? "再生停止中"
     }
     
     private var artistName: String {

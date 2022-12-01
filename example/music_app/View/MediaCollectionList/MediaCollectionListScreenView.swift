@@ -70,7 +70,7 @@ struct MediaCollectionListScreenView: View {
                                 .padding(.bottom, 6)
                             
                             VStack(alignment: .leading, spacing: 2) {
-                                Text(viewModel.mediaList[index].title ?? "")
+                                Text(viewModel.mediaList[index].displayTitle ?? "")
                                     .font(.callout)
                                     .lineLimit(1)
                                 

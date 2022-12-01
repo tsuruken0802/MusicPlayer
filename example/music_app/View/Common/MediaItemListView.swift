@@ -23,12 +23,12 @@ struct MediaItemListView: View {
     @ViewBuilder
     private func itemView(index: Int) -> some View {
         if listType == .number {
-            MediaNumberItemView(number: index+1, title: items[index].title ?? "") {
+            MediaNumberItemView(number: index+1, title: items[index].displayTitle ?? "") {
                 onTap(items[index], index)
             }
         }
         else if listType == .artwork {
-            MediaThumbnailItemView(thumbnailImage: items[index].item.image(size: MediaThumbnailItemView.imageSize), title: items[index].title ?? "") {
+            MediaThumbnailItemView(thumbnailImage: items[index].item.image(size: MediaThumbnailItemView.imageSize), title: items[index].displayTitle ?? "") {
                 onTap(items[index], index)
             }
         }

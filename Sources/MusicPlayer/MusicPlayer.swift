@@ -840,7 +840,7 @@ private extension MusicPlayer {
         let center = MPNowPlayingInfoCenter.default()
         var nowPlayingInfo = center.nowPlayingInfo ?? [String : Any]()
         
-        nowPlayingInfo[MPMediaItemPropertyTitle] = currentItem?.title
+        nowPlayingInfo[MPMediaItemPropertyTitle] = currentItem?.displayTitle
         
         let size = CGSize(width: 50, height: 50)
         if let image = currentItem?.artwork?.image(at: size) {

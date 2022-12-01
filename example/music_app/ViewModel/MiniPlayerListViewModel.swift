@@ -51,7 +51,7 @@ private extension MiniPlayerListViewModel {
         }
         let items = songs[fromIndex ... toIndex]
         currentItems = items.map({ item in
-            return MiniPlayerListItem.init(id: item.id, image: item.item.image(size: 50), title: item.title!, artist: item.item.artist)
+            return MiniPlayerListItem.init(id: item.id, image: item.item.image(size: 50), title: item.displayTitle!, artist: item.item.artist)
         })
     }
 }
