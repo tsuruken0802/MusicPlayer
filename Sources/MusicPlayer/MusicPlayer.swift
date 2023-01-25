@@ -209,7 +209,12 @@ public final class MusicPlayer: ObservableObject {
         
         $reverbValue.sink { [weak self] value in
             guard let self = self else { return }
-            self.reverb.wetDryMix = value
+            if let _ = self.reverbType {
+                self.reverb.wetDryMix = value
+            }
+            else {
+                self.reverb.wetDryMix = 0
+            }
         }
         .store(in: &cancellables)
         
