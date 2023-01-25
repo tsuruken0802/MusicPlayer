@@ -72,9 +72,9 @@ extension MPSongItem: Identifiable {}
 public struct MPSongItemEffect {
     public let rate: Float
     public let pitch: Float
-    public let reverb: MPSongReverbEffect
+    public let reverb: MPSongReverbEffect?
     
-    public init(rate: Float, pitch: Float, reverb: MPSongReverbEffect) {
+    public init(rate: Float, pitch: Float, reverb: MPSongReverbEffect?) {
         self.rate = rate
         self.pitch = pitch
         self.reverb = reverb
