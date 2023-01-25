@@ -627,7 +627,7 @@ public extension MusicPlayer {
             rate = effect?.rate ?? rate
             pitch = effect?.pitch ?? pitch
             reverbValue = effect?.reverb.value ?? reverbValue
-            reverbType = effect?.reverb.type
+            reverbType = effect?.reverb.type ?? reverbType
             playbackTimeRange = trimming
             if let divisions = divisions {
                 division = .init(values: divisions, currentTime: currentTime, loopDivision: isLoopDivision)
