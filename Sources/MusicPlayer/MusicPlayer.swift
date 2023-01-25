@@ -192,6 +192,7 @@ public final class MusicPlayer: ObservableObject {
             guard let self = self else { return }
             self.pitchControl.rate = MusicPlayerService.enableRateValue(value: value)
             self.startCurrentTimeRendering(currentRate: value)
+            print(self.pitchControl.rate)
         }
         .store(in: &cancellables)
         
