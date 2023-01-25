@@ -197,12 +197,12 @@ public final class MusicPlayer: ObservableObject {
         
         $reverbType.sink { [weak self] value in
             guard let self = self else { return }
-            if let unwrapedValue = value {
-                self.reverb.bypass = false
-                self.reverb.loadFactoryPreset(unwrapedValue)
+            if let unwrappedValue = value {
+                self.reverb.wetDryMix = self.reverbValue
+                self.reverb.loadFactoryPreset(unwrappedValue)
             }
             else {
-                self.reverb.bypass = true
+                self.reverb.wetDryMix = 0
             }
         }
         .store(in: &cancellables)
