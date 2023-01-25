@@ -20,13 +20,22 @@ class MusicOptionsViewModel: ObservableObject {
     
     @Published var isLoopDivision: Bool
     
+    @Published var selectedReverb: Int = 0
+    
     private var cancellables: [AnyCancellable] = []
     
     init() {
         isLoopDivision = MusicPlayer.shared.division.loopDivision
         
         $isLoopDivision.sink { value in
-            MusicPlayer.shared.division.loopDivision = value
+            DispatchQueue.main.async {
+                MusicPlayer.shared.division.loopDivision = value
+            }
+        }.store(in: &cancellables)
+        $selectedReverb.sink { value in
+            DispatchQueue.main.async {
+                MusicPlayer.shared.reverbType = .init(rawValue: value)
+            }
         }.store(in: &cancellables)
     }
     

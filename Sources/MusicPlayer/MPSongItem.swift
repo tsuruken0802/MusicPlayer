@@ -11,9 +11,7 @@ import MediaPlayer
 // struct OK?
 public struct MPSongItemList {
     public let items: [MPSongItem]
-    
     public var currentIndex: Int
-    
     public var currentItem: MPSongItem? {
         if !items.indices.contains(currentIndex) {
             return nil
@@ -34,23 +32,14 @@ public struct MPSongItemList {
 
 public class MPSongItem {
     public let item: MPMediaItem
-    
     public var effect: MPSongItemEffect?
-    
     public var trimming: MPSongItemTrimming?
-    
     public var division: MPDivision?
-    
     public var duration: TimeInterval { item.playbackDuration }
-    
     public var id: MPMediaEntityPersistentID { item.persistentID }
-    
     public var title: String?
-    
     public var lyrics: String?
-    
     public var artist: String? { item.artist }
-    
     public var artwork: MPMediaItemArtwork? { item.artwork }
     
     public func image(size: CGFloat) -> UIImage? {
@@ -82,12 +71,13 @@ extension MPSongItem: Identifiable {}
 
 public struct MPSongItemEffect {
     public let rate: Float
-    
     public let pitch: Float
+    public let reverb: MPSongReverbEffect
     
-    public init(rate: Float, pitch: Float) {
+    public init(rate: Float, pitch: Float, reverb: MPSongReverbEffect) {
         self.rate = rate
         self.pitch = pitch
+        self.reverb = reverb
     }
 }
 
@@ -96,5 +86,18 @@ public struct MPSongItemTrimming {
     
     public init(trimming: ClosedRange<Float>) {
         self.trimming = trimming
+    }
+}
+
+public struct MPSongReverbEffect {
+    // 0 ... 100
+    public let value: Float
+    
+    // if null, reverb is nothing
+    public let type: AVAudioUnitReverbPreset?
+    
+    public init(value: Float, type: AVAudioUnitReverbPreset?) {
+        self.value = value
+        self.type = type
     }
 }

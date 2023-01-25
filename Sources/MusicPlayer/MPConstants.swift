@@ -23,4 +23,10 @@ public class MPConstants {
     public static let defaultRateUnit: Float = 0.25
     public static let limitRateMinValue: Float = 0.25
     public static let limitRateMaxValue: Float = 4.0
+    
+    /// Reverb
+    public static let defaultReverbValue: Float = 50
+    public static let limitReverbMinValue: Float = 0
+    public static let limitReverbMaxValue: Float = 100
+    public static let defaultReverbUnit: Float = 1
 }

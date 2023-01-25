@@ -6,11 +6,38 @@
 //
 
 import SwiftUI
+import AVFAudio
+
+struct ReverbData: Identifiable {
+    var reverbType: AVAudioUnitReverbPreset
+    var name: String
+    
+    public var id: String { String(reverbType.rawValue) }
+}
+
+extension AVAudioUnitReverbPreset: Identifiable {
+    public var id: String { String(self.rawValue) }
+}
 
 struct MusicOptionsView: View {
     @ObservedObject private var musicPlayer = MusicPlayer.shared
-    
     @StateObject private var viewModel: MusicOptionsViewModel = .init()
+    
+    @State private var reverbSelection = [
+        ReverbData(reverbType: .smallRoom, name: "狭い部屋"),
+        ReverbData(reverbType: .mediumRoom, name: "普通の部屋"),
+        ReverbData(reverbType: .largeRoom, name: "広い部屋"),
+        ReverbData(reverbType: .largeRoom2, name: "広い部屋2"),
+        ReverbData(reverbType: .mediumHall, name: "普通のホール"),
+        ReverbData(reverbType: .mediumHall2, name: "普通のホール2"),
+        ReverbData(reverbType: .mediumHall3, name: "普通のホール3"),
+        ReverbData(reverbType: .largeHall, name: "広いホール"),
+        ReverbData(reverbType: .largeHall2, name: "広いホール2"),
+        ReverbData(reverbType: .plate, name: "プレート"),
+        ReverbData(reverbType: .mediumChamber, name: "ミディアムチェンバー"),
+        ReverbData(reverbType: .largeChamber, name: "大きいチェンバー"),
+        ReverbData(reverbType: .cathedral, name: "大聖堂"),
+    ]
     
     private var pitchString: String {
         return viewModel.displayPitch(value: musicPlayer.pitch, unit: musicPlayer.pitchOptions.unit)
@@ -93,6 +120,22 @@ struct MusicOptionsView: View {
                     .topSpace()
                 }
                 .largeTopSpace()
+                
+                VStack {
+                    Text("ライブエフェクト")
+                        .font(.title2)
+                        .topSpace()
+                    
+                    HStack {
+                        Text("強さ")
+                        Slider(value: $musicPlayer.reverbValue, in: musicPlayer.reverbOptions.minValue...musicPlayer.reverbOptions.maxValue, step: musicPlayer.reverbOptions.unit)
+                    }
+                    Picker("ライブエフェクトを選択", selection: $viewModel.selectedReverb) {
+                        ForEach(reverbSelection) { reverbType in
+                            Text(reverbType.name).tag(reverbType.reverbType.rawValue)
+                        }
+                    }
+                }
                 
                 // trimming
                 VStack {

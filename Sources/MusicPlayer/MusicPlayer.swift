@@ -12,6 +12,7 @@ public final class MusicPlayer: ObservableObject {
     private let audioEngine: AVAudioEngine = .init()
     private let playerNode: AVAudioPlayerNode = .init()
     private let pitchControl: AVAudioUnitTimePitch = .init()
+    private let reverb: AVAudioUnitReverb = .init()
     private var audioFile: AVAudioFile?
     
     /// Cache of playback time when moving the seek bar
@@ -92,6 +93,13 @@ public final class MusicPlayer: ObservableObject {
                                                                       maxValue: MPConstants.defaultRateMaxValue,
                                                                       unit: MPConstants.defaultRateUnit,
                                                                       defaultValue: MPConstants.defaultRateValue)
+    /// Reverb
+    @Published public var reverbValue: Float = MPConstants.defaultReverbValue
+    @Published public var reverbType: AVAudioUnitReverbPreset?
+    @Published public var reverbOptions: MusicEffectRangeOption = .init(minValue: MPConstants.limitReverbMinValue,
+                                                                        maxValue: MPConstants.limitReverbMaxValue,
+                                                                        unit: MPConstants.defaultReverbUnit,
+                                                                        defaultValue: MPConstants.defaultReverbValue)
     
     /// trimming(seconds) and divisions
     @Published public var playbackTimeRange: ClosedRange<Float>? {
@@ -171,6 +179,7 @@ public final class MusicPlayer: ObservableObject {
         setNotification()
         audioEngine.attach(playerNode)
         audioEngine.attach(pitchControl)
+        audioEngine.attach(reverb)
         initRemoteCommand()
         
         $pitch.sink { [weak self] value in
@@ -183,6 +192,24 @@ public final class MusicPlayer: ObservableObject {
             guard let self = self else { return }
             self.pitchControl.rate = MusicPlayerService.enableRateValue(value: value)
             self.startCurrentTimeRendering(currentRate: value)
+        }
+        .store(in: &cancellables)
+        
+        $reverbType.sink { [weak self] value in
+            guard let self = self else { return }
+            if let unwrapedValue = value {
+                self.reverb.bypass = false
+                self.reverb.loadFactoryPreset(unwrapedValue)
+            }
+            else {
+                self.reverb.bypass = true
+            }
+        }
+        .store(in: &cancellables)
+        
+        $reverbValue.sink { [weak self] value in
+            guard let self = self else { return }
+            self.reverb.wetDryMix = value
         }
         .store(in: &cancellables)
         
@@ -594,6 +621,8 @@ public extension MusicPlayer {
         if isCurrentItem {
             rate = effect?.rate ?? rate
             pitch = effect?.pitch ?? pitch
+            reverbValue = effect?.reverb.value ?? reverbValue
+            reverbType = effect?.reverb.type
             playbackTimeRange = trimming
             if let divisions = divisions {
                 division = .init(values: divisions, currentTime: currentTime, loopDivision: isLoopDivision)
@@ -612,6 +641,8 @@ public extension MusicPlayer {
         if let effect = effect {
             rate = effect.rate
             pitch = effect.pitch
+            reverbType = effect.reverb.type
+            reverbValue = effect.reverb.value
         }
         if let trimming = trimming {
             playbackTimeRange = trimming.trimming
@@ -634,7 +665,7 @@ public extension MusicPlayer {
     /// - Parameter songId: song id
     func resetEffects(songId: UInt64) {
         guard let index = items.firstIndex(where: { $0.id == songId }) else { return }
-        items[index].effect = .init(rate: rateOptions.defaultValue, pitch: pitchOptions.defaultValue)
+        items[index].effect = .init(rate: rateOptions.defaultValue, pitch: pitchOptions.defaultValue, reverb: .init(value: reverbOptions.defaultValue, type: nil))
         items[index].trimming = nil
         items[index].division = nil
     }
@@ -691,7 +722,7 @@ private extension MusicPlayer {
                           lyrics: String? = nil) {
         guard let song = songs.first(where: { $0.id == songId }) else { return }
         if let effect = effect {
-            song.effect = .init(rate: effect.rate, pitch: effect.pitch)
+            song.effect = .init(rate: effect.rate, pitch: effect.pitch, reverb: effect.reverb)
         }
         if let trimming = trimming {
             song.trimming = .init(trimming: trimming)
@@ -875,7 +906,8 @@ private extension MusicPlayer {
         do {
             audioFile = try AVAudioFile(forReading: assetURL)
             audioEngine.connect(playerNode, to: pitchControl, format: nil)
-            audioEngine.connect(pitchControl, to: audioEngine.mainMixerNode, format: nil)
+            audioEngine.connect(pitchControl, to: reverb, format: nil)
+            audioEngine.connect(reverb, to: audioEngine.mainMixerNode, format: nil)
             playerNode.scheduleFile(audioFile!, at: nil)
             return true
         }

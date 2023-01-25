@@ -73,7 +73,7 @@ struct LibraryScreenView: View {
                         Button(action: {
                             let upRate = MusicPlayer.shared.incrementedRate(startRate: MPConstants.defaultRateValue)
                             let upPitch = MusicPlayer.shared.incrementedPitch(startPitch: MPConstants.defaultPitchValue)
-                            let allSongs = MPMediaService.getAllSongs().map({ MPSongItem(item: $0, effect: .init(rate: upRate, pitch: upPitch)) })
+                            let allSongs = MPMediaService.getAllSongs().map({ MPSongItem(item: $0, effect: .init(rate: upRate, pitch: upPitch, reverb: .init(value: 80, type: .largeHall2))) })
                             songsNavi.destination = AllSongListScreenView(songs: allSongs)
                         }, label: {
                             NavigationLink("曲(up rate)", destination: songsNavi.destination, isActive: $songsNavi.activeNavigation)
