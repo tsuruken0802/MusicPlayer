@@ -274,22 +274,6 @@ public final class MusicPlayer: ObservableObject {
 }
 
 public extension MusicPlayer {
-    /// set Schedule File
-    func setScheduleFile2(audioFile2: AVAudioFile) -> Bool {
-        audioFile = audioFile2
-        do {
-            audioEngine.connect(playerNode, to: pitchControl, format: nil)
-            audioEngine.connect(pitchControl, to: reverb, format: nil)
-            audioEngine.connect(reverb, to: audioEngine.mainMixerNode, format: nil)
-            playerNode.scheduleFile(audioFile2, at: nil)
-            return true
-        }
-        catch let e {
-            print(e.localizedDescription)
-            return false
-        }
-    }
-    
     func export(items: [MPSongItem], index: Int) {
 //        play(items: items, index: index)
         guard let assetURL = items[index].item.assetURL else { return }
@@ -297,14 +281,11 @@ public extension MusicPlayer {
         
         let inputFormat = inputFile.processingFormat
         // 書き込み先ファイルをつくる
-        let outputNode = audioEngine.mainMixerNode
         let outputFormat = AVAudioFormat(standardFormatWithSampleRate: inputFormat.sampleRate, channels: inputFormat.channelCount)!
 
         let path = NSTemporaryDirectory() + "hoge.wav"
         let url = URL(string: path)!
         let outputFile = try! AVAudioFile(forWriting: url, settings: outputFormat.settings)
-//        setScheduleFile2(audioFile2: inputFile)
-//        audioEngine.prepare()
 
         do {
             let inputBuffer = AVAudioPCMBuffer(pcmFormat: inputFormat, frameCapacity: UInt32(inputFile.length))
@@ -345,73 +326,6 @@ public extension MusicPlayer {
             print(e)
         }
     }
-    
-    
-    func export2(items: [MPSongItem], index: Int) {
-        play(items: items, index: index)
-        let path = NSTemporaryDirectory() + "hoge.wav"
-        let url = URL(string: path)!
-        // 書き込み先ファイルをつくる
-        let outputNode = audioEngine.mainMixerNode
-
-        // タップ（蛇口）をつけてバッファを取り出してファイルに書き込み
-        let bufferSize = AVAudioFrameCount(outputNode.outputFormat(forBus: 0).sampleRate)
-        let format = outputNode.outputFormat(forBus: 0)
-        let outputFile = try! AVAudioFile(forWriting: url, settings: format.settings)
-        outputNode.installTap(onBus: 0, bufferSize: 8192, format: format) { (buffer, when) in
-            do {
-                print("きたよ1" + "\(when)")
-                try outputFile.write(from: buffer)
-               } catch let error {
-                   print("きたよ2")
-                print(error)
-               }
-        }
-    }
-    
-//    func offlineRender(inputFileURL: URL, outputFileURL: URL, completion: @escaping (Error?) -> Void) {
-//        guard let inputFile = try? AVAudioFile(forReading: inputFileURL) else {
-//            completion(NSError(domain: "AudioFileError", code: -1, userInfo: [NSLocalizedDescriptionKey: "Couldn't read the input audio file."]))
-//            return
-//        }
-//
-//        let inputFormat = inputFile.processingFormat
-//        let outputFormat = AVAudioFormat(standardFormatWithSampleRate: inputFormat.sampleRate, channels: inputFormat.channelCount)!
-//
-//        let outputBuffer = AVAudioPCMBuffer(pcmFormat: outputFormat, frameCapacity: AVAudioFrameCount(inputFile.length))!
-//        outputBuffer.frameLength = AVAudioFrameCount(inputFile.length)
-//
-//        let outputFile = try! AVAudioFile(forWriting: outputFileURL, settings: outputFormat.settings)
-//
-//        do {
-//            let exportSemaphore = DispatchSemaphore(value: 0)
-//
-//            var remainSampleTime = AVAudioFrameCount(length * Double(sampleRate))
-//
-//            audioEngine.mainMixerNode.installTap(onBus: 0, bufferSize: 4096, format: outputFormat) { buffer, _ in
-//                do {
-//                    try outputFile.write(from: buffer)
-//                } catch {
-//                    completion(NSError(domain: "AudioFileError", code: -2, userInfo: [NSLocalizedDescriptionKey: "Couldn't write the output audio file."]))
-//                    return
-//                }
-//
-//                if audioPlayerNode.isPlaying == false {
-//                    exportSemaphore.signal()
-//                }
-//            }
-//
-//            exportSemaphore.wait()
-//
-//            audioPlayerNode.stop()
-//            audioEngine.stop()
-//            audioEngine.mainMixerNode.removeTap(onBus: 0)
-//
-//            completion(nil)
-//        } catch {
-//            completion(error)
-//        }
-//    }
 }
 
 public extension MusicPlayer {
