@@ -274,6 +274,147 @@ public final class MusicPlayer: ObservableObject {
 }
 
 public extension MusicPlayer {
+    /// set Schedule File
+    func setScheduleFile2(audioFile2: AVAudioFile) -> Bool {
+        audioFile = audioFile2
+        do {
+            audioEngine.connect(playerNode, to: pitchControl, format: nil)
+            audioEngine.connect(pitchControl, to: reverb, format: nil)
+            audioEngine.connect(reverb, to: audioEngine.mainMixerNode, format: nil)
+            playerNode.scheduleFile(audioFile2, at: nil)
+            return true
+        }
+        catch let e {
+            print(e.localizedDescription)
+            return false
+        }
+    }
+    
+    func export(items: [MPSongItem], index: Int) {
+//        play(items: items, index: index)
+        guard let assetURL = items[index].item.assetURL else { return }
+        guard let inputFile =  try? AVAudioFile(forReading: assetURL) else { return }
+    
+        let inputFormat = inputFile.processingFormat
+        // 書き込み先ファイルをつくる
+        let outputNode = audioEngine.mainMixerNode
+        let outputFormat = AVAudioFormat(standardFormatWithSampleRate: inputFormat.sampleRate, channels: inputFormat.channelCount)!
+
+        let path = NSTemporaryDirectory() + "hoge.wav"
+        let url = URL(string: path)!
+        let outputFile = try! AVAudioFile(forWriting: url, settings: outputFormat.settings)
+        setScheduleFile2(audioFile2: inputFile)
+//        audioEngine.prepare()
+
+        do {
+            let inputBuffer = AVAudioPCMBuffer(pcmFormat: inputFormat, frameCapacity: UInt32(inputFile.length))
+            try inputFile.read(into: inputBuffer!)
+
+            let renderTime = AVAudioTime(sampleTime: 0, atRate: inputFormat.sampleRate)
+            try audioEngine.enableManualRenderingMode(.offline, format: outputFormat, maximumFrameCount: 4096)
+
+            try audioEngine.start()
+            playerNode.scheduleBuffer(inputBuffer!, at: nil, options: .loops, completionHandler: nil)
+
+            while audioEngine.manualRenderingSampleTime < inputBuffer!.frameLength {
+                let buffer = AVAudioPCMBuffer(pcmFormat: outputFormat, frameCapacity: 4096)
+                let framesToRender = min(4096, UInt32(inputBuffer!.frameLength) - UInt32(audioEngine.manualRenderingSampleTime))
+                let status = try audioEngine.renderOffline(framesToRender, to: buffer!)
+
+                switch status {
+                case .success:
+                    print("成功！")
+                    try outputFile.write(from: buffer!)
+                case .insufficientDataFromInputNode:
+                    break
+                case .cannotDoInCurrentContext, .error:
+//                    completion(NSError(domain: "AudioEngineError", code: -2, userInfo: [NSLocalizedDescriptionKey: "Couldn't render the output audio file."]))
+                    return
+                @unknown default:
+//                    completion(NSError(domain: "AudioEngineError", code: -3, userInfo: [NSLocalizedDescriptionKey: "Unknown error occurred while rendering the output audio file."]))
+                    return
+                }
+            }
+
+            audioEngine.stop()
+            audioEngine.disableManualRenderingMode()
+
+//            completion(nil)
+        } catch(let e) {
+            print("エラーオッkたよ")
+            print(e)
+        }
+    }
+    
+    
+    func export2(items: [MPSongItem], index: Int) {
+        play(items: items, index: index)
+        let path = NSTemporaryDirectory() + "hoge.wav"
+        let url = URL(string: path)!
+        // 書き込み先ファイルをつくる
+        let outputNode = audioEngine.mainMixerNode
+
+        // タップ（蛇口）をつけてバッファを取り出してファイルに書き込み
+        let bufferSize = AVAudioFrameCount(outputNode.outputFormat(forBus: 0).sampleRate)
+        let format = outputNode.outputFormat(forBus: 0)
+        let outputFile = try! AVAudioFile(forWriting: url, settings: format.settings)
+        outputNode.installTap(onBus: 0, bufferSize: 8192, format: format) { (buffer, when) in
+            do {
+                print("きたよ1" + "\(when)")
+                try outputFile.write(from: buffer)
+               } catch let error {
+                   print("きたよ2")
+                print(error)
+               }
+        }
+    }
+    
+//    func offlineRender(inputFileURL: URL, outputFileURL: URL, completion: @escaping (Error?) -> Void) {
+//        guard let inputFile = try? AVAudioFile(forReading: inputFileURL) else {
+//            completion(NSError(domain: "AudioFileError", code: -1, userInfo: [NSLocalizedDescriptionKey: "Couldn't read the input audio file."]))
+//            return
+//        }
+//
+//        let inputFormat = inputFile.processingFormat
+//        let outputFormat = AVAudioFormat(standardFormatWithSampleRate: inputFormat.sampleRate, channels: inputFormat.channelCount)!
+//
+//        let outputBuffer = AVAudioPCMBuffer(pcmFormat: outputFormat, frameCapacity: AVAudioFrameCount(inputFile.length))!
+//        outputBuffer.frameLength = AVAudioFrameCount(inputFile.length)
+//
+//        let outputFile = try! AVAudioFile(forWriting: outputFileURL, settings: outputFormat.settings)
+//
+//        do {
+//            let exportSemaphore = DispatchSemaphore(value: 0)
+//
+//            var remainSampleTime = AVAudioFrameCount(length * Double(sampleRate))
+//
+//            audioEngine.mainMixerNode.installTap(onBus: 0, bufferSize: 4096, format: outputFormat) { buffer, _ in
+//                do {
+//                    try outputFile.write(from: buffer)
+//                } catch {
+//                    completion(NSError(domain: "AudioFileError", code: -2, userInfo: [NSLocalizedDescriptionKey: "Couldn't write the output audio file."]))
+//                    return
+//                }
+//
+//                if audioPlayerNode.isPlaying == false {
+//                    exportSemaphore.signal()
+//                }
+//            }
+//
+//            exportSemaphore.wait()
+//
+//            audioPlayerNode.stop()
+//            audioEngine.stop()
+//            audioEngine.mainMixerNode.removeTap(onBus: 0)
+//
+//            completion(nil)
+//        } catch {
+//            completion(error)
+//        }
+//    }
+}
+
+public extension MusicPlayer {
     /// Play current item
     func play() {
         if isSeekOver || !isEnableAudio {
