@@ -293,8 +293,8 @@ public extension MusicPlayer {
     func export(items: [MPSongItem], index: Int) {
 //        play(items: items, index: index)
         guard let assetURL = items[index].item.assetURL else { return }
-        guard let inputFile =  try? AVAudioFile(forReading: assetURL) else { return }
-    
+        guard let inputFile = try? AVAudioFile(forReading: assetURL) else { return }
+        
         let inputFormat = inputFile.processingFormat
         // 書き込み先ファイルをつくる
         let outputNode = audioEngine.mainMixerNode
@@ -303,18 +303,18 @@ public extension MusicPlayer {
         let path = NSTemporaryDirectory() + "hoge.wav"
         let url = URL(string: path)!
         let outputFile = try! AVAudioFile(forWriting: url, settings: outputFormat.settings)
-        setScheduleFile2(audioFile2: inputFile)
+//        setScheduleFile2(audioFile2: inputFile)
 //        audioEngine.prepare()
 
         do {
             let inputBuffer = AVAudioPCMBuffer(pcmFormat: inputFormat, frameCapacity: UInt32(inputFile.length))
             try inputFile.read(into: inputBuffer!)
 
-            let renderTime = AVAudioTime(sampleTime: 0, atRate: inputFormat.sampleRate)
+//            let renderTime = AVAudioTime(sampleTime: 0, atRate: inputFormat.sampleRate)
             try audioEngine.enableManualRenderingMode(.offline, format: outputFormat, maximumFrameCount: 4096)
 
-            try audioEngine.start()
-            playerNode.scheduleBuffer(inputBuffer!, at: nil, options: .loops, completionHandler: nil)
+            play(items: items, index: index)
+//            playerNode.scheduleBuffer(inputBuffer!, at: nil, options: .loops, completionHandler: nil)
 
             while audioEngine.manualRenderingSampleTime < inputBuffer!.frameLength {
                 let buffer = AVAudioPCMBuffer(pcmFormat: outputFormat, frameCapacity: 4096)
