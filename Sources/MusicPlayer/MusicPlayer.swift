@@ -274,8 +274,8 @@ public final class MusicPlayer: ObservableObject {
 }
 
 public extension MusicPlayer {
-    func export(assetURL: URL, onSuccess: () -> Void, onError: () -> Void) {
-        stop()
+    func export(assetURL: URL, onSuccess: (_ exportUrlPath: String) -> Void, onError: () -> Void) {
+//        stop()
         _ = setScheduleFile(assetURL: assetURL)
         guard let sourceFile = try? AVAudioFile(forReading: assetURL) else { return }
         let format = sourceFile.processingFormat
@@ -318,7 +318,7 @@ public extension MusicPlayer {
             }
             stop()
             audioEngine.disableManualRenderingMode()
-            onSuccess()
+            onSuccess(path)
         } catch(let e) {
             onError()
             fatalError("The manual rendering failed: \(e).")
