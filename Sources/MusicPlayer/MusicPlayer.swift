@@ -307,7 +307,7 @@ public extension MusicPlayer {
                 // trimmingの分だけ秒数を減らす
                 let startTrimmingDiff = AVAudioFramePosition(song.trimming?.trimming.lowerBound ?? 0.0)
                 songLength = songLength - startTrimmingDiff * Int64(sourceFile.fileFormat.sampleRate)
-                let endTrimmingDiff =  AVAudioFramePosition(Float(duration!) - (song.trimming?.trimming.upperBound ?? 0.0))
+                let endTrimmingDiff =  AVAudioFramePosition(Float(duration!) - (song.trimming?.trimming.upperBound ?? Float(duration!)))
                 songLength = songLength - endTrimmingDiff * Int64(sourceFile.fileFormat.sampleRate)
                 // Rateに応じた曲の長さを基準値とする
                 songLength = songLength / AVAudioFramePosition(song.effect?.rate ?? 1.0)
