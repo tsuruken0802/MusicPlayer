@@ -274,7 +274,7 @@ public final class MusicPlayer: ObservableObject {
 }
 
 public extension MusicPlayer {
-    func export(song: MPSongItem, onSuccess: (_ exportUrlPath: String) -> Void, onError: () -> Void) {
+    func export(song: MPSongItem, onSuccess: @escaping (_ exportUrlPath: String) -> Void, onError: @escaping () -> Void) {
         guard let assetURL = song.item.assetURL else { return }
         guard let sourceFile = try? AVAudioFile(forReading: assetURL) else { return }
         stop()
@@ -288,55 +288,57 @@ public extension MusicPlayer {
         let format = sourceFile.processingFormat
         let maxFrameCount: AVAudioFrameCount = 4096
         
-        do {
-            try audioEngine.enableManualRenderingMode(.offline, format: format, maximumFrameCount: maxFrameCount)
-            
-            try audioEngine.start()
-            playerNode.play()
-            
-            let buffer = AVAudioPCMBuffer(pcmFormat: audioEngine.manualRenderingFormat, frameCapacity: audioEngine.manualRenderingMaximumFrameCount)!
-            
-            // 出力先のファイル
-            let path = NSTemporaryDirectory() + "export.m4a"
-            let url = URL(string: path)!
-            let outputFile = try! AVAudioFile(forWriting: url, settings: sourceFile.fileFormat.settings)
-            
-            /// exportする曲の秒数を決める
-            // Rateに応じた曲の長さにする
-            var songLength = sourceFile.length / AVAudioFramePosition(song.effect?.rate ?? 1.0)
-            let startTrimming = AVAudioFramePosition(song.trimming?.trimming.lowerBound ?? 0.0)
-            songLength = songLength - startTrimming
-            let endTrimming = AVAudioFramePosition(song.trimming?.trimming.upperBound ?? 0.0)
-            songLength = songLength - (AVAudioFramePosition(duration!) - endTrimming)
-            
-            while audioEngine.manualRenderingSampleTime < songLength {
-                let frameCount = songLength - audioEngine.manualRenderingSampleTime
-                let framesToRender = min(AVAudioFrameCount(frameCount), buffer.frameCapacity)
-                let status = try audioEngine.renderOffline(framesToRender, to: buffer)
+        DispatchQueue.global(qos: .default).async { [unowned self] in
+            do {
+                try audioEngine.enableManualRenderingMode(.offline, format: format, maximumFrameCount: maxFrameCount)
                 
-                switch status {
-                case .success:
-                    try outputFile.write(from: buffer)
-                case .insufficientDataFromInputNode:
-                    // Applicable only when using the input node as one of the sources.
-                    break
-                case .cannotDoInCurrentContext:
-                    // The engine couldn't render in the current render call.
-                    // Retry in the next iteration.
-                    break
-                case .error:
-                    // An error occurred while rendering the audio.
-                    fatalError("The manual rendering failed.")
-                @unknown default:
-                    fatalError("unknown error.")
+                try audioEngine.start()
+                playerNode.play()
+                
+                let buffer = AVAudioPCMBuffer(pcmFormat: audioEngine.manualRenderingFormat, frameCapacity: audioEngine.manualRenderingMaximumFrameCount)!
+                
+                // 出力先のファイル
+                let path = NSTemporaryDirectory() + "export.m4a"
+                let url = URL(string: path)!
+                let outputFile = try! AVAudioFile(forWriting: url, settings: sourceFile.fileFormat.settings)
+                
+                /// exportする曲の秒数を決める
+                // Rateに応じた曲の長さにする
+                var songLength = sourceFile.length / AVAudioFramePosition(song.effect?.rate ?? 1.0)
+                let startTrimming = AVAudioFramePosition(song.trimming?.trimming.lowerBound ?? 0.0)
+                songLength = songLength - startTrimming
+                let endTrimming = AVAudioFramePosition(song.trimming?.trimming.upperBound ?? 0.0)
+                songLength = songLength - (AVAudioFramePosition(duration!) - endTrimming)
+                
+                while audioEngine.manualRenderingSampleTime < songLength {
+                    let frameCount = songLength - audioEngine.manualRenderingSampleTime
+                    let framesToRender = min(AVAudioFrameCount(frameCount), buffer.frameCapacity)
+                    let status = try audioEngine.renderOffline(framesToRender, to: buffer)
+                    
+                    switch status {
+                    case .success:
+                        try outputFile.write(from: buffer)
+                    case .insufficientDataFromInputNode:
+                        // Applicable only when using the input node as one of the sources.
+                        break
+                    case .cannotDoInCurrentContext:
+                        // The engine couldn't render in the current render call.
+                        // Retry in the next iteration.
+                        break
+                    case .error:
+                        // An error occurred while rendering the audio.
+                        fatalError("The manual rendering failed.")
+                    @unknown default:
+                        fatalError("unknown error.")
+                    }
                 }
+                stop()
+                audioEngine.disableManualRenderingMode()
+                onSuccess(path)
+            } catch(let e) {
+                onError()
+                fatalError("The manual rendering failed: \(e).")
             }
-            stop()
-            audioEngine.disableManualRenderingMode()
-            onSuccess(path)
-        } catch(let e) {
-            onError()
-            fatalError("The manual rendering failed: \(e).")
         }
     }
 }
