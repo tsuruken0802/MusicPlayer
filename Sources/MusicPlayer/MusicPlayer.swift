@@ -340,6 +340,8 @@ public extension MusicPlayer {
                 }
                 stop()
                 audioEngine.disableManualRenderingMode()
+                // stopしたから再度立ち上げておく
+                setScheduleFile(assetURL: assetURL)
                 onSuccess(path)
             } catch(let e) {
                 onError()
