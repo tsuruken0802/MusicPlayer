@@ -277,9 +277,14 @@ public extension MusicPlayer {
     func export(song: MPSongItem, onSuccess: (_ exportUrlPath: String) -> Void, onError: () -> Void) {
 //        stop()
         guard let assetURL = song.item.assetURL else { return }
+        guard let sourceFile = try? AVAudioFile(forReading: assetURL) else { return }
+        setCurrentItem(items: [song], index: 0)
         setCurrentEffect(effect: song.effect, trimming: song.trimming, division: song.division)
         _ = setScheduleFile(assetURL: assetURL)
-        guard let sourceFile = try? AVAudioFile(forReading: assetURL) else { return }
+        if let trimmingStart = song.trimming?.trimming.lowerBound {
+            setSeek(seconds: trimmingStart, withPlay: false)
+        }
+        
         let format = sourceFile.processingFormat
         let maxFrameCount: AVAudioFrameCount = 4096
         
@@ -296,6 +301,7 @@ public extension MusicPlayer {
             let url = URL(string: path)!
             let outputFile = try! AVAudioFile(forWriting: url, settings: sourceFile.fileFormat.settings)
             
+            // Rateに応じた曲の長さにする
             let songLength = sourceFile.length / AVAudioFramePosition(song.effect?.rate ?? 1.0)
             
             while audioEngine.manualRenderingSampleTime < songLength {
@@ -357,9 +363,7 @@ public extension MusicPlayer {
         if !itemsSafe(items: items, index: index) {
             return
         }
-        self.originalItems = items
-        self.items = items
-        self.currentIndex = index
+        setCurrentItem(items: items, index: index)
         resetPlaybackTime()
         if isShuffle {
             shuffle()
@@ -388,6 +392,13 @@ public extension MusicPlayer {
                          trimming: currentItem?.trimming,
                          division: currentItem?.division)
         play()
+    }
+    
+    // Set Current Item
+    func setCurrentItem(items: [MPSongItem], index: Int) {
+        self.originalItems = items
+        self.items = items
+        self.currentIndex = index
     }
     
     /// Play next item
