@@ -338,9 +338,9 @@ public extension MusicPlayer {
                         fatalError("unknown error.")
                     }
                 }
-                stop()
-                audioEngine.disableManualRenderingMode()
                 DispatchQueue.main.async { [unowned self] in
+                    stop()
+                    audioEngine.disableManualRenderingMode()
                     // stopしたから再度立ち上げておく
                     setCurrentItem(items: [song], index: 0)
                     setCurrentEffect(effect: song.effect, trimming: song.trimming, division: song.division)
