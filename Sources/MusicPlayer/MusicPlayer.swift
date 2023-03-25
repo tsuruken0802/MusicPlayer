@@ -308,7 +308,7 @@ public extension MusicPlayer {
                 let buffer = AVAudioPCMBuffer(pcmFormat: audioEngine.manualRenderingFormat, frameCapacity: audioEngine.manualRenderingMaximumFrameCount)!
                 
                 // 出力先のファイル
-                let path = NSHomeDirectory() + "/Documents/" + "export.m4a"
+                let path = NSTemporaryDirectory() + "exported_music.m4a"
                 let url = URL(string: path)!
                 let outputFile = try AVAudioFile(forWriting: url, settings: sourceFile.fileFormat.settings)
                 
