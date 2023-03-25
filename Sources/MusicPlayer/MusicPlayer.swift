@@ -274,19 +274,17 @@ public final class MusicPlayer: ObservableObject {
 }
 
 public extension MusicPlayer {
-    func export(items: [MPSongItem], index: Int) {
-        guard let assetURL = items[index].item.assetURL else { return }
+    func export(assetURL: URL, onSuccess: () -> Void, onError: () -> Void) {
+        _ = setScheduleFile(assetURL: assetURL)
         guard let sourceFile = try? AVAudioFile(forReading: assetURL) else { return }
         let format = sourceFile.processingFormat
         let maxFrameCount: AVAudioFrameCount = 4096
-
+        
         do {
             try audioEngine.enableManualRenderingMode(.offline, format: format, maximumFrameCount: maxFrameCount)
             
-//            let inputBuffer = AVAudioPCMBuffer(pcmFormat: audioEngine.manualRenderingFormat, frameCapacity: UInt32(inputFile.length))
-//            try inputFile.read(into: inputBuffer!)
-            
-            play(items: items, index: index)
+            try audioEngine.start()
+            playerNode.play()
             
             let buffer = AVAudioPCMBuffer(pcmFormat: audioEngine.manualRenderingFormat, frameCapacity: audioEngine.manualRenderingMaximumFrameCount)!
             
@@ -294,34 +292,35 @@ public extension MusicPlayer {
             let path = NSTemporaryDirectory() + "hoge.m4a"
             let url = URL(string: path)!
             let outputFile = try! AVAudioFile(forWriting: url, settings: sourceFile.fileFormat.settings)
-
+            
             while audioEngine.manualRenderingSampleTime < sourceFile.length {
                 let frameCount = sourceFile.length - audioEngine.manualRenderingSampleTime
-                let framesToRender = min(AVAudioFrameCount(maxFrameCount), buffer.frameCapacity)
+                let framesToRender = min(AVAudioFrameCount(frameCount), buffer.frameCapacity)
                 let status = try audioEngine.renderOffline(framesToRender, to: buffer)
-
+                
                 switch status {
                 case .success:
-                    print("成功！")
                     try outputFile.write(from: buffer)
                 case .insufficientDataFromInputNode:
+                    // Applicable only when using the input node as one of the sources.
                     break
-                case .cannotDoInCurrentContext, .error:
-//                    completion(NSError(domain: "AudioEngineError", code: -2, userInfo: [NSLocalizedDescriptionKey: "Couldn't render the output audio file."]))
-                    return
+                case .cannotDoInCurrentContext:
+                    // The engine couldn't render in the current render call.
+                    // Retry in the next iteration.
+                    break
+                case .error:
+                    // An error occurred while rendering the audio.
+                    fatalError("The manual rendering failed.")
                 @unknown default:
-//                    completion(NSError(domain: "AudioEngineError", code: -3, userInfo: [NSLocalizedDescriptionKey: "Unknown error occurred while rendering the output audio file."]))
-                    return
+                    fatalError("unknown error.")
                 }
             }
-
-            audioEngine.stop()
+            stop()
             audioEngine.disableManualRenderingMode()
-
-//            completion(nil)
+            onSuccess()
         } catch(let e) {
-            print("エラーオッkたよ")
-            print(e)
+            onError()
+            fatalError("The manual rendering failed: \(e).")
         }
     }
 }
@@ -963,9 +962,9 @@ private extension MusicPlayer {
     }
     
     /// set Schedule File
-    func setScheduleFile() -> Bool {
+    func setScheduleFile(assetURL: URL? = nil) -> Bool {
         audioFile = nil
-        guard let assetURL = currentItem?.item.assetURL else { return false }
+        guard let assetURL = assetURL ?? currentItem?.item.assetURL else { return false }
         do {
             audioFile = try AVAudioFile(forReading: assetURL)
             audioEngine.connect(playerNode, to: pitchControl, format: nil)
@@ -1049,8 +1048,8 @@ private extension MusicPlayer {
         guard let userInfo = notification.userInfo,
               let typeValue = userInfo[AVAudioSessionInterruptionTypeKey] as? UInt,
               let type = AVAudioSession.InterruptionType(rawValue: typeValue) else {
-                  return
-              }
+            return
+        }
         switch type {
         case .began:
             if isPlaying {
@@ -1074,8 +1073,8 @@ private extension MusicPlayer {
         guard let userInfo = notification.userInfo,
               let reasonValue = userInfo[AVAudioSessionRouteChangeReasonKey] as? UInt,
               let reason = AVAudioSession.RouteChangeReason(rawValue:reasonValue) else {
-                  return
-              }
+            return
+        }
         
         switch reason {
         case .newDeviceAvailable:
