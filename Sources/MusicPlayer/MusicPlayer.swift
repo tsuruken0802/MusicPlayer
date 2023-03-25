@@ -274,8 +274,10 @@ public final class MusicPlayer: ObservableObject {
 }
 
 public extension MusicPlayer {
-    func export(assetURL: URL, onSuccess: (_ exportUrlPath: String) -> Void, onError: () -> Void) {
+    func export(song: MPSongItem, onSuccess: (_ exportUrlPath: String) -> Void, onError: () -> Void) {
 //        stop()
+        guard let assetURL = song.item.assetURL else { return }
+        setCurrentEffect(effect: song.effect, trimming: song.trimming, division: song.division)
         _ = setScheduleFile(assetURL: assetURL)
         guard let sourceFile = try? AVAudioFile(forReading: assetURL) else { return }
         let format = sourceFile.processingFormat

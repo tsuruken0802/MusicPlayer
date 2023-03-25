@@ -58,6 +58,7 @@
 		03CCD5B127E6EB860084E2E2 /* MusicPlaybackSliderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03CCD5B027E6EB860084E2E2 /* MusicPlaybackSliderView.swift */; };
 		03CCD5B527E714E00084E2E2 /* MusicOptionTrimmingSliderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03CCD5B427E714E00084E2E2 /* MusicOptionTrimmingSliderView.swift */; };
 		03CCD5B727E715E30084E2E2 /* MusicOptionTrimmingSliderViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03CCD5B627E715E30084E2E2 /* MusicOptionTrimmingSliderViewModel.swift */; };
+		03CFDB5129CECCAC0007A886 /* ShareFileService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03CFDB5029CECCAC0007A886 /* ShareFileService.swift */; };
 		03E6652627E76BEA00CB76F8 /* MiniPlayerTrimmingPositionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03E6652527E76BEA00CB76F8 /* MiniPlayerTrimmingPositionView.swift */; };
 		03E6652A27E8852C00CB76F8 /* MiniPlayerMiniControllerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03E6652927E8852C00CB76F8 /* MiniPlayerMiniControllerView.swift */; };
 		03E6652C27E885D100CB76F8 /* MiniPlayerExpanedControllerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03E6652B27E885D100CB76F8 /* MiniPlayerExpanedControllerView.swift */; };
@@ -149,6 +150,7 @@
 		03CCD5B027E6EB860084E2E2 /* MusicPlaybackSliderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MusicPlaybackSliderView.swift; sourceTree = "<group>"; };
 		03CCD5B427E714E00084E2E2 /* MusicOptionTrimmingSliderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MusicOptionTrimmingSliderView.swift; sourceTree = "<group>"; };
 		03CCD5B627E715E30084E2E2 /* MusicOptionTrimmingSliderViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MusicOptionTrimmingSliderViewModel.swift; sourceTree = "<group>"; };
+		03CFDB5029CECCAC0007A886 /* ShareFileService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareFileService.swift; sourceTree = "<group>"; };
 		03E6652527E76BEA00CB76F8 /* MiniPlayerTrimmingPositionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MiniPlayerTrimmingPositionView.swift; sourceTree = "<group>"; };
 		03E6652927E8852C00CB76F8 /* MiniPlayerMiniControllerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MiniPlayerMiniControllerView.swift; sourceTree = "<group>"; };
 		03E6652B27E885D100CB76F8 /* MiniPlayerExpanedControllerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MiniPlayerExpanedControllerView.swift; sourceTree = "<group>"; };
@@ -199,6 +201,7 @@
 				0328229C27C7ABE7002BC9FD /* PlaybackTimeConverter.swift */,
 				03C0649F27D0FC12000C1898 /* MPMediaService.swift */,
 				03EC28FD27F7556700F01F80 /* MPMusicPlayerRepeatService.swift */,
+				03CFDB5029CECCAC0007A886 /* ShareFileService.swift */,
 			);
 			path = Service;
 			sourceTree = "<group>";
@@ -621,6 +624,7 @@
 				036532B027DDBA2B0077C967 /* MusicEffectRangeOption.swift in Sources */,
 				0353AB822775D152004DD139 /* MiniPlayer.swift in Sources */,
 				032184A828124FB000BBEE41 /* MusicPlayerDivisionView.swift in Sources */,
+				03CFDB5129CECCAC0007A886 /* ShareFileService.swift in Sources */,
 				032184AC28124FDE00BBEE41 /* MusicPlayerDivisionItemView.swift in Sources */,
 				03C064A227D0FD67000C1898 /* ArtistAlbumListViewModel.swift in Sources */,
 				03E6653027E8B40D00CB76F8 /* MiniPlayerListHeaderView.swift in Sources */,
