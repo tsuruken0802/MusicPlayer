@@ -345,6 +345,9 @@ public extension MusicPlayer {
                     setCurrentItem(items: [song], index: 0)
                     setCurrentEffect(effect: song.effect, trimming: song.trimming, division: song.division)
                     _ = setScheduleFile(assetURL: assetURL)
+                    if let trimmingStart = song.trimming?.trimming.lowerBound {
+                        setSeek(seconds: trimmingStart, withPlay: false)
+                    }
                     onSuccess(path)
                 }
             } catch(let e) {
