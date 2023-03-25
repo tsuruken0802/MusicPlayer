@@ -320,7 +320,7 @@ public extension MusicPlayer {
                     songLength = songLength - endTrimmingDiff * sourceFile.fileFormat.sampleRate
                 }
                 // Rateに応じた曲の長さを基準値とする
-                let sSongLength  = AVAudioFramePosition(songLength / Double(song.effect?.rate ?? 1.0))
+                let sSongLength  = AVAudioFramePosition(songLength / Double(song.effect?.rate ?? 1.0)) + 1
                 
                 while audioEngine.manualRenderingSampleTime < sSongLength {
                     let frameCount = sSongLength - audioEngine.manualRenderingSampleTime
