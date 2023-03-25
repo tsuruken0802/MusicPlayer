@@ -341,7 +341,9 @@ public extension MusicPlayer {
                 stop()
                 audioEngine.disableManualRenderingMode()
                 // stopしたから再度立ち上げておく
-                setScheduleFile(assetURL: assetURL)
+                setCurrentItem(items: [song], index: 0)
+                setCurrentEffect(effect: song.effect, trimming: song.trimming, division: song.division)
+                _ = setScheduleFile(assetURL: assetURL)
                 onSuccess(path)
             } catch(let e) {
                 onError()
