@@ -276,34 +276,34 @@ public final class MusicPlayer: ObservableObject {
 public extension MusicPlayer {
     func export(items: [MPSongItem], index: Int) {
         guard let assetURL = items[index].item.assetURL else { return }
-        guard let inputFile = try? AVAudioFile(forReading: assetURL) else { return }
-        
-        let inputFormat = inputFile.processingFormat
-        // 書き込み先ファイルをつくる
-        let outputFormat = AVAudioFormat(standardFormatWithSampleRate: inputFormat.sampleRate, channels: inputFormat.channelCount)!
-
-        let path = NSTemporaryDirectory() + "hoge.m4a"
-        let url = URL(string: path)!
-        let outputFile = try! AVAudioFile(forWriting: url, settings: outputFormat.settings)
+        guard let sourceFile = try? AVAudioFile(forReading: assetURL) else { return }
+        let format = sourceFile.processingFormat
         let maxFrameCount: AVAudioFrameCount = 4096
 
         do {
-            let inputBuffer = AVAudioPCMBuffer(pcmFormat: inputFormat, frameCapacity: UInt32(inputFile.length))
-            try inputFile.read(into: inputBuffer!)
-
-            try audioEngine.enableManualRenderingMode(.offline, format: outputFormat, maximumFrameCount: maxFrameCount)
-
+            try audioEngine.enableManualRenderingMode(.offline, format: format, maximumFrameCount: maxFrameCount)
+            
+//            let inputBuffer = AVAudioPCMBuffer(pcmFormat: audioEngine.manualRenderingFormat, frameCapacity: UInt32(inputFile.length))
+//            try inputFile.read(into: inputBuffer!)
+            
             play(items: items, index: index)
+            
+            let buffer = AVAudioPCMBuffer(pcmFormat: audioEngine.manualRenderingFormat, frameCapacity: audioEngine.manualRenderingMaximumFrameCount)!
+            
+            // 出力先のファイル
+            let path = NSTemporaryDirectory() + "hoge.m4a"
+            let url = URL(string: path)!
+            let outputFile = try! AVAudioFile(forWriting: url, settings: sourceFile.fileFormat.settings)
 
-            while audioEngine.manualRenderingSampleTime < inputBuffer!.frameLength {
-                let buffer = AVAudioPCMBuffer(pcmFormat: outputFormat, frameCapacity: maxFrameCount)
-                let framesToRender = min(maxFrameCount, UInt32(inputBuffer!.frameLength) - UInt32(audioEngine.manualRenderingSampleTime))
-                let status = try audioEngine.renderOffline(framesToRender, to: buffer!)
+            while audioEngine.manualRenderingSampleTime < sourceFile.length {
+                let frameCount = sourceFile.length - audioEngine.manualRenderingSampleTime
+                let framesToRender = min(AVAudioFrameCount(maxFrameCount), buffer.frameCapacity)
+                let status = try audioEngine.renderOffline(framesToRender, to: buffer)
 
                 switch status {
                 case .success:
                     print("成功！")
-                    try outputFile.write(from: buffer!)
+                    try outputFile.write(from: buffer)
                 case .insufficientDataFromInputNode:
                     break
                 case .cannotDoInCurrentContext, .error:
