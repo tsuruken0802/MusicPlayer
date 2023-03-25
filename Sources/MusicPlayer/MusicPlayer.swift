@@ -275,7 +275,6 @@ public final class MusicPlayer: ObservableObject {
 
 public extension MusicPlayer {
     func export(items: [MPSongItem], index: Int) {
-//        play(items: items, index: index)
         guard let assetURL = items[index].item.assetURL else { return }
         guard let inputFile = try? AVAudioFile(forReading: assetURL) else { return }
         
@@ -283,23 +282,22 @@ public extension MusicPlayer {
         // 書き込み先ファイルをつくる
         let outputFormat = AVAudioFormat(standardFormatWithSampleRate: inputFormat.sampleRate, channels: inputFormat.channelCount)!
 
-        let path = NSTemporaryDirectory() + "hoge.wav"
+        let path = NSTemporaryDirectory() + "hoge.m4a"
         let url = URL(string: path)!
         let outputFile = try! AVAudioFile(forWriting: url, settings: outputFormat.settings)
+        let maxFrameCount: AVAudioFrameCount = 4096
 
         do {
             let inputBuffer = AVAudioPCMBuffer(pcmFormat: inputFormat, frameCapacity: UInt32(inputFile.length))
             try inputFile.read(into: inputBuffer!)
 
-//            let renderTime = AVAudioTime(sampleTime: 0, atRate: inputFormat.sampleRate)
-            try audioEngine.enableManualRenderingMode(.offline, format: outputFormat, maximumFrameCount: 4096)
+            try audioEngine.enableManualRenderingMode(.offline, format: outputFormat, maximumFrameCount: maxFrameCount)
 
             play(items: items, index: index)
-//            playerNode.scheduleBuffer(inputBuffer!, at: nil, options: .loops, completionHandler: nil)
 
             while audioEngine.manualRenderingSampleTime < inputBuffer!.frameLength {
-                let buffer = AVAudioPCMBuffer(pcmFormat: outputFormat, frameCapacity: 4096)
-                let framesToRender = min(4096, UInt32(inputBuffer!.frameLength) - UInt32(audioEngine.manualRenderingSampleTime))
+                let buffer = AVAudioPCMBuffer(pcmFormat: outputFormat, frameCapacity: maxFrameCount)
+                let framesToRender = min(maxFrameCount, UInt32(inputBuffer!.frameLength) - UInt32(audioEngine.manualRenderingSampleTime))
                 let status = try audioEngine.renderOffline(framesToRender, to: buffer!)
 
                 switch status {
