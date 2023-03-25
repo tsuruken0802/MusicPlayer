@@ -296,8 +296,10 @@ public extension MusicPlayer {
             let url = URL(string: path)!
             let outputFile = try! AVAudioFile(forWriting: url, settings: sourceFile.fileFormat.settings)
             
-            while audioEngine.manualRenderingSampleTime < sourceFile.length {
-                let frameCount = sourceFile.length - audioEngine.manualRenderingSampleTime
+            let songLength = sourceFile.length / AVAudioFramePosition(song.effect?.rate ?? 1.0)
+            
+            while audioEngine.manualRenderingSampleTime < songLength {
+                let frameCount = songLength - audioEngine.manualRenderingSampleTime
                 let framesToRender = min(AVAudioFrameCount(frameCount), buffer.frameCapacity)
                 let status = try audioEngine.renderOffline(framesToRender, to: buffer)
                 
