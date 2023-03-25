@@ -301,11 +301,10 @@ public extension MusicPlayer {
         
         DispatchQueue.global(qos: .default).async { [unowned self] in
             do {
-                print(audioEngine.manualRenderingMaximumFrameCount)
                 let buffer = AVAudioPCMBuffer(pcmFormat: audioEngine.manualRenderingFormat, frameCapacity: audioEngine.manualRenderingMaximumFrameCount)!
                 
                 // 出力先のファイル
-                let path = NSTemporaryDirectory() + "export.m4a"
+                let path = NSTemporaryDirectory() + "\(song.id).m4a"
                 let url = URL(string: path)!
                 let outputFile = try AVAudioFile(forWriting: url, settings: sourceFile.fileFormat.settings)
                 
@@ -322,7 +321,6 @@ public extension MusicPlayer {
                 }
                 // Rateに応じた曲の長さを基準値とする
                 let sSongLength  = AVAudioFramePosition(songLength / Double(song.effect?.rate ?? 1.0))
-                print(sSongLength)
                 
                 while audioEngine.manualRenderingSampleTime < sSongLength {
                     let frameCount = sSongLength - audioEngine.manualRenderingSampleTime
