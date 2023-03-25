@@ -275,9 +275,9 @@ public final class MusicPlayer: ObservableObject {
 
 public extension MusicPlayer {
     func export(song: MPSongItem, onSuccess: (_ exportUrlPath: String) -> Void, onError: () -> Void) {
-//        stop()
         guard let assetURL = song.item.assetURL else { return }
         guard let sourceFile = try? AVAudioFile(forReading: assetURL) else { return }
+        stop()
         setCurrentItem(items: [song], index: 0)
         setCurrentEffect(effect: song.effect, trimming: song.trimming, division: song.division)
         _ = setScheduleFile(assetURL: assetURL)
@@ -301,8 +301,13 @@ public extension MusicPlayer {
             let url = URL(string: path)!
             let outputFile = try! AVAudioFile(forWriting: url, settings: sourceFile.fileFormat.settings)
             
+            /// exportする曲の秒数を決める
             // Rateに応じた曲の長さにする
-            let songLength = sourceFile.length / AVAudioFramePosition(song.effect?.rate ?? 1.0)
+            var songLength = sourceFile.length / AVAudioFramePosition(song.effect?.rate ?? 1.0)
+            let startTrimming = AVAudioFramePosition(song.trimming?.trimming.lowerBound ?? 0.0)
+            songLength = songLength - startTrimming
+            let endTrimming = AVAudioFramePosition(song.trimming?.trimming.upperBound ?? 0.0)
+            songLength = songLength - (AVAudioFramePosition(duration!) - endTrimming)
             
             while audioEngine.manualRenderingSampleTime < songLength {
                 let frameCount = songLength - audioEngine.manualRenderingSampleTime
