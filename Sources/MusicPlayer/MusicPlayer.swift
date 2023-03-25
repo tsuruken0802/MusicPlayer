@@ -303,13 +303,14 @@ public extension MusicPlayer {
                 let outputFile = try AVAudioFile(forWriting: url, settings: sourceFile.fileFormat.settings)
                 
                 // exportする曲の秒数を取得する
-                // Rateに応じた曲の長さを基準値とする
-                var songLength = sourceFile.length / AVAudioFramePosition(song.effect?.rate ?? 1.0)
+                var songLength = sourceFile.length
                 // trimmingの分だけ秒数を減らす
                 let startTrimmingDiff = AVAudioFramePosition(song.trimming?.trimming.lowerBound ?? 0.0)
-                songLength = songLength - startTrimmingDiff
+                songLength = songLength - startTrimmingDiff * Int64(sourceFile.fileFormat.sampleRate)
                 let endTrimmingDiff =  AVAudioFramePosition(Float(duration!) - (song.trimming?.trimming.upperBound ?? 0.0))
-                songLength = songLength - endTrimmingDiff
+                songLength = songLength - endTrimmingDiff * Int64(sourceFile.fileFormat.sampleRate)
+                // Rateに応じた曲の長さを基準値とする
+                songLength = songLength / AVAudioFramePosition(song.effect?.rate ?? 1.0)
                 
                 while audioEngine.manualRenderingSampleTime < songLength {
                     let frameCount = songLength - audioEngine.manualRenderingSampleTime
