@@ -340,14 +340,18 @@ public extension MusicPlayer {
                 }
                 stop()
                 audioEngine.disableManualRenderingMode()
-                // stopしたから再度立ち上げておく
-                setCurrentItem(items: [song], index: 0)
-                setCurrentEffect(effect: song.effect, trimming: song.trimming, division: song.division)
-                _ = setScheduleFile(assetURL: assetURL)
-                onSuccess(path)
+                DispatchQueue.main.async { [unowned self] in
+                    // stopしたから再度立ち上げておく
+                    setCurrentItem(items: [song], index: 0)
+                    setCurrentEffect(effect: song.effect, trimming: song.trimming, division: song.division)
+                    _ = setScheduleFile(assetURL: assetURL)
+                    onSuccess(path)
+                }
             } catch(let e) {
-                onError()
-                fatalError("The manual rendering failed: \(e).")
+                DispatchQueue.main.async {
+                    print(e)
+                    onError()
+                }
             }
         }
     }
