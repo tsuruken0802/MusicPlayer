@@ -300,15 +300,16 @@ public extension MusicPlayer {
                 // 出力先のファイル
                 let path = NSTemporaryDirectory() + "export.m4a"
                 let url = URL(string: path)!
-                let outputFile = try! AVAudioFile(forWriting: url, settings: sourceFile.fileFormat.settings)
+                let outputFile = try AVAudioFile(forWriting: url, settings: sourceFile.fileFormat.settings)
                 
-                /// exportする曲の秒数を決める
-                // Rateに応じた曲の長さにする
+                // exportする曲の秒数を取得する
+                // Rateに応じた曲の長さを基準値とする
                 var songLength = sourceFile.length / AVAudioFramePosition(song.effect?.rate ?? 1.0)
-                let startTrimming = AVAudioFramePosition(song.trimming?.trimming.lowerBound ?? 0.0)
-                songLength = songLength - startTrimming
-                let endTrimming = AVAudioFramePosition(song.trimming?.trimming.upperBound ?? 0.0)
-                songLength = songLength - (AVAudioFramePosition(duration!) - endTrimming)
+                // trimmingの分だけ秒数を減らす
+                let startTrimmingDiff = AVAudioFramePosition(song.trimming?.trimming.lowerBound ?? 0.0)
+                songLength = songLength - startTrimmingDiff
+                let endTrimmingDiff =  AVAudioFramePosition(Float(duration!) - (song.trimming?.trimming.upperBound ?? 0.0))
+                songLength = songLength - endTrimmingDiff
                 
                 while audioEngine.manualRenderingSampleTime < songLength {
                     let frameCount = songLength - audioEngine.manualRenderingSampleTime
