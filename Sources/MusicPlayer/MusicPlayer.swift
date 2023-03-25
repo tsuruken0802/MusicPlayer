@@ -275,6 +275,7 @@ public final class MusicPlayer: ObservableObject {
 
 public extension MusicPlayer {
     func export(assetURL: URL, onSuccess: () -> Void, onError: () -> Void) {
+        stop()
         _ = setScheduleFile(assetURL: assetURL)
         guard let sourceFile = try? AVAudioFile(forReading: assetURL) else { return }
         let format = sourceFile.processingFormat
@@ -289,7 +290,7 @@ public extension MusicPlayer {
             let buffer = AVAudioPCMBuffer(pcmFormat: audioEngine.manualRenderingFormat, frameCapacity: audioEngine.manualRenderingMaximumFrameCount)!
             
             // 出力先のファイル
-            let path = NSTemporaryDirectory() + "hoge.m4a"
+            let path = NSTemporaryDirectory() + "export.m4a"
             let url = URL(string: path)!
             let outputFile = try! AVAudioFile(forWriting: url, settings: sourceFile.fileFormat.settings)
             
