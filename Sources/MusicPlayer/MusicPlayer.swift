@@ -288,13 +288,19 @@ public extension MusicPlayer {
         let format = sourceFile.processingFormat
         let maxFrameCount: AVAudioFrameCount = 4096
         
+        do {
+            try audioEngine.enableManualRenderingMode(.offline, format: format, maximumFrameCount: maxFrameCount)
+            
+            try audioEngine.start()
+            playerNode.play()
+        }
+        catch(let e) {
+            print(e)
+            onError()
+        }
+        
         DispatchQueue.global(qos: .default).async { [unowned self] in
             do {
-                try audioEngine.enableManualRenderingMode(.offline, format: format, maximumFrameCount: maxFrameCount)
-                
-                try audioEngine.start()
-                playerNode.play()
-                
                 let buffer = AVAudioPCMBuffer(pcmFormat: audioEngine.manualRenderingFormat, frameCapacity: audioEngine.manualRenderingMaximumFrameCount)!
                 
                 // 出力先のファイル
