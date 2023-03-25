@@ -162,6 +162,9 @@ public final class MusicPlayer: ObservableObject {
         return fDuration
     }
     
+    // export中かどうかのフラグ
+    private var isExporting = false
+    
     /// shuffle
     @Published public var isShuffle: Bool = false
     
@@ -275,8 +278,10 @@ public final class MusicPlayer: ObservableObject {
 
 public extension MusicPlayer {
     func export(song: MPSongItem, onSuccess: @escaping (_ exportUrlPath: String) -> Void, onError: @escaping () -> Void) {
+        if isExporting { return }
         guard let assetURL = song.item.assetURL else { return }
         guard let sourceFile = try? AVAudioFile(forReading: assetURL) else { return }
+        isExporting = true
         stop()
         setCurrentItem(items: [song], index: 0)
         setCurrentEffect(effect: song.effect, trimming: song.trimming, division: song.division)
@@ -290,7 +295,6 @@ public extension MusicPlayer {
         
         do {
             try audioEngine.enableManualRenderingMode(.offline, format: format, maximumFrameCount: maxFrameCount)
-            
             try audioEngine.start()
             playerNode.play()
         }
@@ -344,13 +348,11 @@ public extension MusicPlayer {
                         fatalError("unknown error.")
                     }
                 }
+                isExporting = false
                 DispatchQueue.main.async { [unowned self] in
                     stop()
                     audioEngine.disableManualRenderingMode()
-                    // stopしたから再度立ち上げておく
-                    setCurrentItem(items: [song], index: 0)
-                    setCurrentEffect(effect: song.effect, trimming: song.trimming, division: song.division)
-                    _ = setScheduleFile(assetURL: assetURL)
+                    resetPlaybackTime()
                     if let trimmingStart = song.trimming?.trimming.lowerBound {
                         setSeek(seconds: trimmingStart, withPlay: false)
                     }
@@ -662,6 +664,9 @@ public extension MusicPlayer {
     /// set timer
     /// currentRate: current playback rate
     func startCurrentTimeRendering(currentRate: Float? = nil) {
+        // エクスポート中は再生時間を更新する必要はない
+        if isExporting { return }
+        
         if currentTimeTimer?.isValid == true {
             stopCurrentTimeRendering()
         }
