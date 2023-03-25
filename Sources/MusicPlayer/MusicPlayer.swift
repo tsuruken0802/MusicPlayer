@@ -304,7 +304,7 @@ public extension MusicPlayer {
                 let buffer = AVAudioPCMBuffer(pcmFormat: audioEngine.manualRenderingFormat, frameCapacity: audioEngine.manualRenderingMaximumFrameCount)!
                 
                 // 出力先のファイル
-                let path = NSTemporaryDirectory() + "\(song.id).m4a"
+                let path = NSHomeDirectory() + "/Documents/" + "export.m4a"
                 let url = URL(string: path)!
                 let outputFile = try AVAudioFile(forWriting: url, settings: sourceFile.fileFormat.settings)
                 
@@ -320,7 +320,7 @@ public extension MusicPlayer {
                     songLength = songLength - endTrimmingDiff * sourceFile.fileFormat.sampleRate
                 }
                 // Rateに応じた曲の長さを基準値とする
-                let sSongLength  = AVAudioFramePosition(songLength / Double(song.effect?.rate ?? 1.0)) + 1
+                let sSongLength  = AVAudioFramePosition(songLength / Double(song.effect?.rate ?? 1.0))
                 
                 while audioEngine.manualRenderingSampleTime < sSongLength {
                     let frameCount = sSongLength - audioEngine.manualRenderingSampleTime
