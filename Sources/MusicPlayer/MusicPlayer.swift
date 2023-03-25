@@ -303,21 +303,21 @@ public extension MusicPlayer {
                 let outputFile = try AVAudioFile(forWriting: url, settings: sourceFile.fileFormat.settings)
                 
                 // exportする曲の秒数を取得する
-                var songLength: AVAudioFramePosition = sourceFile.length
+                var songLength = Double(sourceFile.length)
                 // trimmingの開始の分だけ秒数を減らす
-                let startTrimmingDiff = AVAudioFramePosition(song.trimming?.trimming.lowerBound ?? 0.0)
-                songLength = songLength - startTrimmingDiff * AVAudioFramePosition(sourceFile.fileFormat.sampleRate)
+                let startTrimmingDiff = Double(song.trimming?.trimming.lowerBound ?? 0.0)
+                songLength = songLength - startTrimmingDiff * sourceFile.fileFormat.sampleRate
                 // trimmingの終了の分だけ秒数を減らす
                 if let trimmingUpper = song.trimming?.trimming.upperBound {
-                    let dDuration = AVAudioFramePosition(duration!)
-                    let endTrimmingDiff = dDuration - AVAudioFramePosition(trimmingUpper)
-                    songLength = songLength - endTrimmingDiff * AVAudioFramePosition(sourceFile.fileFormat.sampleRate)
+                    let dDuration = duration!
+                    let endTrimmingDiff = dDuration - Double(trimmingUpper)
+                    songLength = songLength - endTrimmingDiff * sourceFile.fileFormat.sampleRate
                 }
                 // Rateに応じた曲の長さを基準値とする
-                songLength = songLength / AVAudioFramePosition(song.effect?.rate ?? 1.0)
+                let sSongLength  = AVAudioFramePosition(songLength / Double(song.effect?.rate ?? 1.0))
                 
-                while audioEngine.manualRenderingSampleTime < songLength {
-                    let frameCount = songLength - audioEngine.manualRenderingSampleTime
+                while audioEngine.manualRenderingSampleTime < sSongLength {
+                    let frameCount = sSongLength - audioEngine.manualRenderingSampleTime
                     let framesToRender = min(AVAudioFrameCount(frameCount), buffer.frameCapacity)
                     let status = try audioEngine.renderOffline(framesToRender, to: buffer)
                     
