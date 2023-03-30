@@ -42,6 +42,9 @@ public final class MusicPlayer: ObservableObject {
         return currentTime >= maxPlaybackTime
     }
     
+    // バックグラウンド時の再生時に表示するデフォルトのアイコン
+    public var defaultBgIcon: UIImage?
+    
     /// item duration
     public var duration: TimeInterval? {
         return currentItem?.duration
@@ -375,7 +378,10 @@ public extension MusicPlayer {
             return
         }
         
+        setAudioSession()
+        
         do {
+
             try audioEngine.start()
             playerNode.play()
             isPlaying = true
@@ -799,6 +805,19 @@ public extension MusicPlayer {
 }
 
 private extension MusicPlayer {
+    
+    /// set audio session
+    func setAudioSession() {
+        let session = AVAudioSession.sharedInstance()
+        do {
+            try session.setCategory(.playback, mode: .default)
+            try session.setActive(true)
+        }
+        catch let e {
+            print(e.localizedDescription)
+        }
+    }
+    
     /// get enable music index
     /// - Parameter forward: if true, search forward
     /// - Returns: enable music index
@@ -993,8 +1012,10 @@ private extension MusicPlayer {
                 return image
             }
         }
-        else {
-            nowPlayingInfo[MPMediaItemPropertyArtwork] = nil
+        else if let defaultBgIcon = defaultBgIcon {
+            nowPlayingInfo[MPMediaItemPropertyArtwork] = MPMediaItemArtwork(boundsSize: size) { _ in
+                return defaultBgIcon
+            }
         }
         
         nowPlayingInfo[MPNowPlayingInfoPropertyElapsedPlaybackTime] = currentTime
