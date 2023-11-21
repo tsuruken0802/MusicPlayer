@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct MiniPlayerExpanedControllerView: View {
-    @StateObject private var musicPlayer = MusicPlayer.shared
+    @State private var musicPlayer = MusicPlayer.shared
     
     // playback icon size
     private let playbackIconSize: CGFloat = 35

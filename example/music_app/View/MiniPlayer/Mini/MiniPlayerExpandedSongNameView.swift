@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct MiniPlayerExpandedSongNameView: View {
-    @StateObject private var musicPlayer = MusicPlayer.shared
+    @State private var musicPlayer = MusicPlayer.shared
     
     private var songName: String {
         return musicPlayer.currentItem?.displayTitle ?? "再生停止中"

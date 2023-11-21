@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct MusicPlaybackSliderView: View {
-    @StateObject private var musicPlayer = MusicPlayer.shared
+    @State private var musicPlayer = MusicPlayer.shared
     
     var showTrimmingPosition: Bool?
     

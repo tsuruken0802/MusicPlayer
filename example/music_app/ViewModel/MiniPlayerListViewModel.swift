@@ -6,7 +6,7 @@
 //
 
 import Foundation
-import Combine
+import Observation
 import SwiftUI
 
 class MiniPlayerListViewModel: ObservableObject {
@@ -14,16 +14,15 @@ class MiniPlayerListViewModel: ObservableObject {
     
     @Published var musicPlayer: MusicPlayer = MusicPlayer.shared
     
-    private var cancellables: Set<AnyCancellable> = []
-    
     private static let maxListCount: Int = 20
     
     init() {
-        musicPlayer.$itemList.sink { [weak self] value in
+        _ = withObservationTracking {
+            musicPlayer.itemList
+        } onChange: { [weak self] in
             guard let self = self else { return }
-            self.updateCurrentItems(songs: value.items, currentItemIndex: value.currentIndex)
+            self.updateCurrentItems(songs: self.musicPlayer.itemList.items, currentItemIndex: self.musicPlayer.itemList.currentIndex)
         }
-        .store(in: &cancellables)
     }
 }
 

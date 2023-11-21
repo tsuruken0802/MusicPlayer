@@ -1,10 +1,10 @@
-import Combine
 import Foundation
 import AVFAudio
 import MediaPlayer
 import SwiftUI
+import Observation
 
-public final class MusicPlayer: ObservableObject {
+@Observable final public class MusicPlayer {
     /// instance
     public static var shared: MusicPlayer = .init()
     
@@ -24,8 +24,6 @@ public final class MusicPlayer: ObservableObject {
     }
     
     private var currentTimeTimer: Timer?
-    
-    private var cancellables: Set<AnyCancellable> = []
     
     /// Threshold value whether return to the previous song
     /// value is seconds
@@ -70,7 +68,7 @@ public final class MusicPlayer: ObservableObject {
     }
     
     /// playback items
-    @Published private(set) public var itemList: MPSongItemList = .init()
+    private(set) public var itemList: MPSongItemList = .init()
     private(set) public var items: [MPSongItem] {
         get { return itemList.items }
         set { itemList = .init(items: newValue, currentIndex: currentIndex) }
@@ -78,42 +76,83 @@ public final class MusicPlayer: ObservableObject {
     private var originalItems: [MPSongItem] = []
     
     /// true is player is playing
-    @Published private(set) public var isPlaying: Bool = false
+    private(set) public var isPlaying: Bool = false
     
     /// current playback time (seconds)
-    @Published public var currentTime: Float = 0
+    public var currentTime: Float = 0
     
     /// Pitch
-    @Published public var pitch: Float = MPConstants.defaultPitchValue
-    @Published public var pitchOptions: MusicEffectRangeOption = .init(minValue: MPConstants.defaultPitchMinValue,
+    public var pitch: Float = MPConstants.defaultPitchValue {
+        didSet {
+            self.pitchControl.pitch = MusicPlayerService.enablePitchValue(value: self.pitch)
+        }
+    }
+    public var pitchOptions: MusicEffectRangeOption = .init(minValue: MPConstants.defaultPitchMinValue,
                                                                        maxValue: MPConstants.defaultPitchMaxValue,
                                                                        unit: MPConstants.defaultPitchUnit,
                                                                        defaultValue: MPConstants.defaultPitchValue)
     
     /// Rate
-    @Published public var rate: Float = MPConstants.defaultRateValue
-    @Published public var rateOptions: MusicEffectRangeOption = .init(minValue: MPConstants.defaultRateMinValue,
+    public var rate: Float = MPConstants.defaultRateValue {
+        didSet {
+            self.pitchControl.rate = MusicPlayerService.enableRateValue(value: self.rate)
+            self.startCurrentTimeRendering(currentRate: self.rate)
+        }
+    }
+    public var rateOptions: MusicEffectRangeOption = .init(minValue: MPConstants.defaultRateMinValue,
                                                                       maxValue: MPConstants.defaultRateMaxValue,
                                                                       unit: MPConstants.defaultRateUnit,
                                                                       defaultValue: MPConstants.defaultRateValue)
     /// Reverb
-    @Published public var reverbValue: Float = MPConstants.defaultReverbValue
-    @Published public var reverbType: AVAudioUnitReverbPreset?
-    @Published public var reverbOptions: MusicEffectRangeOption = .init(minValue: MPConstants.limitReverbMinValue,
+    public var reverbValue: Float = MPConstants.defaultReverbValue {
+        didSet {
+            if let _ = self.reverbType {
+                self.reverb.wetDryMix = self.reverbValue
+            }
+            else {
+                self.reverb.wetDryMix = 0
+            }
+        }
+    }
+    public var reverbType: AVAudioUnitReverbPreset? {
+        didSet {
+            if let unwrappedValue = self.reverbType {
+                self.reverb.wetDryMix = self.reverbValue
+                self.reverb.loadFactoryPreset(unwrappedValue)
+            }
+            else {
+                self.reverb.wetDryMix = 0
+            }
+        }
+    }
+    public var reverbOptions: MusicEffectRangeOption = .init(minValue: MPConstants.limitReverbMinValue,
                                                                         maxValue: MPConstants.limitReverbMaxValue,
                                                                         unit: MPConstants.defaultReverbUnit,
                                                                         defaultValue: MPConstants.defaultReverbValue)
     
     /// trimming(seconds) and divisions
-    @Published public var playbackTimeRange: ClosedRange<Float>? {
+    public var playbackTimeRange: ClosedRange<Float>? {
         didSet {
             if playbackTimeRange != nil {
                 division.clear()
             }
+            
+            if let timeRange = playbackTimeRange {
+                let min = timeRange.lowerBound
+                let max = timeRange.upperBound
+                if self.currentTime < min {
+                    self.currentTime = min
+                    self.setSeek()
+                }
+                else if self.currentTime > max {
+                    self.currentTime = max
+                    self.setSeek()
+                }
+            }
         }
     }
     
-    @Published public var division: MPDivision = .init(currentTime: 0.0, loopDivision: false) {
+    public var division: MPDivision = .init(currentTime: 0.0, loopDivision: false) {
         didSet {
             if division.isEmpty == false {
                 playbackTimeRange = nil
@@ -169,17 +208,38 @@ public final class MusicPlayer: ObservableObject {
     private var isExporting = false
     
     /// shuffle
-    @Published public var isShuffle: Bool = false
+    public var isShuffle: Bool = false {
+        didSet {
+            if self.isShuffle {
+                self.shuffle()
+            }
+            else {
+                self.setOriginalSort()
+            }
+        }
+    }
     
     /// repeat
-    @Published public var repeatType: MPRepeatType = .none
+    public var repeatType: MPRepeatType = .none
     
     /// remote command
-    @Published public var rightRemoteCommand: MPRemoteCommandType = .nextTrack
-    @Published public var leftRemoteCommand: MPRemoteCommandType = .previousTrack
+    public var rightRemoteCommand: MPRemoteCommandType = .nextTrack {
+        didSet {
+            self.setLeftAndRightRemoteCommandValue(rightCommand: self.rightRemoteCommand)
+        }
+    }
+    public var leftRemoteCommand: MPRemoteCommandType = .previousTrack {
+        didSet {
+            self.setLeftAndRightRemoteCommandValue(leftCommand: self.leftRemoteCommand)
+        }
+    }
     
     /// skip seconds on remote command
-    @Published public var remoteSkipSeconds: Int = 5
+    public var remoteSkipSeconds: Int = 5 {
+        didSet {
+            self.setLeftAndRightRemoteCommandValue(skipSeconds: self.remoteSkipSeconds)
+        }
+    }
     
     private init() {
         setNotification()
@@ -187,95 +247,11 @@ public final class MusicPlayer: ObservableObject {
         audioEngine.attach(pitchControl)
         audioEngine.attach(reverb)
         initRemoteCommand()
-        
-        $pitch.sink { [weak self] value in
-            guard let self = self else { return }
-            self.pitchControl.pitch = MusicPlayerService.enablePitchValue(value: value)
-        }
-        .store(in: &cancellables)
-        
-        $rate.sink { [weak self] value in
-            guard let self = self else { return }
-            self.pitchControl.rate = MusicPlayerService.enableRateValue(value: value)
-            self.startCurrentTimeRendering(currentRate: value)
-        }
-        .store(in: &cancellables)
-        
-        $reverbType.sink { [weak self] value in
-            guard let self = self else { return }
-            if let unwrappedValue = value {
-                self.reverb.wetDryMix = self.reverbValue
-                self.reverb.loadFactoryPreset(unwrappedValue)
-            }
-            else {
-                self.reverb.wetDryMix = 0
-            }
-        }
-        .store(in: &cancellables)
-        
-        $reverbValue.sink { [weak self] value in
-            guard let self = self else { return }
-            if let _ = self.reverbType {
-                self.reverb.wetDryMix = value
-            }
-            else {
-                self.reverb.wetDryMix = 0
-            }
-        }
-        .store(in: &cancellables)
-        
-        $playbackTimeRange.sink { [weak self] value in
-            guard let self = self else { return }
-            guard let value = value else { return }
-            let min = value.lowerBound
-            let max = value.upperBound
-            if self.currentTime < min {
-                self.currentTime = min
-                self.setSeek()
-            }
-            else if self.currentTime > max {
-                self.currentTime = max
-                self.setSeek()
-            }
-        }
-        .store(in: &cancellables)
-        
-        $isShuffle.sink { [weak self] value in
-            guard let self = self else { return }
-            if value {
-                self.shuffle()
-            }
-            else {
-                self.setOriginalSort()
-            }
-        }
-        .store(in: &cancellables)
-        
-        $rightRemoteCommand.sink { [weak self] value in
-            guard let self = self else { return }
-            self.setLeftAndRightRemoteCommandValue(rightCommand: value)
-        }
-        .store(in: &cancellables)
-        
-        $leftRemoteCommand.sink { [weak self] value in
-            guard let self = self else { return }
-            self.setLeftAndRightRemoteCommandValue(leftCommand: value)
-        }
-        .store(in: &cancellables)
-        
-        $remoteSkipSeconds.sink { [weak self] value in
-            guard let self = self else { return }
-            self.setLeftAndRightRemoteCommandValue(skipSeconds: value)
-        }
-        .store(in: &cancellables)
     }
     
     deinit {
         stop()
         NotificationCenter.default.removeObserver(self)
-        cancellables.forEach { (cancel) in
-            cancel.cancel()
-        }
     }
 }
 

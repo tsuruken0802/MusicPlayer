@@ -20,7 +20,7 @@ extension AVAudioUnitReverbPreset: Identifiable {
 }
 
 struct MusicOptionsView: View {
-    @ObservedObject private var musicPlayer = MusicPlayer.shared
+    @State private var musicPlayer = MusicPlayer.shared
     @StateObject private var viewModel: MusicOptionsViewModel = .init()
     
     @State private var reverbSelection = [
