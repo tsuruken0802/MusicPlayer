@@ -1,16 +1,14 @@
 {
-  "object": {
-    "pins": [
-      {
-        "package": "RangeSlider",
-        "repositoryURL": "https://github.com/tsuruken0802/RangeSlider",
-        "state": {
-          "branch": "main",
-          "revision": "520a11a79d0b7a4f906712731d336d37554af1d0",
-          "version": null
-        }
+  "pins" : [
+    {
+      "identity" : "rangeslider",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/tsuruken0802/RangeSlider",
+      "state" : {
+        "branch" : "main",
+        "revision" : "520a11a79d0b7a4f906712731d336d37554af1d0"
       }
-    ]
-  },
-  "version": 1
+    }
+  ],
+  "version" : 2
 }
