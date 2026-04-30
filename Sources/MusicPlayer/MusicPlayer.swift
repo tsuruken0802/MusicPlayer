@@ -655,7 +655,11 @@ public extension MusicPlayer {
         let rate = currentRate ?? rate
         let valueRate = rate / MPConstants.defaultRateValue
         let value = currentTimeTimerScheduleTime / valueRate
-        currentTimeTimer = Timer.scheduledTimer(timeInterval: TimeInterval(value), target: self, selector: #selector(self.onUpdateCurrentTime), userInfo: nil, repeats: true)
+        // .commonモードで登録することで、UIトラッキング中(スクロールやSlider操作中など)も
+        // タイマーが発火し続け、currentTimeがアプリケーション側に伝搬され続けるようにする
+        let timer = Timer(timeInterval: TimeInterval(value), target: self, selector: #selector(self.onUpdateCurrentTime), userInfo: nil, repeats: true)
+        RunLoop.main.add(timer, forMode: .common)
+        currentTimeTimer = timer
     }
     
     /// stop timer
