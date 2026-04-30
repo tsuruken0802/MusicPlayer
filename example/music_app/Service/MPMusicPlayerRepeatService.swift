@@ -7,6 +7,7 @@
 
 import Foundation
 
+@MainActor
 class MPMusicPlayerRepeatService {
     static func next() {
         switch MusicPlayer.shared.repeatType {

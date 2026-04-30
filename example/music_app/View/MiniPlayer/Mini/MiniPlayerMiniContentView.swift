@@ -9,7 +9,7 @@ import SwiftUI
 
 struct MiniPlayerMiniContentView: View {
     
-    @State private var musicPlayer = MusicPlayer.shared
+    private let musicPlayer = MusicPlayer.shared
     
     private var songName: String {
         return musicPlayer.currentItem?.displayTitle ?? "再生停止中"

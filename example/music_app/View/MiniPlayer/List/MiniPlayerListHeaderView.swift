@@ -9,7 +9,7 @@ import SwiftUI
 
 struct MiniPlayerListHeaderView: View {
     
-    @State var musicPlayer = MusicPlayer.shared
+    private let musicPlayer = MusicPlayer.shared
     
     private var shuffleBg: some View {
         return musicPlayer.isShuffle ? Color.white.opacity(0.4) : Color.clear

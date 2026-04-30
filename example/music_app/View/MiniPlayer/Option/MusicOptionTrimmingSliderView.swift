@@ -9,7 +9,7 @@ import SwiftUI
 import RangeSlider
 
 struct MusicOptionTrimmingSliderView: View {
-    @State private var musicPlayer = MusicPlayer.shared
+    private let musicPlayer = MusicPlayer.shared
     
     @StateObject private var viewModel: MusicOptionTrimmingSliderViewModel = .init()
     

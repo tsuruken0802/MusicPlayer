@@ -1,23 +1,25 @@
 import Foundation
-import AVFAudio
+@preconcurrency import AVFAudio
 import MediaPlayer
 import SwiftUI
 import Observation
 
-@Observable final public class MusicPlayer {
+@Observable @MainActor final public class MusicPlayer {
     /// instance
-    public static var shared: MusicPlayer = .init()
+    public static let shared: MusicPlayer = .init()
     
     /// Engine and Nodes
-    private let audioEngine: AVAudioEngine = .init()
-    private let playerNode: AVAudioPlayerNode = .init()
-    private let pitchControl: AVAudioUnitTimePitch = .init()
-    private let reverb: AVAudioUnitReverb = .init()
+    /// AVFAudio側の型は非Sendableだが、内部はthread-safeなのでoffline render時に
+    /// background queueから触れるよう nonisolated(unsafe) を付与する
+    private nonisolated(unsafe) let audioEngine: AVAudioEngine = .init()
+    private nonisolated(unsafe) let playerNode: AVAudioPlayerNode = .init()
+    private nonisolated(unsafe) let pitchControl: AVAudioUnitTimePitch = .init()
+    private nonisolated(unsafe) let reverb: AVAudioUnitReverb = .init()
     private var audioFile: AVAudioFile?
     
-    /// Cache of playback time when moving the seek bar
-    private var cachedSeekBarSeconds: Float = 0
-    
+    /// 再生時刻保持用のObservable(高頻度更新を局所化)
+    public let time: MPPlaybackTime = .init()
+
     /// return true if playable
     private var isEnableAudio: Bool {
         return audioFile != nil
@@ -37,7 +39,7 @@ import Observation
     
     /// If true, the current Time exceeds the song playback time
     private var isSeekOver: Bool {
-        return currentTime >= maxPlaybackTime
+        return time.currentTime >= maxPlaybackTime
     }
     
     // バックグラウンド時の再生時に表示するデフォルトのアイコン
@@ -77,10 +79,7 @@ import Observation
     
     /// true is player is playing
     private(set) public var isPlaying: Bool = false
-    
-    /// current playback time (seconds)
-    public var currentTime: Float = 0
-    
+
     /// Pitch
     public var pitch: Float = MPConstants.defaultPitchValue {
         didSet {
@@ -140,13 +139,11 @@ import Observation
             if let timeRange = playbackTimeRange {
                 let min = timeRange.lowerBound
                 let max = timeRange.upperBound
-                if self.currentTime < min {
-                    self.currentTime = min
-                    self.setSeek()
+                if self.time.currentTime < min {
+                    self.setSeek(seconds: min)
                 }
-                else if self.currentTime > max {
-                    self.currentTime = max
-                    self.setSeek()
+                else if self.time.currentTime > max {
+                    self.setSeek(seconds: max)
                 }
             }
         }
@@ -250,7 +247,9 @@ import Observation
     }
     
     deinit {
-        stop()
+        // 実態はsingletonでありdeinitされない。
+        // MainActor隔離下ではdeinitからstop()を呼べないので呼ばない
+        // (AVAudioEngineは自身のdeinitで停止する)
         NotificationCenter.default.removeObserver(self)
     }
 }
@@ -265,13 +264,14 @@ public extension MusicPlayer {
         setCurrentItem(items: [song], index: 0)
         setCurrentEffect(effect: song.effect, trimming: song.trimming, division: song.division)
         _ = setScheduleFile(assetURL: assetURL)
-        if let trimmingStart = song.trimming?.trimming.lowerBound {
+        let trimmingStart = song.trimming?.trimming.lowerBound
+        if let trimmingStart = trimmingStart {
             setSeek(seconds: trimmingStart, withPlay: false)
         }
-        
+
         let format = sourceFile.processingFormat
         let maxFrameCount: AVAudioFrameCount = 4096
-        
+
         do {
             try audioEngine.enableManualRenderingMode(.offline, format: format, maximumFrameCount: maxFrameCount)
             try audioEngine.start()
@@ -281,35 +281,76 @@ public extension MusicPlayer {
             print(e)
             onError()
         }
-        
-        DispatchQueue.global(qos: .default).async { [unowned self] in
+
+        // MainActor隔離下の値を事前算出してbackground queueに渡す
+        let dDuration = duration ?? 0.0
+        let trimmingLower = song.trimming?.trimming.lowerBound
+        let trimmingUpper = song.trimming?.trimming.upperBound
+        let songRate = song.effect?.rate ?? 1.0
+
+        Self.performExport(audioEngine: audioEngine,
+                           sourceFile: sourceFile,
+                           duration: dDuration,
+                           trimmingLower: trimmingLower,
+                           trimmingUpper: trimmingUpper,
+                           songRate: songRate) { [weak self] result in
+            Task { @MainActor in
+                guard let self = self else { return }
+                switch result {
+                case .success(let path):
+                    self.isExporting = false
+                    self.stop()
+                    self.audioEngine.disableManualRenderingMode()
+                    self.resetPlaybackTime()
+                    if let trimmingStart = trimmingStart {
+                        self.setSeek(seconds: trimmingStart, withPlay: false)
+                    }
+                    onSuccess(path)
+                case .failure(let e):
+                    self.isExporting = false
+                    print(e)
+                    onError()
+                }
+            }
+        }
+    }
+
+    /// オフラインレンダリングをbackground queueで実行する
+    /// MainActor隔離外で動かすため、必要な値はすべて引数で受け取る
+    private nonisolated static func performExport(audioEngine: AVAudioEngine,
+                                                  sourceFile: AVAudioFile,
+                                                  duration: TimeInterval,
+                                                  trimmingLower: Float?,
+                                                  trimmingUpper: Float?,
+                                                  songRate: Float,
+                                                  completion: @escaping (Result<String, Error>) -> Void) {
+        DispatchQueue.global(qos: .default).async {
             do {
                 let buffer = AVAudioPCMBuffer(pcmFormat: audioEngine.manualRenderingFormat, frameCapacity: audioEngine.manualRenderingMaximumFrameCount)!
-                
+
                 // 出力先のファイル
                 let path = NSTemporaryDirectory() + "neon_music.m4a"
                 let url = URL(string: path)!
                 let outputFile = try AVAudioFile(forWriting: url, settings: sourceFile.fileFormat.settings)
-                
+
                 // exportする曲の秒数を取得する
                 var songLength = Double(sourceFile.length)
                 // trimmingの開始の分だけ秒数を減らす
-                let startTrimmingDiff = Double(song.trimming?.trimming.lowerBound ?? 0.0)
+                let startTrimmingDiff = Double(trimmingLower ?? 0.0)
                 songLength = songLength - startTrimmingDiff * sourceFile.fileFormat.sampleRate
                 // trimmingの終了の分だけ秒数を減らす
-                if let trimmingUpper = song.trimming?.trimming.upperBound {
-                    let dDuration = duration!
-                    let endTrimmingDiff = dDuration - Double(trimmingUpper)
+                if let trimmingUpper = trimmingUpper {
+                    let endTrimmingDiff = duration - Double(trimmingUpper)
                     songLength = songLength - endTrimmingDiff * sourceFile.fileFormat.sampleRate
                 }
                 // Rateに応じた曲の長さを基準値とする
-                let sSongLength  = AVAudioFramePosition(songLength / Double(song.effect?.rate ?? 1.0))
-                
+                let sSongLength = AVAudioFramePosition(songLength / Double(songRate))
+
                 while audioEngine.manualRenderingSampleTime < sSongLength {
                     let frameCount = sSongLength - audioEngine.manualRenderingSampleTime
                     let framesToRender = min(AVAudioFrameCount(frameCount), buffer.frameCapacity)
                     let status = try audioEngine.renderOffline(framesToRender, to: buffer)
-                    
+
                     switch status {
                     case .success:
                         try outputFile.write(from: buffer)
@@ -327,21 +368,9 @@ public extension MusicPlayer {
                         fatalError("unknown error.")
                     }
                 }
-                isExporting = false
-                DispatchQueue.main.async { [unowned self] in
-                    stop()
-                    audioEngine.disableManualRenderingMode()
-                    resetPlaybackTime()
-                    if let trimmingStart = song.trimming?.trimming.lowerBound {
-                        setSeek(seconds: trimmingStart, withPlay: false)
-                    }
-                    onSuccess(path)
-                }
+                completion(.success(path))
             } catch(let e) {
-                DispatchQueue.main.async {
-                    print(e)
-                    onError()
-                }
+                completion(.failure(e))
             }
         }
     }
@@ -423,7 +452,7 @@ public extension MusicPlayer {
             let nextDivision = division.toValue(duration: fDuration)
             if nextDivision < fDuration {
                 setSeek(seconds: nextDivision)
-                division.setCurrentIndex(currentTime: currentTime)
+                division.setCurrentIndex(currentTime: time.currentTime)
                 return
             }
         }
@@ -477,9 +506,9 @@ public extension MusicPlayer {
     func back(backEnableSong: Bool = false) {
         if !division.isEmpty {
             // 戻る時間を取得する
-            if let backTime = division.backTime(currentTime: currentTime, threshold: MusicPlayer.backSameMusicThreshold) {
+            if let backTime = division.backTime(currentTime: time.currentTime, threshold: MusicPlayer.backSameMusicThreshold) {
                 // 戻れるかどうか
-                if backTime <= currentTime {
+                if backTime <= time.currentTime {
                     // 戻る
                     setSeek(seconds: backTime)
                     division.setCurrentIndex(currentTime: backTime)
@@ -488,7 +517,7 @@ public extension MusicPlayer {
             }
         }
         else {
-            if currentTime >= minThresholdPlaybackTime {
+            if time.currentTime >= minThresholdPlaybackTime {
                 setSeek(seconds: minPlaybackTime)
                 return
             }
@@ -532,56 +561,56 @@ public extension MusicPlayer {
     /// - Parameter withPlay: true if playback is performed after the position is changed
     func setSeek(withPlay: Bool? = nil) {
         // range外の再生時間でseekしようとした場合はrange内に収めてから行うようにする
-        currentTime = min(max(minSeekTime, currentTime), maxSeekTime)
-        let time = TimeInterval(currentTime)
+        time.currentTime = min(max(minSeekTime, time.currentTime), maxSeekTime)
+        let seekTime = TimeInterval(time.currentTime)
         let isPlay = withPlay ?? isPlaying
         guard let duration = duration else { return }
         guard let audioFile = audioFile else { return }
-        if time > duration { return }
-        
+        if seekTime > duration { return }
+
         let sampleRate = audioFile.processingFormat.sampleRate
-        var startSampleTime = AVAudioFramePosition(sampleRate * time)
+        var startSampleTime = AVAudioFramePosition(sampleRate * seekTime)
         // 0秒より前にseekしようとしたら0秒にする
         if (startSampleTime < 0) { startSampleTime = 0 }
-        
-        var length = duration - time
+
+        var length = duration - seekTime
         if length <= 0 { length = 0 }
         var remainSampleTime = AVAudioFrameCount(length * Double(sampleRate))
         if remainSampleTime <= 0 { remainSampleTime = 1 }   // 0だとクラッシュするので極小値で対応
-        
-        cachedSeekBarSeconds = Float(time)
-        
+
+        time.cachedSeekBarSeconds = Float(seekTime)
+
         stop()
-        
+
         playerNode.scheduleSegment(audioFile, startingFrame: startSampleTime, frameCount: remainSampleTime, at: nil)
-        
+
         setNowPlayingInfo()
-        
+
         // divisionタイプならseekした時間でindexを更新しておく
         if trimmingType == .division {
-            division.setCurrentIndex(currentTime: currentTime)
+            division.setCurrentIndex(currentTime: time.currentTime)
         }
-        
+
         if isPlay {
             play()
         }
     }
-    
+
     /// change current playback position
     /// - Parameters:
     ///   - seconds: move seconds time
     ///   - withPlay: with play
     func setSeek(seconds: Float, withPlay: Bool? = nil) {
-        currentTime = seconds
+        time.currentTime = seconds
         setSeek(withPlay: withPlay)
     }
-    
+
     /// change current playback position
     /// - Parameters:
     ///   - addingSeconds: adding seconds time
     ///   - withPlay: with play
     func setSeek(addingSeconds: Float, withPlay: Bool? = nil) {
-        currentTime += addingSeconds
+        time.currentTime += addingSeconds
         setSeek(withPlay: withPlay)
     }
     
@@ -697,20 +726,22 @@ public extension MusicPlayer {
                           isLoopDivision: Bool? = nil,
                           title: String? = nil,
                           lyrics: String? = nil) {
-        updateSongEffect(songs: items,
-                         songId: songId,
-                         effect: effect,
-                         trimming: trimming,
-                         divisions: divisions,
-                         title: title,
-                         lyrics: lyrics)
-        updateSongEffect(songs: originalItems,
-                         songId: songId,
-                         effect: effect,
-                         trimming: trimming,
-                         divisions: divisions,
-                         title: title,
-                         lyrics: lyrics)
+        var newItems = items
+        applyEffect(to: &newItems,
+                    songId: songId,
+                    effect: effect,
+                    trimming: trimming,
+                    divisions: divisions,
+                    title: title,
+                    lyrics: lyrics)
+        items = newItems
+        applyEffect(to: &originalItems,
+                    songId: songId,
+                    effect: effect,
+                    trimming: trimming,
+                    divisions: divisions,
+                    title: title,
+                    lyrics: lyrics)
         let isCurrentItem = songId == currentItem?.id
         if isCurrentItem {
             rate = effect?.rate ?? rate
@@ -722,7 +753,7 @@ public extension MusicPlayer {
             
             playbackTimeRange = trimming
             if let divisions = divisions {
-                division = .init(values: divisions, currentTime: currentTime, loopDivision: isLoopDivision)
+                division = .init(values: divisions, currentTime: time.currentTime, loopDivision: isLoopDivision)
             }
         }
     }
@@ -748,7 +779,7 @@ public extension MusicPlayer {
         }
         if let division = division {
             self.division = division
-            self.division.setCurrentIndex(currentTime: currentTime)
+            self.division.setCurrentIndex(currentTime: time.currentTime)
         }
     }
     
@@ -763,24 +794,26 @@ public extension MusicPlayer {
     /// reset effects by song id
     /// - Parameter songId: song id
     func resetEffects(songId: UInt64) {
-        guard let index = items.firstIndex(where: { $0.id == songId }) else { return }
-        items[index].effect = .init(rate: rateOptions.defaultValue, pitch: pitchOptions.defaultValue, reverb: .init(value: reverbOptions.defaultValue, type: nil))
-        items[index].trimming = nil
-        items[index].division = nil
+        var newItems = items
+        guard let index = newItems.firstIndex(where: { $0.id == songId }) else { return }
+        newItems[index].effect = .init(rate: rateOptions.defaultValue, pitch: pitchOptions.defaultValue, reverb: .init(value: reverbOptions.defaultValue, type: nil))
+        newItems[index].trimming = nil
+        newItems[index].division = nil
+        items = newItems
     }
     
     /// add division
     /// - Parameter seconds: division seconds
     func addDivision(seconds: Float) {
         division.add(seconds: seconds)
-        division.setCurrentIndex(currentTime: currentTime)
+        division.setCurrentIndex(currentTime: time.currentTime)
     }
-    
+
     /// remove division
     /// - Parameter index: remove index
     func removeDivision(index: Int) {
         division.remove(index: index)
-        division.setCurrentIndex(currentTime: currentTime)
+        division.setCurrentIndex(currentTime: time.currentTime)
     }
 }
 
@@ -816,38 +849,38 @@ private extension MusicPlayer {
         return newIndex
     }
     
-    /// update song effect
+    /// apply effect to a songs array (struct value semantics)
     /// - Parameters:
-    ///   - songs: songs
+    ///   - songs: songs (inout)
     ///   - songId: song id
     ///   - effect: effect
     ///   - trimming: trimming
     ///   - divisions: divisions
     ///   - title: title
     ///   - lyrics: lyrics
-    func updateSongEffect(songs: [MPSongItem],
-                          songId: UInt64,
-                          effect: MPSongItemEffect?,
-                          trimming: ClosedRange<Float>?,
-                          divisions: [Float]?,
-                          title: String? = nil,
-                          lyrics: String? = nil) {
-        guard let song = songs.first(where: { $0.id == songId }) else { return }
+    func applyEffect(to songs: inout [MPSongItem],
+                     songId: UInt64,
+                     effect: MPSongItemEffect?,
+                     trimming: ClosedRange<Float>?,
+                     divisions: [Float]?,
+                     title: String? = nil,
+                     lyrics: String? = nil) {
+        guard let index = songs.firstIndex(where: { $0.id == songId }) else { return }
         if let effect = effect {
-            song.effect = .init(rate: effect.rate, pitch: effect.pitch, reverb: effect.reverb)
+            songs[index].effect = .init(rate: effect.rate, pitch: effect.pitch, reverb: effect.reverb)
         }
         if let trimming = trimming {
-            song.trimming = .init(trimming: trimming)
+            songs[index].trimming = .init(trimming: trimming)
         }
         if let divisions = divisions {
-            let currentTime = songId == currentItem?.id ? currentTime : 0.0
-            song.division = .init(values: divisions, currentTime: currentTime)
+            let baseTime = songId == currentItem?.id ? time.currentTime : 0.0
+            songs[index].division = .init(values: divisions, currentTime: baseTime)
         }
         if let title = title {
-            song.title = title
+            songs[index].title = title
         }
         if let lyrics = lyrics {
-            song.lyrics = lyrics
+            songs[index].lyrics = lyrics
         }
     }
     
@@ -861,11 +894,15 @@ private extension MusicPlayer {
         let sampleRate = playerTime.sampleRate
         let sampleTime = playerTime.sampleTime
         // 秒数を取得する
-        let time = Double(sampleTime) / sampleRate
+        let seconds = Double(sampleTime) / sampleRate
         // シークバーを動かした後は内部的にsampleTimeが0にリセットされるため
         // 前回の再生時間を足す
-        let newCurrentTime = Float(time) + cachedSeekBarSeconds
-        currentTime = min(newCurrentTime, fDuration)
+        let newCurrentTime = Float(seconds) + time.cachedSeekBarSeconds
+        let clamped = min(newCurrentTime, fDuration)
+        // 同じ値の代入で@Observable通知が発火するのを抑制する
+        if time.currentTime != clamped {
+            time.currentTime = clamped
+        }
     }
     
     /// stop playback
@@ -972,8 +1009,7 @@ private extension MusicPlayer {
         commandCenter.changePlaybackPositionCommand.isEnabled = true
         commandCenter.changePlaybackPositionCommand.addTarget { [unowned self] event in
             guard let positionCommandEvent = event as? MPChangePlaybackPositionCommandEvent else { return .commandFailed }
-            currentTime = Float(positionCommandEvent.positionTime)
-            setSeek()
+            setSeek(seconds: Float(positionCommandEvent.positionTime))
             return .success
         }
     }
@@ -998,7 +1034,7 @@ private extension MusicPlayer {
             }
         }
         
-        nowPlayingInfo[MPNowPlayingInfoPropertyElapsedPlaybackTime] = currentTime
+        nowPlayingInfo[MPNowPlayingInfoPropertyElapsedPlaybackTime] = time.currentTime
         
         if isPlaying {
             nowPlayingInfo[MPNowPlayingInfoPropertyPlaybackRate] = rate
@@ -1049,8 +1085,8 @@ private extension MusicPlayer {
     
     /// reset playback time
     func resetPlaybackTime() {
-        cachedSeekBarSeconds = 0
-        currentTime = 0
+        time.cachedSeekBarSeconds = 0
+        time.currentTime = 0
         playbackTimeRange = 0.0...fDuration
     }
 }
@@ -1064,13 +1100,13 @@ private extension MusicPlayer {
                 if division.loopDivision {
                     // divisionの境界線の前まで移動した状態でbackTimeを取得する
                     // MusicPlayer.backSameMusicThresholdでなくてもいい
-                    if let back = division.backTime(currentTime: currentTime, threshold: MusicPlayer.backSameMusicThreshold) {
+                    if let back = division.backTime(currentTime: time.currentTime, threshold: MusicPlayer.backSameMusicThreshold) {
                         setSeek(seconds: back)
                     }
                 }
                 else {
                     // 最後まで到達した
-                    if currentTime >= maxSeekTime {
+                    if time.currentTime >= maxSeekTime {
                         if repeatType == .one {
                             setSeek(seconds: 0)
                         }
@@ -1080,7 +1116,7 @@ private extension MusicPlayer {
                     }
                     else {
                         // divisionを越えたら区間のindexを更新する
-                        division.setCurrentIndex(currentTime: currentTime)
+                        division.setCurrentIndex(currentTime: time.currentTime)
                     }
                 }
             }

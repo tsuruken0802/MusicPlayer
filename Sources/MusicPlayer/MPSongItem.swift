@@ -30,7 +30,7 @@ public struct MPSongItemList {
     }
 }
 
-public class MPSongItem {
+public struct MPSongItem {
     public let item: MPMediaItem
     public var effect: MPSongItemEffect?
     public var trimming: MPSongItemTrimming?
@@ -41,11 +41,11 @@ public class MPSongItem {
     public var lyrics: String?
     public var artist: String? { item.artist }
     public var artwork: MPMediaItemArtwork? { item.artwork }
-    
+
     public func image(size: CGFloat) -> UIImage? {
         return item.artwork?.image(at: CGSize(width: size, height: size))
     }
-    
+
     public init(item: MPMediaItem,
                 effect: MPSongItemEffect? = nil,
                 trimming: MPSongItemTrimming? = nil,

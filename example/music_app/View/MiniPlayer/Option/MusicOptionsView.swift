@@ -20,7 +20,7 @@ extension AVAudioUnitReverbPreset: Identifiable {
 }
 
 struct MusicOptionsView: View {
-    @State private var musicPlayer = MusicPlayer.shared
+    private let musicPlayer = MusicPlayer.shared
     @StateObject private var viewModel: MusicOptionsViewModel = .init()
     
     @State private var reverbSelection = [
@@ -55,6 +55,7 @@ struct MusicOptionsView: View {
     }
     
     var body: some View {
+        @Bindable var musicPlayer = musicPlayer
         ScrollView {
             VStack {
                 // tempo

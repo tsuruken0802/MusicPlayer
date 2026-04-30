@@ -8,6 +8,7 @@
 import Foundation
 import Combine
 
+@MainActor
 class MusicOptionsViewModel: ObservableObject {
     let pitchPlusMark: String = "#"
     let pitchMinusMark: String = "♭"

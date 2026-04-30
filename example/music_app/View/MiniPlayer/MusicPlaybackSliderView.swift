@@ -8,14 +8,14 @@
 import SwiftUI
 
 struct MusicPlaybackSliderView: View {
-    @State private var musicPlayer = MusicPlayer.shared
-    
+    private let musicPlayer = MusicPlayer.shared
+
     var showTrimmingPosition: Bool?
-    
+
     var duration: Float {
         return musicPlayer.fDuration
     }
-    
+
     private var trimmingPositionRates: [Float] {
         guard let playback = musicPlayer.playbackTimeRange else { return [] }
         if duration <= 0.0 { return [] }
@@ -25,15 +25,15 @@ struct MusicPlaybackSliderView: View {
         let maxRate = playback.upperBound / duration
         return [minRate, maxRate]
     }
-    
+
     private var trimmingDivisionRates: [Float] {
-        let positions = musicPlayer.division.values 
+        let positions = musicPlayer.division.values
         return positions.compactMap { value in
             if duration <= 0.0 { return nil }
             return value / duration
         }
     }
-    
+
     private var positions: [Float] {
         if musicPlayer.playbackTimeRange != nil {
             return trimmingPositionRates
@@ -42,24 +42,17 @@ struct MusicPlaybackSliderView: View {
             return trimmingDivisionRates
         }
     }
-    
+
     init(showTrimmingPosition: Bool? = nil, duration: TimeInterval? = nil) {
         self.showTrimmingPosition = showTrimmingPosition
     }
-    
+
+    // currentTimeを読まない親View(trimming/division オーバーレイの再評価を4Hz更新から守る)
     var body: some View {
         VStack(spacing: 0) {
             if let duration = musicPlayer.duration, duration > 0.0 {
-                Slider(value: $musicPlayer.currentTime, in: 0.0...Float(duration), step: 0.1) { isEditing in
-                    if isEditing {
-                        musicPlayer.stopCurrentTimeRendering()
-                    }
-                    else {
-                        musicPlayer.startCurrentTimeRendering()
-                        musicPlayer.setSeek()
-                    }
-                }
-                
+                _PlaybackSliderInner(duration: Float(duration))
+
                 let positions = positions
                 if !positions.isEmpty {
                     if showTrimmingPosition == true {
@@ -70,10 +63,40 @@ struct MusicPlaybackSliderView: View {
                             .padding(.vertical, 10)
                     }
                 }
-                
-                MusicSecondsTexts(from: musicPlayer.currentTime, to: Float(duration), showDecimalSeconds: false)
+
+                _PlaybackSecondsLabel(duration: Float(duration))
             }
         }
+    }
+}
+
+/// SliderのみcurrentTimeをBindする独立View
+/// 4Hz再描画の影響をこの内側のSliderだけに局所化する
+private struct _PlaybackSliderInner: View {
+    private let musicPlayer = MusicPlayer.shared
+    let duration: Float
+
+    var body: some View {
+        @Bindable var time = musicPlayer.time
+        Slider(value: $time.currentTime, in: 0.0...duration, step: 0.1) { isEditing in
+            if isEditing {
+                musicPlayer.stopCurrentTimeRendering()
+            }
+            else {
+                musicPlayer.startCurrentTimeRendering()
+                musicPlayer.setSeek()
+            }
+        }
+    }
+}
+
+/// 秒数ラベルもcurrentTime観測を独立Viewに切り出して局所化する
+private struct _PlaybackSecondsLabel: View {
+    private let playbackTime = MusicPlayer.shared.time
+    let duration: Float
+
+    var body: some View {
+        MusicSecondsTexts(from: playbackTime.currentTime, to: duration, showDecimalSeconds: false)
     }
 }
 

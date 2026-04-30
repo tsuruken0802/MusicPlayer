@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct MiniPlayerSongImage: View {
-    @State private var musicPlayer = MusicPlayer.shared
+    private let musicPlayer = MusicPlayer.shared
     
     let layoutType: MiniPlayerLayoutType
     

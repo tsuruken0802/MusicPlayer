@@ -8,33 +8,18 @@
 import SwiftUI
 
 struct MusicPlayerDivisionView: View {
-    @State private var musicPlayer: MusicPlayer = .shared
-    
+    private let musicPlayer: MusicPlayer = .shared
+
     let duration: TimeInterval
-    
+
     let divisions: [Float]
-    
+
     private let circleLength: CGFloat = 28
-    
+
     private let verticalSpacing: CGFloat = 20
-    
+
     @State var value: Float = 0
-    
-    var valueRate: Float? {
-        if duration <= 0 { return nil } // 0割禁止
-        return musicPlayer.currentTime / Float(duration)
-    }
-    
-    private func circle(width: CGFloat) -> some View {
-        let rate = CGFloat(valueRate ?? 0.0)
-        let x: CGFloat = (width - circleLength) * rate
-        return Image(systemName: "plus.circle.fill")
-            .resizable()
-            .foregroundColor(.green)
-            .frame(width: circleLength, height: circleLength)
-            .padding(.leading, x)
-    }
-    
+
     private var height: CGFloat {
         circleLength +
         verticalSpacing +
@@ -42,25 +27,49 @@ struct MusicPlayerDivisionView: View {
         verticalSpacing +
         MusicPlayerDivisionItemView.height
     }
-    
+
     var body: some View {
         GeometryReader { geometry in
             VStack(alignment: .leading, spacing: 0) {
-                circle(width: geometry.size.width)
+                // currentTimeを観測する円アイコンは独立Viewに切り出し、
+                // 4Hz更新の影響範囲をこの円のみに局所化する
+                DivisionCircleView(duration: duration, circleLength: circleLength, width: geometry.size.width)
                     .onTapGesture {
-                        musicPlayer.addDivision(seconds: musicPlayer.currentTime)
+                        musicPlayer.addDivision(seconds: musicPlayer.time.currentTime)
                     }
-                
+
                 Spacer(minLength: verticalSpacing)
-                
+
                 MusicPlaybackSliderView(duration: duration)
-                
+
                 Spacer(minLength: verticalSpacing)
-                
+
                 MusicPlayerDivisionItemView(divisions: divisions)
             }
         }
         .frame(height: height)
+    }
+}
+
+private struct DivisionCircleView: View {
+    private let playbackTime = MusicPlayer.shared.time
+    let duration: TimeInterval
+    let circleLength: CGFloat
+    let width: CGFloat
+
+    private var valueRate: Float? {
+        if duration <= 0 { return nil } // 0割禁止
+        return playbackTime.currentTime / Float(duration)
+    }
+
+    var body: some View {
+        let rate = CGFloat(valueRate ?? 0.0)
+        let x: CGFloat = (width - circleLength) * rate
+        return Image(systemName: "plus.circle.fill")
+            .resizable()
+            .foregroundColor(.green)
+            .frame(width: circleLength, height: circleLength)
+            .padding(.leading, x)
     }
 }
 

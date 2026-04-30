@@ -10,7 +10,7 @@ import SwiftUI
 struct TabScreenView: View {
     @Namespace var animation
     
-    @State var musicPlayer: MusicPlayer = MusicPlayer.shared
+    private let musicPlayer: MusicPlayer = MusicPlayer.shared
     
     var body: some View {
         ZStack(alignment: Alignment(horizontal: .center, vertical: .bottom)) {

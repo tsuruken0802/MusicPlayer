@@ -8,15 +8,19 @@
 import Observation
 import Combine
 
+@MainActor
 class MusicOptionTrimmingSliderViewModel: ObservableObject {
     @Published var currentValue: ClosedRange<Float> = 0.0...Float(MusicPlayer.shared.duration ?? 0.0)
-    
+
     init() {
         _ = withObservationTracking {
             MusicPlayer.shared.playbackTimeRange
         } onChange: { [weak self] in
-            if let value = MusicPlayer.shared.playbackTimeRange {
-                self?.currentValue = value
+            // onChangeはnonisolatedなのでMainActorにhopする
+            Task { @MainActor [weak self] in
+                if let value = MusicPlayer.shared.playbackTimeRange {
+                    self?.currentValue = value
+                }
             }
         }
     }

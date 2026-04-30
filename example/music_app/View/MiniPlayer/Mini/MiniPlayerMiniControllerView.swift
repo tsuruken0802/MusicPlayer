@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct MiniPlayerMiniControllerView: View {
-    @State private var musicPlayer = MusicPlayer.shared
+    private let musicPlayer = MusicPlayer.shared
     
     private var playAndPauseImage: Image {
         return Image(systemName: musicPlayer.isPlaying ? "pause.fill" : "play.fill")

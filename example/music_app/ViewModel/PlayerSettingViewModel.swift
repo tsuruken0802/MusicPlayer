@@ -8,24 +8,29 @@
 import Foundation
 import Combine
 
+@MainActor
 class PlayerSettingViewModel: ObservableObject {
     @Published var playerSeconds: Int
-    
+
     @Published var isSkip: Bool = MusicPlayer.shared.rightRemoteCommand.isSkipType
-    
+
     private var cancellable: [AnyCancellable] = []
-    
+
     init() {
         playerSeconds = 15
-        
+
         $playerSeconds.sink { value in
-            MusicPlayer.shared.remoteSkipSeconds = value
+            Task { @MainActor in
+                MusicPlayer.shared.remoteSkipSeconds = value
+            }
         }
         .store(in: &cancellable)
-        
+
         $isSkip.sink { value in
-            MusicPlayer.shared.rightRemoteCommand = value ? .skipForward : .nextTrack
-            MusicPlayer.shared.leftRemoteCommand = value ? .skipBackward : .previousTrack
+            Task { @MainActor in
+                MusicPlayer.shared.rightRemoteCommand = value ? .skipForward : .nextTrack
+                MusicPlayer.shared.leftRemoteCommand = value ? .skipBackward : .previousTrack
+            }
         }
         .store(in: &cancellable)
     }

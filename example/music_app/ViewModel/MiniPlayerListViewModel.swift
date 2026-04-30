@@ -9,6 +9,7 @@ import Foundation
 import Observation
 import SwiftUI
 
+@MainActor
 class MiniPlayerListViewModel: ObservableObject {
     @Published var currentItems: [MiniPlayerListItem] = []
     
@@ -20,8 +21,11 @@ class MiniPlayerListViewModel: ObservableObject {
         _ = withObservationTracking {
             musicPlayer.itemList
         } onChange: { [weak self] in
-            guard let self = self else { return }
-            self.updateCurrentItems(songs: self.musicPlayer.itemList.items, currentItemIndex: self.musicPlayer.itemList.currentIndex)
+            // onChangeはnonisolatedなのでMainActorにhopする
+            Task { @MainActor [weak self] in
+                guard let self = self else { return }
+                self.updateCurrentItems(songs: self.musicPlayer.itemList.items, currentItemIndex: self.musicPlayer.itemList.currentIndex)
+            }
         }
     }
 }
