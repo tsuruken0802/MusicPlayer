@@ -9,6 +9,8 @@ import SwiftUI
 
 struct MusicPlaybackSliderView: View {
     private let musicPlayer = MusicPlayer.shared
+    /// MPPlaybackTimeを@Stateで保持(SwiftUI 17+の@Observableシングルトン保持パターン)
+    @State private var time: MPPlaybackTime = MusicPlayer.shared.time
 
     var showTrimmingPosition: Bool?
 
@@ -47,11 +49,21 @@ struct MusicPlaybackSliderView: View {
         self.showTrimmingPosition = showTrimmingPosition
     }
 
-    // currentTimeを読まない親View(trimming/division オーバーレイの再評価を4Hz更新から守る)
     var body: some View {
-        VStack(spacing: 0) {
+        let currentTime = time.currentTime
+        let _ = print("[View] body eval, time.currentTime=\(currentTime)")
+        return VStack(spacing: 0) {
             if let duration = musicPlayer.duration, duration > 0.0 {
-                _PlaybackSliderInner(duration: Float(duration))
+                Slider(value: $time.currentTime, in: 0.0...Float(duration), step: 0.1) { isEditing in
+                    print("[View] Slider onEditingChanged isEditing=\(isEditing)")
+                    if isEditing {
+                        musicPlayer.stopCurrentTimeRendering()
+                    }
+                    else {
+                        musicPlayer.startCurrentTimeRendering()
+                        musicPlayer.setSeek()
+                    }
+                }
 
                 let positions = positions
                 if !positions.isEmpty {
@@ -64,39 +76,12 @@ struct MusicPlaybackSliderView: View {
                     }
                 }
 
-                _PlaybackSecondsLabel(duration: Float(duration))
+                MusicSecondsTexts(from: currentTime, to: Float(duration), showDecimalSeconds: false)
             }
         }
-    }
-}
-
-/// SliderのみcurrentTimeをBindする独立View
-/// 4Hz再描画の影響をこの内側のSliderだけに局所化する
-private struct _PlaybackSliderInner: View {
-    private let musicPlayer = MusicPlayer.shared
-    let duration: Float
-
-    var body: some View {
-        @Bindable var time = musicPlayer.time
-        Slider(value: $time.currentTime, in: 0.0...duration, step: 0.1) { isEditing in
-            if isEditing {
-                musicPlayer.stopCurrentTimeRendering()
-            }
-            else {
-                musicPlayer.startCurrentTimeRendering()
-                musicPlayer.setSeek()
-            }
+        .onChange(of: time.currentTime) { _, new in
+            print("[View] onChange currentTime=\(new)")
         }
-    }
-}
-
-/// 秒数ラベルもcurrentTime観測を独立Viewに切り出して局所化する
-private struct _PlaybackSecondsLabel: View {
-    private let playbackTime = MusicPlayer.shared.time
-    let duration: Float
-
-    var body: some View {
-        MusicSecondsTexts(from: playbackTime.currentTime, to: duration, showDecimalSeconds: false)
     }
 }
 

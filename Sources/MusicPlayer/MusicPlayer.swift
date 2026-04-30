@@ -549,6 +549,7 @@ public extension MusicPlayer {
     
     /// Pause playback
     func pause() {
+        print("[MP] pause() called")
         updateCurrentTime()
         audioEngine.pause()
         playerNode.pause()
@@ -677,7 +678,7 @@ public extension MusicPlayer {
     func startCurrentTimeRendering(currentRate: Float? = nil) {
         // エクスポート中は再生時間を更新する必要はない
         if isExporting { return }
-        
+
         if currentTimeTimer?.isValid == true {
             stopCurrentTimeRendering()
         }
@@ -689,10 +690,12 @@ public extension MusicPlayer {
         let timer = Timer(timeInterval: TimeInterval(value), target: self, selector: #selector(self.onUpdateCurrentTime), userInfo: nil, repeats: true)
         RunLoop.main.add(timer, forMode: .common)
         currentTimeTimer = timer
+        print("[MP] startCurrentTimeRendering interval=\(value) rate=\(rate) timerValid=\(timer.isValid)")
     }
-    
+
     /// stop timer
     func stopCurrentTimeRendering() {
+        print("[MP] stopCurrentTimeRendering (was valid=\(currentTimeTimer?.isValid == true))")
         currentTimeTimer?.invalidate()
         currentTimeTimer = nil
     }
@@ -901,12 +904,14 @@ private extension MusicPlayer {
         let clamped = min(newCurrentTime, fDuration)
         // 同じ値の代入で@Observable通知が発火するのを抑制する
         if time.currentTime != clamped {
+            print("[MP] updateCurrentTime: \(time.currentTime) -> \(clamped)")
             time.currentTime = clamped
         }
     }
     
     /// stop playback
     func stop() {
+        print("[MP] stop() called (audio engine)")
         audioEngine.stop()
         playerNode.stop()
         isPlaying = false
@@ -1094,6 +1099,7 @@ private extension MusicPlayer {
 private extension MusicPlayer {
     /// current time timer handler
     @objc private func onUpdateCurrentTime() {
+        print("[MP] Timer fired, isSeekOver=\(isSeekOver) currentTime=\(time.currentTime)")
         if isSeekOver {
             if trimmingType == .division {
                 // ループする場合
@@ -1133,6 +1139,7 @@ private extension MusicPlayer {
     }
     
     @objc func onInterruption(_ notification: Notification) {
+        print("[MP] onInterruption called")
         guard let userInfo = notification.userInfo,
               let typeValue = userInfo[AVAudioSessionInterruptionTypeKey] as? UInt,
               let type = AVAudioSession.InterruptionType(rawValue: typeValue) else {
@@ -1158,6 +1165,7 @@ private extension MusicPlayer {
     }
     
     @objc func onAudioSessionRouteChanged(_ notification: Notification) {
+        print("[MP] onAudioSessionRouteChanged called")
         guard let userInfo = notification.userInfo,
               let reasonValue = userInfo[AVAudioSessionRouteChangeReasonKey] as? UInt,
               let reason = AVAudioSession.RouteChangeReason(rawValue:reasonValue) else {
