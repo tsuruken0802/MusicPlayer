@@ -60,8 +60,15 @@ struct MusicPlaybackSliderView: View {
                         musicPlayer.stopCurrentTimeRendering()
                     }
                     else {
-                        musicPlayer.startCurrentTimeRendering()
-                        musicPlayer.setSeek()
+                        // Xcode 26 / iOS 26 SDK の SwiftUI Slider 不具合回避:
+                        // isEditing=false 直後にSliderが内部状態でisEditing=trueを
+                        // 再発火することがあり、setSeek内でstop/playを同期実行すると
+                        // 直後のisEditing=trueでTimerが殺されてしまう。
+                        // 次runloopに遅延させてSliderの状態遷移を確実に完了させる。
+                        DispatchQueue.main.async {
+                            musicPlayer.startCurrentTimeRendering()
+                            musicPlayer.setSeek()
+                        }
                     }
                 }
 
